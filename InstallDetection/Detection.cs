@@ -84,7 +84,7 @@ namespace SonistoRepackage.InstallDetection
 
                 if (owner.Contains(user))
                 {
-                    eventList.Add("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
+                    eventList.Add(" |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }

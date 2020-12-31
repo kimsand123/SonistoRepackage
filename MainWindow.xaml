@@ -21,13 +21,7 @@
         <ProgressBar Name="pbProgress" HorizontalAlignment="Left" Height="28" Margin="26,497,0,0" VerticalAlignment="Top" Width="301"/>
         <Button Name="btnStart" Content="Start Repackaging" HorizontalAlignment="Left" Margin="225,445,0,0" VerticalAlignment="Top" Width="102" Click="btnStart_Click" Grid.Column="0"/>
 
-        <RichTextBox Name="rtbInfoWindow" Grid.Column="1" HorizontalAlignment="Left" Height="926" Margin="9.6,10,0,0" VerticalAlignment="Top" Width="1541">
-            <FlowDocument>
-                <Paragraph>
-                    <Run Text=""/>
-                </Paragraph>
-            </FlowDocument>
-        </RichTextBox>
+        <RichTextBox Name="rtbInfoWindow" Grid.Column="1" HorizontalAlignment="Left" Height="926" Margin="9.6,10,0,0" VerticalAlignment="Top" Width="1541" Foreground="Black"/>
 
     </Grid>
 </Window>
