@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SonistoRepackage.InstallDetection;
 
 namespace SonistoRepackage
 {
@@ -23,6 +24,16 @@ namespace SonistoRepackage
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void btnStart_Click(object sender, RoutedEventArgs e)
+        {
+            Detection installDetection = new Detection();
+            List<string> eventList = installDetection.start();
+            foreach (String evnt in eventList)
+            {
+                rtbInfoWindow.AppendText(evnt + "\n");
+            }
         }
     }
 }
