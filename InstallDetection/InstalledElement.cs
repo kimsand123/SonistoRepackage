@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SonistoRepackage.InstallDetection
 {
-    class FilterElement
+    class InstalledElement
     {
         public string drive { get; set; }
         public string path { get; set; }
