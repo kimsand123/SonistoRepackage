@@ -43,7 +43,6 @@ namespace SonistoRepackage
         public MainWindow()
         {
             InitializeComponent();
-            //rtbInfoWindow.Document.Blocks.Add(new Paragraph(new Run("test")));
         }
 
         private void btnCreateJson_Click(object sender, RoutedEventArgs e)
@@ -135,8 +134,6 @@ namespace SonistoRepackage
                 //eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
                 //numberOfEntriesInList -= 1;
             }
-
-
         }
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
@@ -144,7 +141,6 @@ namespace SonistoRepackage
             // run innounp.exe -v installerfile -> filter.txt
             executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
             // Read filter.txt, and put the filenames into a Dictionary
-
         }
 
         private void executeInnounp(string path, string filename)
@@ -175,19 +171,25 @@ namespace SonistoRepackage
                             //skip the first 3 lines of the datastream
                             if ( counter > 2)
                             {
-                                filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
-                                line = line + tmpLine + "\n";
+                                if (tmpLine.Contains(":"))
+                                {
+                                    filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
+                                    line = line + tmpLine + "\n";
+                                }
                             }
                             counter += 1;
                         }
                         exeProcess.WaitForExit();
-
+                        //Removing the last install_script.iss entry
+                        filterElements.Remove(counter - 2);
                         //Getting the filename, path
+
+                        //Creating filename of filter file
                         int idx = filename.IndexOf(".");
                         string filterFileName = filename.Substring(0, idx) + "_filter.txt";
                         string filterFile = path + filterFileName;
 
-                        //Check if file exists if so delete. Create filter file using data from line
+                        //if file exists delete. Create filter file using data from line
                         if (File.Exists(path + filterFileName))
                         {
                             File.Delete(path + filterFileName);
@@ -253,14 +255,23 @@ namespace SonistoRepackage
             }
         }
 
-
-        /*protected void OnPropertyChanged(string propertyName)
+        private void txtBxLogfile_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (PropertyChanged != null)
+            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
+            // Create OpenFileDialog
+            SaveFileDialog saveFileDlg = new SaveFileDialog();
+            saveFileDlg.DefaultExt = ".log";
+            saveFileDlg.Filter = "JsonInstall log (.log)| *.log";
+            saveFileDlg.Title = "Select folder and filename for Sonisto Json logfile";
+
+            // Launch OpenFileDialog by calling ShowDialog method
+            //Nullable<bool> result = saveFileDlg.ShowDialog();
+            saveFileDlg.ShowDialog();
+
+            if (saveFileDlg.FileName != "")
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.txtBxLogfile.Text = saveFileDlg.FileName;
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;*/
     }
 }

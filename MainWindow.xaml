@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <Button Name="btnFindInstaller" Content="Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,10,0,0" Height="30" Width="75"/>
+        <Button Name="btnFindInstaller" Content="1. Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,10,0,0" Height="30" Width="94"/>
 
         <Label Name="lblPath" Content="Path" HorizontalAlignment="Left" Margin="25,43,0,0" VerticalAlignment="Top" Width="71"/>
         <TextBox Name="txtBxPath" Height="23" Margin="80,43,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
@@ -29,12 +29,12 @@
         </Label>
         <TextBox Name="txtBxJsonFileName" Height="23" Margin="90,269,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
         <Label Name="lblLogfile" Content="Logfile" HorizontalAlignment="Left" Margin="26,350,0,0" VerticalAlignment="Top" Width="94"/>
-        <TextBox Name="txtBxLogfile" Height="23" Margin="90,353,13.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" />
+        <TextBox Name="txtBxLogfile" Height="23" Margin="90,353,9.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" GotFocus="txtBxLogfile_GotFocus"/>
 
-        <Button Name="btnCreateJson" Content="Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103"/>
+        <Button Name="btnCreateJson" Content="4. Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103"/>
 
         <RichTextBox Name="rtbInfoWindow" Margin="9.4,10,-0.4,-0.4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" Grid.RowSpan="2" />
-        <Button Name="btnCreateFilter" HorizontalAlignment="Left" Margin="26,119,0,0" VerticalAlignment="Top" Width="75" Height="30" Click="btnCreateFilter_Click">
+        <Button Name="btnCreateFilter" HorizontalAlignment="Left" Margin="26,119,0,0" VerticalAlignment="Top" Width="94" Height="30" Click="btnCreateFilter_Click">
             <StackPanel>
                 <Popup Name="myPopup">
                     <TextBlock  Name="myPopupText" 
@@ -43,11 +43,11 @@
                      Filter is being created
                     </TextBlock>
                 </Popup>
-                <TextBlock><Run Text="Create Filter"/></TextBlock>
+                <TextBlock><Run Text="2. "/><Run Text="Create Filter"/></TextBlock>
             </StackPanel>
         </Button>
-        <Button Name="btnSelectJsonPath" HorizontalAlignment="Left" Margin="26,164,0,0" VerticalAlignment="Top" Width="75" Height="55" Click="btnSelectJsonPath_Click">
-            <TextBlock Text="Select Json Path and filename
+        <Button Name="btnSelectJsonPath" HorizontalAlignment="Left" Margin="26,164,0,0" VerticalAlignment="Top" Width="94" Height="55" Click="btnSelectJsonPath_Click">
+            <TextBlock Text="3. Select Json Path and filename
 " TextWrapping="Wrap" TextAlignment="Center"/>
         </Button>
         <TextBox Name="txtBxJsonPath" Height="25" Margin="90,224,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>

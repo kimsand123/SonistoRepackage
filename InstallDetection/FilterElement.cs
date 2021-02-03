@@ -8,7 +8,7 @@ namespace SonistoRepackage.InstallDetection
 {
     class FilterElement
     {
-        public string drive { get; set; }
+        public string generalFolder { get; set; }
         public string path { get; set; }
         public string fileName { get; set; }
         public string fileType { get; set; }

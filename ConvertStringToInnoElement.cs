@@ -9,7 +9,7 @@ namespace SonistoRepackage
 {
     class ConvertStringToInnoElement
     {
-        FilterElement elementObject = new FilterElement();
+        
         public ConvertStringToInnoElement()
         {
 
@@ -17,22 +17,28 @@ namespace SonistoRepackage
 
         public FilterElement convertElement(string elementString)
         {
+            FilterElement elementObject = new FilterElement();
+            int leftBracketIndex = elementString.IndexOf("{");
+            int rightBracketIndex = elementString.IndexOf("}");
+            int fileLength = elementString.Length - 1;
+            int lastOccuranceOfSlash = elementString.LastIndexOf(@"\");
+            int typeIndex = elementString.LastIndexOf(@".");
+
             if (elementString.Contains("{"))
             {
-
-                int leftBracketIndex = elementString.IndexOf("{");
-                int rightBracketIndex = elementString.IndexOf("}");
-                int to = elementString.Length - 1;
-                int lastOccuranceOfSlash = elementString.LastIndexOf(@"\");
-                int typeIndex = elementString.LastIndexOf(@".");
-
-                elementObject.drive = elementString.Substring(leftBracketIndex, rightBracketIndex-leftBracketIndex+1);
-                elementObject.fileName = elementString.Substring(lastOccuranceOfSlash + 1, to - lastOccuranceOfSlash);
-                elementObject.path = elementString.Substring(rightBracketIndex, lastOccuranceOfSlash + 1);
-                elementObject.fileType = elementString.Substring(typeIndex, to-typeIndex+1);
-                return elementObject;
+                elementObject.generalFolder = elementString.Substring(leftBracketIndex, rightBracketIndex - leftBracketIndex + 1);
+                elementObject.fileName = elementString.Substring(lastOccuranceOfSlash + 1, fileLength - lastOccuranceOfSlash);
+                elementObject.path = elementString.Substring(rightBracketIndex + 1, lastOccuranceOfSlash - rightBracketIndex);
+                //elementObject.fileType = elementString.Substring(typeIndex, fileLength - typeIndex + 1);
             }
-            return null;
+            /*else
+            {
+                int lastDblSpaceIdx = elementString.IndexOf(" ");
+                elementObject.generalFolder = "";
+                elementObject.fileName = elementString.Substring(lastDblSpaceIdx + 1, fileLength - lastDblSpaceIdx);
+            }*/
+            elementObject.fileType = elementString.Substring(typeIndex, fileLength - typeIndex + 1);
+            return elementObject;
         }
     }
 }
