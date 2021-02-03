@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -47,7 +48,33 @@ namespace SonistoRepackage
 
         private void btnCreateJson_Click(object sender, RoutedEventArgs e)
         {
-            var drives2 = DriveInfo.GetDrives();
+            //Start recording
+            //Start install file
+            //Stop recording
+            //Convert recording into dictionary of installed elements
+            //by comparing each element to the filter dictionary, and putting
+            //the installed element into the dic at the same spot as the filter element
+            //when installed elements dic and filter dic has same length
+            //job done.
+
+            Detection fileDetector = new Detection();
+            Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
+            //Start thread
+            recorder.Start();
+            Thread.Sleep(5000);
+            executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
+            Thread.Sleep(5000);
+            fileDetector.stop();
+            List<string> eventList = fileDetector.getEventList();
+            //End Thread
+    
+
+            recorder.Abort();
+
+
+
+
+           /* var drives2 = DriveInfo.GetDrives();
             FileSystemWatcher watcher = new FileSystemWatcher();
             //Setting up the watcher for each fixed drive
             foreach (DriveInfo drive in drives2)
@@ -77,9 +104,9 @@ namespace SonistoRepackage
                     }
                     watcher.EnableRaisingEvents = false;
                 }
-            }
+            }*/
         }
-        private void OnChanged(object source, FileSystemEventArgs e)
+        /*private void OnChanged(object source, FileSystemEventArgs e)
         {
             //reference
             //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
@@ -121,7 +148,7 @@ namespace SonistoRepackage
                     /*int to = e.FullPath.Length - 1;
                     int lastOccurance = e.FullPath.LastIndexOf(@"\");
                     string filename = e.FullPath.Substring(lastOccurance + 1, to - lastOccurance);
-                    string path = e.FullPath.Replace(filename, "");*/
+                    string path = e.FullPath.Replace(filename, "");
 
                     text = " |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner + "\n";
                     eventList.Add(numberOfEntriesInList, convertInstallList.convertElement(e.FullPath));
@@ -134,75 +161,104 @@ namespace SonistoRepackage
                 //eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
                 //numberOfEntriesInList -= 1;
             }
-        }
+        }*/
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
         {
             // run innounp.exe -v installerfile -> filter.txt
-            executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
             // Read filter.txt, and put the filenames into a Dictionary
+            executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
+
         }
+
+        private void executeInnoInstaller(string path, string fileName)
+        {
+            // Use ProcessStartInfo class
+            ProcessStartInfo installerProces = new ProcessStartInfo();
+            installerProces.CreateNoWindow = false;
+            installerProces.UseShellExecute = true;
+            installerProces.FileName = "\"" + fileName + "\"";
+            installerProces.WorkingDirectory = path;
+            installerProces.WindowStyle = ProcessWindowStyle.Normal;
+            //innounpProces.RedirectStandardOutput = true;
+         
+            //innounpProces.Arguments = "-v \"" + filename + "\"";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(installerProces))
+                {
+                    exeProcess.WaitForExit();
+                    //int exitCode = exeProcess.ExitCode;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
 
         private void executeInnounp(string path, string filename)
         {
-            {
-                // Use ProcessStartInfo class
-                ProcessStartInfo innounpProces = new ProcessStartInfo();
-                innounpProces.CreateNoWindow = false;
-                innounpProces.UseShellExecute = false;
-                innounpProces.FileName = "innounp.exe";
-                innounpProces.WorkingDirectory = path;
-                innounpProces.WindowStyle = ProcessWindowStyle.Normal;
-                innounpProces.RedirectStandardOutput = true;
-                innounpProces.Arguments = "-v \"" + filename + "\"";                 
+            // Use ProcessStartInfo class
+            ProcessStartInfo innounpProces = new ProcessStartInfo();
+            innounpProces.CreateNoWindow = false;
+            innounpProces.UseShellExecute = false;
+            innounpProces.FileName = "innounp.exe";
+            innounpProces.WorkingDirectory = path;
+            innounpProces.WindowStyle = ProcessWindowStyle.Normal;
+            innounpProces.RedirectStandardOutput = true;
+            innounpProces.Arguments = "-v \"" + filename + "\"";                 
                 
-                try
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(innounpProces))
                 {
-                    // Start the process with the info we specified.
-                    // Call WaitForExit and then the using statement will close.
-                    using (Process exeProcess = Process.Start(innounpProces))
+                    string line = "";
+                    string tmpLine;
+                    int counter = 0;
+                    while (!exeProcess.StandardOutput.EndOfStream)
                     {
-                        string line = "";
-                        string tmpLine;
-                        int counter = 0;
-                        while (!exeProcess.StandardOutput.EndOfStream)
+                        tmpLine = exeProcess.StandardOutput.ReadLine();
+                        //skip the first 3 lines of the datastream
+                        if ( counter > 2)
                         {
-                            tmpLine = exeProcess.StandardOutput.ReadLine();
-                            //skip the first 3 lines of the datastream
-                            if ( counter > 2)
+                            if (tmpLine.Contains(":"))
                             {
-                                if (tmpLine.Contains(":"))
-                                {
-                                    filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
-                                    line = line + tmpLine + "\n";
-                                }
+                                filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
+                                line = line + tmpLine + "\n";
                             }
-                            counter += 1;
                         }
-                        exeProcess.WaitForExit();
-                        //Removing the last install_script.iss entry
-                        filterElements.Remove(counter - 2);
-                        //Getting the filename, path
-
-                        //Creating filename of filter file
-                        int idx = filename.IndexOf(".");
-                        string filterFileName = filename.Substring(0, idx) + "_filter.txt";
-                        string filterFile = path + filterFileName;
-
-                        //if file exists delete. Create filter file using data from line
-                        if (File.Exists(path + filterFileName))
-                        {
-                            File.Delete(path + filterFileName);
-                        }
-                        File.WriteAllText(path + filterFileName, line);
-                        //int exitCode = exeProcess.ExitCode;
+                        counter += 1;
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                    exeProcess.WaitForExit();
+                    //Removing the last install_script.iss entry
+                    filterElements.Remove(counter - 2);
+                    //Getting the filename, path
+
+                    //Creating filename of filter file
+                    int idx = filename.IndexOf(".");
+                    string filterFileName = filename.Substring(0, idx) + "_filter.txt";
+                    string filterFile = path + filterFileName;
+
+                    //if file exists delete. Create filter file using data from line
+                    if (File.Exists(path + filterFileName))
+                    {
+                        File.Delete(path + filterFileName);
+                    }
+                    File.WriteAllText(path + filterFileName, line);
+                    //int exitCode = exeProcess.ExitCode;
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            } 
         }
 
         private void btnFindInstaller_Click(object sender, RoutedEventArgs e)

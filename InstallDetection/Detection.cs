@@ -5,11 +5,13 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace SonistoRepackage.InstallDetection
 {
-    class Detection
+    public class Detection
     {
+        bool startRecord = false;
         List<String> eventList = new List<string>();
         int totalNumberOfActivities = 0;
         int numberOfEntriesInList = 0;
@@ -19,8 +21,9 @@ namespace SonistoRepackage.InstallDetection
             
         }
 
-        public List<string> start()
+        public void InstanceMethod()
         {
+            startRecord = true;
             var drives2 = DriveInfo.GetDrives();
             FileSystemWatcher watcher = new FileSystemWatcher();
             //Setting up the watcher for each fixed drive
@@ -29,7 +32,7 @@ namespace SonistoRepackage.InstallDetection
                 //Getting the fixed drives only. Not network drives
                 if (drive.DriveType == DriveType.Fixed)
                 {
-
+                    // look for drive and directories, 
                     watcher.Path = drive.Name;
                     watcher.IncludeSubdirectories = true;
                     watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -45,10 +48,18 @@ namespace SonistoRepackage.InstallDetection
                     watcher.EnableRaisingEvents = true;
                 }
             }
-
-            while (eventList.Count < 20) { }
+            while (startRecord) { }
             watcher.EnableRaisingEvents = false;
+        }
+
+        public List<String> getEventList()
+        {
             return eventList;
+        }
+
+        public void stop()
+        {
+            startRecord = false;
         }
         private void OnChanged(object source, FileSystemEventArgs e)
         {
@@ -63,14 +74,14 @@ namespace SonistoRepackage.InstallDetection
 
                 if (owner.Contains(user))
                 {
-                    eventList.Add("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
+                    eventList.Add("| File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }
             }
             catch (Exception ex)
             {
-                eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
+                eventList.Remove("| File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
                 numberOfEntriesInList -= 1;
             }
         }
@@ -84,15 +95,15 @@ namespace SonistoRepackage.InstallDetection
 
                 if (owner.Contains(user))
                 {
-                    eventList.Add(" |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner);
+                    eventList.Add(" | File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }
             }
             catch (Exception ex)
             {
-                eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                numberOfEntriesInList -= 1;
+                //eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
+                //numberOfEntriesInList -= 1;
             }
 
 
