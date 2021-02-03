@@ -56,119 +56,32 @@ namespace SonistoRepackage
             //the installed element into the dic at the same spot as the filter element
             //when installed elements dic and filter dic has same length
             //job done.
-
+            ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
             Detection fileDetector = new Detection();
             Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
             //Start thread
             recorder.Start();
-            Thread.Sleep(5000);
+
             executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
-            Thread.Sleep(5000);
+
             fileDetector.stop();
-            List<string> eventList = fileDetector.getEventList();
             //End Thread
-    
-
             recorder.Abort();
-
-
-
-
-           /* var drives2 = DriveInfo.GetDrives();
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            //Setting up the watcher for each fixed drive
-            foreach (DriveInfo drive in drives2)
+            List<string> eventStringList = fileDetector.getEventList();
+            int idx = 0;
+            foreach (string element in eventStringList)
             {
-                //Getting the fixed drives only. Not network drives
-                if (drive.DriveType == DriveType.Fixed)
-                {
+                eventList.Add(idx, installedElementConverter.convertElement(element, filterElements));
+            }
 
-                    watcher.Path = drive.Name;
-                    watcher.IncludeSubdirectories = true;
-                    watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                    watcher.Filter = "*.*";
-
-                    //Eventhandlers being added 
-                    watcher.Changed += new FileSystemEventHandler(OnChanged);
-                    watcher.Created += new FileSystemEventHandler(OnChanged);
-                    watcher.Deleted += new FileSystemEventHandler(OnChanged);
-                    watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
-                    //Start watching
-                    watcher.EnableRaisingEvents = true;
-
-                    //Loop until eventlist is filled with the files of filterelements
-                    while(eventList.Count < filterElements.Count)
-                    {
-
-                    }
-                    watcher.EnableRaisingEvents = false;
-                }
-            }*/
         }
-        /*private void OnChanged(object source, FileSystemEventArgs e)
-        {
-            //reference
-            //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
-
-            string user = Environment.UserName;
-            string owner = "";
-            string text = "";
-            try
-            {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-
-                if (owner.Contains(user))
-                {
-                    text = " |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner + "\n";
-                    eventList.Add(numberOfEntriesInList, convertInstallList.convertElement(e.FullPath));
-                    //OnPropertyChanged("textLine");
-
-                    //eventList.Add("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                    numberOfEntriesInList += 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                //eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner + "\n");
-                //numberOfEntriesInList -= 1;
-            }
-        }
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            string user = Environment.UserName;
-            string owner = "";
-            string text = "";
-            try
-            {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-
-                if (owner.Contains(user))
-                {
-                    /*int to = e.FullPath.Length - 1;
-                    int lastOccurance = e.FullPath.LastIndexOf(@"\");
-                    string filename = e.FullPath.Substring(lastOccurance + 1, to - lastOccurance);
-                    string path = e.FullPath.Replace(filename, "");
-
-                    text = " |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner + "\n";
-                    eventList.Add(numberOfEntriesInList, convertInstallList.convertElement(e.FullPath));
-                    //eventList.Add(" |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner);
-                    numberOfEntriesInList += 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                //eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                //numberOfEntriesInList -= 1;
-            }
-        }*/
+        
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
         {
             // run innounp.exe -v installerfile -> filter.txt
             // Read filter.txt, and put the filenames into a Dictionary
             executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
-
         }
 
         private void executeInnoInstaller(string path, string fileName)

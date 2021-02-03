@@ -66,23 +66,27 @@ namespace SonistoRepackage.InstallDetection
             //reference
             //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
 
-            string user = Environment.UserName;
+            //string user = Environment.UserName;
+           // WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
+
+
             string owner = "";
             try
             {
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
 
-                if (owner.Contains(user))
+                if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
-                    eventList.Add("| File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
+                    eventList.Add("SoniFile:" + e.FullPath + "SoniAction:" + e.ChangeType + "SoniOwner:" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }
+
             }
             catch (Exception ex)
             {
-                eventList.Remove("| File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
-                numberOfEntriesInList -= 1;
+                /*eventList.Remove("| File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
+                numberOfEntriesInList -= 1;*/
             }
         }
         private void OnRenamed(object source, RenamedEventArgs e)
@@ -93,9 +97,9 @@ namespace SonistoRepackage.InstallDetection
             {
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
 
-                if (owner.Contains(user))
+                if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
-                    eventList.Add(" | File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
+                    eventList.Add("|SoniFile:" + e.FullPath + "|SoniAction:" + e.ChangeType + "|SoniOwner:" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }
