@@ -69,9 +69,16 @@ namespace SonistoRepackage
             recorder.Abort();
             List<string> eventStringList = fileDetector.getEventList();
             int idx = 0;
+            InstalledElement installedElement = new InstalledElement();
             foreach (string element in eventStringList)
             {
-                eventList.Add(idx, installedElementConverter.convertElement(element, filterElements));
+           
+                installedElement = installedElementConverter.convertElement(element, filterElements);
+                if (installedElement != null) {
+                    eventList.Add(idx, installedElement);
+                    idx += 1;
+                }
+
             }
 
         }

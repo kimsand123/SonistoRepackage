@@ -77,7 +77,7 @@ namespace SonistoRepackage.InstallDetection
 
                 if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
-                    eventList.Add("SoniFile:" + e.FullPath + "SoniAction:" + e.ChangeType + "SoniOwner:" + owner);
+                    eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }
@@ -99,7 +99,7 @@ namespace SonistoRepackage.InstallDetection
 
                 if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
-                    eventList.Add("|SoniFile:" + e.FullPath + "|SoniAction:" + e.ChangeType + "|SoniOwner:" + owner);
+                    eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
                     totalNumberOfActivities += 1;
                     numberOfEntriesInList += 1;
                 }
