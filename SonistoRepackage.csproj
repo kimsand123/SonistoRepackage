@@ -68,9 +68,11 @@
     </Compile>
     <Compile Include="ConvertStringToInnoElement.cs" />
     <Compile Include="ConvertStringToInstalledElement.cs" />
+    <Compile Include="InstallDetection\CleanUpInstalledElementList.cs" />
     <Compile Include="InstallDetection\Detection.cs" />
     <Compile Include="InstallDetection\InstalledElement.cs" />
     <Compile Include="InstallDetection\FilterElement.cs" />
+    <Compile Include="InstallDetection\WatchedElement.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

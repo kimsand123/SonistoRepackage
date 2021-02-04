@@ -9,6 +9,7 @@ namespace SonistoRepackage
 {
     class ConvertStringToInstalledElement
     {
+        bool useRenameEntry = false;
         public ConvertStringToInstalledElement()
         {
 
@@ -23,16 +24,11 @@ namespace SonistoRepackage
             int stringLength = elementString.Length - 1;
             string fileString = elementString.Substring(1, stringLength - (stringLength - changeTypeIdx + 1));
             string changeType = elementString.Substring(changeTypeIdx + 1, actionColonIdx - changeTypeIdx - 1);
-            //filter for the changetype. We only want to know the instances where a file is created.
-            if (changeType == "Deleted" || changeType == "Changed")
-            {
-                return null;
-            }
-
+            
             //getting drive, path, file and type of the filestring
             int firstSlashIdx = fileString.IndexOf(@"\");
             int lastSlashIdx = fileString.LastIndexOf(@"\");
-           
+
             InstalledElement installedElement = new InstalledElement();
             //filterElement.fileName = this.elementString.Substring(lastOccuranceOfSlash + 1, to - lastOccuranceOfSlash);
             //if (filterElements.ContainsValue(filterElement))
@@ -50,12 +46,8 @@ namespace SonistoRepackage
             {
                 elementObject.fileType = "";
             }
+            useRenameEntry = false;
             return elementObject;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
         }
     }
 }

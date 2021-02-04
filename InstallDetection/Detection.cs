@@ -13,8 +13,9 @@ namespace SonistoRepackage.InstallDetection
     {
         bool startRecord = false;
         List<String> eventList = new List<string>();
-        int totalNumberOfActivities = 0;
-        int numberOfEntriesInList = 0;
+
+
+        Dictionary<int, WatchedElement> watchedList = new Dictionary<int, WatchedElement>();
 
         public Detection()
         {
@@ -26,6 +27,7 @@ namespace SonistoRepackage.InstallDetection
             startRecord = true;
             var drives2 = DriveInfo.GetDrives();
             FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.InternalBufferSize = 65536;
             //Setting up the watcher for each fixed drive
             foreach (DriveInfo drive in drives2)
             {
@@ -67,31 +69,32 @@ namespace SonistoRepackage.InstallDetection
             //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
 
             //string user = Environment.UserName;
-           // WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
-
+            // WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
+            WatchedElement watchedElement = new WatchedElement();
 
             string owner = "";
             try
             {
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
+                //TODO: "Administratorer" er sprog afhængigt. Lav OS languagecheck og brug konstant.
 
                 if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
-                    totalNumberOfActivities += 1;
-                    numberOfEntriesInList += 1;
                 }
 
             }
             catch (Exception ex)
             {
-                /*eventList.Remove("| File:" + e.FullPath + " | Action:" + e.ChangeType + " | Owner:" + owner);
-                numberOfEntriesInList -= 1;*/
             }
         }
         private void OnRenamed(object source, RenamedEventArgs e)
         {
+            //When renaming there will always be two entries in the dictionary
+            //first the oldpath, after that the new path.
+
             string user = Environment.UserName;
+            WatchedElement watchedElement = new WatchedElement();
             string owner = "";
             try
             {
@@ -99,18 +102,19 @@ namespace SonistoRepackage.InstallDetection
 
                 if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
+                    eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
-                    totalNumberOfActivities += 1;
-                    numberOfEntriesInList += 1;
                 }
             }
             catch (Exception ex)
             {
-                //eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                //numberOfEntriesInList -= 1;
             }
 
 
+        }
+        public Dictionary<int, WatchedElement> getWatchedElements()
+        {
+            return watchedList;
         }
     }
 }

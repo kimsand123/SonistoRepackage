@@ -63,18 +63,27 @@ namespace SonistoRepackage
             recorder.Start();
 
             executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
-
             fileDetector.stop();
+
             //End Thread
             recorder.Abort();
+            Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
             int idx = 0;
+
+            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+            List<string> cleanList = cleanTheList.doIt(eventStringList);
+
             InstalledElement installedElement = new InstalledElement();
             foreach (string element in eventStringList)
             {
-           
                 installedElement = installedElementConverter.convertElement(element, filterElements);
                 if (installedElement != null) {
+                    if (eventList.ContainsValue(installedElement))
+                    {
+                        var item = eventList.First(elementForErase => elementForErase.Value == installedElement);
+                        eventList.Remove(item.Key);
+                    }
                     eventList.Add(idx, installedElement);
                     idx += 1;
                 }
