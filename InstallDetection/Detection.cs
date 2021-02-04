@@ -68,10 +68,11 @@ namespace SonistoRepackage.InstallDetection
             //reference
             //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
 
+           
             //string user = Environment.UserName;
             // WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
             WatchedElement watchedElement = new WatchedElement();
-
+            //Test
             string owner = "";
             try
             {
