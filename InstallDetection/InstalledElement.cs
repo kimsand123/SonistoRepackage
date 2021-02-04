@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SonistoRepackage.InstallDetection
 {
-    class FilterElement
+    class InstalledElement
     {
-        public string generalFolder { get; set; }
+        public string drive { get; set; }
         public string path { get; set; }
         public string fileName { get; set; }
         public string fileType { get; set; }

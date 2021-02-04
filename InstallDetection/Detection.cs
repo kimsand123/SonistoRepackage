@@ -5,31 +5,36 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace SonistoRepackage.InstallDetection
 {
-    class Detection
+    public class Detection
     {
+        bool startRecord = false;
         List<String> eventList = new List<string>();
-        int totalNumberOfActivities = 0;
-        int numberOfEntriesInList = 0;
+
+
+        Dictionary<int, WatchedElement> watchedList = new Dictionary<int, WatchedElement>();
 
         public Detection()
         {
             
         }
 
-        public List<string> start()
+        public void InstanceMethod()
         {
+            startRecord = true;
             var drives2 = DriveInfo.GetDrives();
             FileSystemWatcher watcher = new FileSystemWatcher();
+            watcher.InternalBufferSize = 65536;
             //Setting up the watcher for each fixed drive
             foreach (DriveInfo drive in drives2)
             {
                 //Getting the fixed drives only. Not network drives
                 if (drive.DriveType == DriveType.Fixed)
                 {
-
+                    // look for drive and directories, 
                     watcher.Path = drive.Name;
                     watcher.IncludeSubdirectories = true;
                     watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
@@ -45,57 +50,71 @@ namespace SonistoRepackage.InstallDetection
                     watcher.EnableRaisingEvents = true;
                 }
             }
-
-            while (eventList.Count < 20) { }
+            while (startRecord) { }
             watcher.EnableRaisingEvents = false;
+        }
+
+        public List<String> getEventList()
+        {
             return eventList;
+        }
+
+        public void stop()
+        {
+            startRecord = false;
         }
         private void OnChanged(object source, FileSystemEventArgs e)
         {
             //reference
             //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
 
-            string user = Environment.UserName;
+            //string user = Environment.UserName;
+            // WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
+            WatchedElement watchedElement = new WatchedElement();
+
             string owner = "";
             try
             {
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
+                //TODO: "Administratorer" er sprog afhængigt. Lav OS languagecheck og brug konstant.
 
-                if (owner.Contains(user))
+                if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
-                    eventList.Add("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                    totalNumberOfActivities += 1;
-                    numberOfEntriesInList += 1;
+                    eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
                 }
+
             }
             catch (Exception ex)
             {
-                eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                numberOfEntriesInList -= 1;
             }
         }
         private void OnRenamed(object source, RenamedEventArgs e)
         {
+            //When renaming there will always be two entries in the dictionary
+            //first the oldpath, after that the new path.
+
             string user = Environment.UserName;
+            WatchedElement watchedElement = new WatchedElement();
             string owner = "";
             try
             {
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
 
-                if (owner.Contains(user))
+                if (owner.Contains("BUILTIN\\" + "Administratorer"))
                 {
-                    eventList.Add(" |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner);
-                    totalNumberOfActivities += 1;
-                    numberOfEntriesInList += 1;
+                    eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
+                    eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
                 }
             }
             catch (Exception ex)
             {
-                eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                numberOfEntriesInList -= 1;
             }
 
 
+        }
+        public Dictionary<int, WatchedElement> getWatchedElements()
+        {
+            return watchedList;
         }
     }
 }

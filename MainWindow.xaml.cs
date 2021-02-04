@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using JetBrains.Annotations;
+using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
 
 namespace SonistoRepackage
@@ -29,211 +31,170 @@ namespace SonistoRepackage
     /// </summary>
     /// 
 
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
 
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private static readonly object synchLock = new object();
-
-        ObservableCollection<String> eventList = new ObservableCollection<string>();
-        int totalNumberOfActivities = 0;
         int numberOfEntriesInList = 0;
 
-
-        Dictionary<string, FilterElement> filterElements = new Dictionary<string, FilterElement>();
-
+        Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
+        Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
+        ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
+        ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
+        
         public MainWindow()
         {
             InitializeComponent();
-            //rtbInfoWindow.Document.Blocks.Add(new Paragraph(new Run("test")));
         }
 
-        private void btnStart_Click(object sender, RoutedEventArgs e)
+        private void btnCreateJson_Click(object sender, RoutedEventArgs e)
         {
-            var drives2 = DriveInfo.GetDrives();
-            FileSystemWatcher watcher = new FileSystemWatcher();
-            //Setting up the watcher for each fixed drive
-            foreach (DriveInfo drive in drives2)
+            //Start recording
+            //Start install file
+            //Stop recording
+            //Convert recording into dictionary of installed elements
+            //by comparing each element to the filter dictionary, and putting
+            //the installed element into the dic at the same spot as the filter element
+            //when installed elements dic and filter dic has same length
+            //job done.
+            ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
+            Detection fileDetector = new Detection();
+            Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
+            //Start thread
+            recorder.Start();
+
+            executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
+            fileDetector.stop();
+
+            //End Thread
+            recorder.Abort();
+            Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
+            List<string> eventStringList = fileDetector.getEventList();
+            int idx = 0;
+
+            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+            List<string> cleanList = cleanTheList.doIt(eventStringList);
+
+            InstalledElement installedElement = new InstalledElement();
+            foreach (string element in eventStringList)
             {
-                //Getting the fixed drives only. Not network drives
-                if (drive.DriveType == DriveType.Fixed)
-                {
-
-                    watcher.Path = drive.Name;
-                    watcher.IncludeSubdirectories = true;
-                    watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
-                    watcher.Filter = "*.*";
-
-                    //Eventhandlers being added 
-                    watcher.Changed += new FileSystemEventHandler(OnChanged);
-                    watcher.Created += new FileSystemEventHandler(OnChanged);
-                    watcher.Deleted += new FileSystemEventHandler(OnChanged);
-                    watcher.Renamed += new RenamedEventHandler(OnRenamed);
-
-                    //Start watching
-                    watcher.EnableRaisingEvents = true;
-
-                    while(eventList.Count < filterElements.Count)
+                installedElement = installedElementConverter.convertElement(element, filterElements);
+                if (installedElement != null) {
+                    if (eventList.ContainsValue(installedElement))
                     {
-
+                        var item = eventList.First(elementForErase => elementForErase.Value == installedElement);
+                        eventList.Remove(item.Key);
                     }
-
-
+                    eventList.Add(idx, installedElement);
+                    idx += 1;
                 }
+
             }
-
-
-
-            /*Detection installDetection = new Detection();
-            List<string> eventList = installDetection.start();
-            foreach (String evnt in eventList)
-            {
-                rtbInfoWindow.AppendText(evnt + "\n");
-            }*/
-        }
-        private void OnChanged(object source, FileSystemEventArgs e)
-        {
-            //reference
-            //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
-
-            string user = Environment.UserName;
-            string owner = "";
-            string text = "";
-            try
-            {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-
-                if (owner.Contains(user))
-                {
-                    text = " |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner + "\n";
-                    lock (synchLock)
-                    {
-                        rtbInfoWindow.Document.Blocks.Add(new Paragraph(new Run(text)));
-                        /*rtbInfoWindow.Document.Blocks.Add(new Paragraph(new Run(text)));
-                        rtbInfoWindow.Focus();
-                        rtbInfoWindow.ScrollToEnd();
-                        rtbInfoWindow.UpdateLayout();*/
-                    }
-
-                    //OnPropertyChanged("textLine");
-
-                    //eventList.Add("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                    totalNumberOfActivities += 1;
-                    numberOfEntriesInList += 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner + "\n");
-                numberOfEntriesInList -= 1;
-            }
-        }
-        private void OnRenamed(object source, RenamedEventArgs e)
-        {
-            string user = Environment.UserName;
-            string owner = "";
-            string text = "";
-            try
-            {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-
-                if (owner.Contains(user))
-                {
-
-                    text = " |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner + "\n";
-                    var paragraph = new Paragraph();
-                    //paragraph.Inlines.Add(new Run(text));
-                    rtbInfoWindow.Document.Blocks.Add(new Paragraph(new Run(text)));
-                   /* rtbInfoWindow.Document.Blocks.Add(paragraph);
-                    rtbInfoWindow.Focus();
-                    rtbInfoWindow.ScrollToEnd();*/
-                    //OnPropertyChanged("textLine");
-                    //eventList.Add(" |File:" + e.FullPath + " |Action:" + e.ChangeType + " |Owner:" + owner);
-                    totalNumberOfActivities += 1;
-                    numberOfEntriesInList += 1;
-                }
-            }
-            catch (Exception ex)
-            {
-                eventList.Remove("|File:" + e.FullPath + "|Action:" + e.ChangeType + "|Owner:" + owner);
-                numberOfEntriesInList -= 1;
-            }
-
 
         }
-
-        private void rtbInfoWindow_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
+        
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
         {
             // run innounp.exe -v installerfile -> filter.txt
-            executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
             // Read filter.txt, and put the filenames into a Dictionary
-
+            executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
         }
+
+        private void executeInnoInstaller(string path, string fileName)
+        {
+            // Use ProcessStartInfo class
+            ProcessStartInfo installerProces = new ProcessStartInfo();
+            installerProces.CreateNoWindow = false;
+            installerProces.UseShellExecute = true;
+            installerProces.FileName = "\"" + fileName + "\"";
+            installerProces.WorkingDirectory = path;
+            installerProces.WindowStyle = ProcessWindowStyle.Normal;
+            //innounpProces.RedirectStandardOutput = true;
+         
+            //innounpProces.Arguments = "-v \"" + filename + "\"";
+
+            try
+            {
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(installerProces))
+                {
+                    exeProcess.WaitForExit();
+                    //int exitCode = exeProcess.ExitCode;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
 
         private void executeInnounp(string path, string filename)
         {
+            // Use ProcessStartInfo class
+            ProcessStartInfo innounpProces = new ProcessStartInfo();
+            innounpProces.CreateNoWindow = false;
+            innounpProces.UseShellExecute = false;
+            innounpProces.FileName = "innounp.exe";
+            innounpProces.WorkingDirectory = path;
+            innounpProces.WindowStyle = ProcessWindowStyle.Normal;
+            innounpProces.RedirectStandardOutput = true;
+            innounpProces.Arguments = "-v \"" + filename + "\"";                 
+                
+            try
             {
-
-                // Use ProcessStartInfo class
-                ProcessStartInfo innounpProces = new ProcessStartInfo();
-                innounpProces.CreateNoWindow = false;
-                innounpProces.UseShellExecute = false;
-                innounpProces.FileName = "innounp.exe";
-                innounpProces.WorkingDirectory = path;
-                innounpProces.WindowStyle = ProcessWindowStyle.Normal;
-                innounpProces.RedirectStandardOutput = true;
-
-                string arguments = "-v \"" + filename + "\"";
-                
-                innounpProces.Arguments = arguments;                
-                
-                try
+                // Start the process with the info we specified.
+                // Call WaitForExit and then the using statement will close.
+                using (Process exeProcess = Process.Start(innounpProces))
                 {
-                    // Start the process with the info we specified.
-                    // Call WaitForExit and then the using statement will close.
-                    using (Process exeProcess = Process.Start(innounpProces))
-
+                    string line = "";
+                    string tmpLine;
+                    int counter = 0;
+                    while (!exeProcess.StandardOutput.EndOfStream)
                     {
-                        string line = "";
-                        while (!exeProcess.StandardOutput.EndOfStream)
+                        tmpLine = exeProcess.StandardOutput.ReadLine();
+                        //skip the first 3 lines of the datastream
+                        if ( counter > 2)
                         {
-                            line = line + exeProcess.StandardOutput.ReadLine() + "\n";
+                            if (tmpLine.Contains(":"))
+                            {
+                                filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
+                                line = line + tmpLine + "\n";
+                            }
                         }
-                        exeProcess.WaitForExit();
-                        int idx = filename.IndexOf(".");
-                        string filterFileName = filename.Substring(0, idx) + "_filter.txt";
-                        string filterFile = path + filterFileName;
-                        if (File.Exists(path + filterFileName))
-                        {
-                            File.Delete(path + filterFileName);
-                        }
-                        File.WriteAllText(path + filterFileName, line);
-                        //int exitCode = exeProcess.ExitCode;
+                        counter += 1;
                     }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                    exeProcess.WaitForExit();
+                    //Removing the last install_script.iss entry
+                    filterElements.Remove(counter - 2);
+                    //Getting the filename, path
+
+                    //Creating filename of filter file
+                    int idx = filename.IndexOf(".");
+                    string filterFileName = filename.Substring(0, idx) + "_filter.txt";
+                    string filterFile = path + filterFileName;
+
+                    //if file exists delete. Create filter file using data from line
+                    if (File.Exists(path + filterFileName))
+                    {
+                        File.Delete(path + filterFileName);
+                    }
+                    File.WriteAllText(path + filterFileName, line);
+                    //int exitCode = exeProcess.ExitCode;
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            } 
         }
 
         private void btnFindInstaller_Click(object sender, RoutedEventArgs e)
         {
             // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
             // Create OpenFileDialog
-            Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
+            OpenFileDialog openFileDlg = new OpenFileDialog();
             openFileDlg.DefaultExt = ".exe";
             openFileDlg.Filter = "Inno executable (.exe)| *.exe";
             openFileDlg.InitialDirectory = @"C:\Temp\";
@@ -256,17 +217,46 @@ namespace SonistoRepackage
 
         private void btnSelectJsonPath_Click(object sender, RoutedEventArgs e)
         {
+            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
+            // Create OpenFileDialog
+            SaveFileDialog saveFileDlg = new SaveFileDialog();
+            saveFileDlg.DefaultExt = ".json";
+            saveFileDlg.Filter = "Sonisto json (.json)| *.json";
+            saveFileDlg.Title = "Select folder and filename for Sonisto JSON";
 
-        }
+            // Launch OpenFileDialog by calling ShowDialog method
+            //Nullable<bool> result = saveFileDlg.ShowDialog();
+            saveFileDlg.ShowDialog();
 
-
-        /*protected void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
+            if (saveFileDlg.FileName != "")
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                string file = saveFileDlg.FileName;
+                int to = file.Length - 1;
+                int lastOccurance = file.LastIndexOf(@"\");
+                string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
+                string path = file.Replace(filename, "");
+                this.txtBxJsonPath.Text = path;
+                this.txtBxJsonFileName.Text = filename;
             }
         }
-        public event PropertyChangedEventHandler PropertyChanged;*/
+
+        private void txtBxLogfile_GotFocus(object sender, RoutedEventArgs e)
+        {
+            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
+            // Create OpenFileDialog
+            SaveFileDialog saveFileDlg = new SaveFileDialog();
+            saveFileDlg.DefaultExt = ".log";
+            saveFileDlg.Filter = "JsonInstall log (.log)| *.log";
+            saveFileDlg.Title = "Select folder and filename for Sonisto Json logfile";
+
+            // Launch OpenFileDialog by calling ShowDialog method
+            //Nullable<bool> result = saveFileDlg.ShowDialog();
+            saveFileDlg.ShowDialog();
+
+            if (saveFileDlg.FileName != "")
+            {
+                this.txtBxLogfile.Text = saveFileDlg.FileName;
+            }
+        }
     }
 }

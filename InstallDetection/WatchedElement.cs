@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace SonistoRepackage.InstallDetection
 {
-    class FilterElement
+    public class WatchedElement
     {
-        public string generalFolder { get; set; }
+        public string fileAction { get; set; }
         public string path { get; set; }
+        public string drive { get; set; }
         public string fileName { get; set; }
-        public string fileType { get; set; }
+        public string extension { get; set; }
+        public string owner { get; set; }
     }
 }
