@@ -40,7 +40,8 @@ namespace SonistoRepackage
         Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
         ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
         ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
-        
+        CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -70,8 +71,6 @@ namespace SonistoRepackage
             Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
             int idx = 0;
-
-            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
             List<string> cleanList = cleanTheList.doIt(eventStringList);
 
             InstalledElement installedElement = new InstalledElement();
