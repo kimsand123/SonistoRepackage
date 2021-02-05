@@ -16,26 +16,27 @@ namespace SonistoRepackage.InstallDetection
         List<String> eventList = new List<string>();
         string processName = "";
         string workingDirectory = "";
-        string filesData = "";
-
 
         Dictionary<int, WatchedElement> watchedList = new Dictionary<int, WatchedElement>();
 
-        public Detection(string processName, string workingDirectory, string filesData)
+        public Detection()
+        {
+
+        }
+
+        /*public Detection(string processName, string workingDirectory)
         {
             this.processName = processName;
             this.workingDirectory = workingDirectory;
-            this.filesData = filesData;
-        }
+        }*/
 
         public void InstanceMethod()
         {
-            handleSolution(processName, workingDirectory, filesData);
-            //fileSystemWatcherSolution();
-
+            //handleSolution(processName, workingDirectory);
+            fileSystemWatcherSolution();
         }
 
-        private void handleSolution(string processName, string workingDirectory, string filesData)
+        private void handleSolution(string processName, string workingDirectory)
         {
             // Use ProcessStartInfo class
             ProcessStartInfo innounpProces = new ProcessStartInfo();
@@ -60,7 +61,7 @@ namespace SonistoRepackage.InstallDetection
                     {
                         tmpLine = exeProcess.StandardOutput.ReadLine();
                         //skip the first 3 lines of the datastream
-                        if (counter > 2)
+                        if (counter > -1)
                         {
                             if (tmpLine.Contains(":"))
                             {
@@ -72,11 +73,9 @@ namespace SonistoRepackage.InstallDetection
                     }
                     exeProcess.WaitForExit();
 
-                    //Getting the filename, path
-
                     //Creating filename of filter file
-                    int idx = filesData.IndexOf(".");
-                    string filterFileName = filesData.Substring(0, idx) + "_filter.txt";
+                    int idx = processName.IndexOf(".");
+                    string filterFileName = processName.Substring(0, idx) + "_filter.txt";
                     string filterFile = workingDirectory + filterFileName;
 
                     //if file exists delete. Create filter file using data from line
@@ -109,7 +108,8 @@ namespace SonistoRepackage.InstallDetection
                     // look for drive and directories, 
                     watcher.Path = drive.Name;
                     watcher.IncludeSubdirectories = true;
-                    watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                    //watcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+                    watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastAccess | NotifyFilters.LastWrite;
                     watcher.Filter = "*.*";
 
                     //Eventhandlers being added 
@@ -166,22 +166,46 @@ namespace SonistoRepackage.InstallDetection
             //When renaming there will always be two entries in the dictionary
             //first the oldpath, after that the new path.
 
-            string user = Environment.UserName;
+            //string user = Environment.UserName;
             WatchedElement watchedElement = new WatchedElement();
             string owner = "";
-            try
-            {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
 
-                if (owner.Contains("BUILTIN\\" + "Administratorer"))
-                {
-                    eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
-                    eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
-                }
-            }
-            catch (Exception ex)
+            switch (e.ChangeType)
             {
+                case WatcherChangeTypes.Changed:
+                    try
+                    {
+                        owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
+
+                        if (owner.Contains("BUILTIN\\" + "Administratorer"))
+                        {
+                            eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
+                            eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+                    break;
+                case WatcherChangeTypes.Deleted:
+                    try
+                    {
+                        owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
+
+                        if (owner.Contains("BUILTIN\\" + "Administratorer"))
+                        {
+                            eventList.Add(">" + e.FullPath + "<Deleted" + ":" + owner);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
+
+
+                    break;
             }
+
+            
 
 
         }

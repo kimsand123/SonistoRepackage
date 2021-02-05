@@ -57,12 +57,14 @@ namespace SonistoRepackage
             //when installed elements dic and filter dic has same length
             //job done.
             ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
-            Detection fileDetector = new Detection();
+            //Detection fileDetector = new Detection(this.txtBxInstaller.Text,this.txtBxPath.Text); //Used only with handle method
+            Detection fileDetector = new Detection(); //Used only with FileWatcher method
             Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
             //Start thread
             recorder.Start();
 
             executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
+            Thread.Sleep(5000);
             fileDetector.stop();
 
             //End Thread
