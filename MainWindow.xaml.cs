@@ -104,12 +104,18 @@ namespace SonistoRepackage
         {
             // Use ProcessStartInfo class
             ProcessStartInfo installerProces = new ProcessStartInfo();
-            installerProces.CreateNoWindow = false;
-            installerProces.UseShellExecute = true;
-            installerProces.FileName = "\"" + fileName + "\"";
-            installerProces.WorkingDirectory = path;
+            installerProces.CreateNoWindow = true;
+            installerProces.UseShellExecute = false;
+            //installerProces.RedirectStandardError = true;
+            //installerProces.RedirectStandardOutput = true;
+            installerProces.FileName = path + "\"" + fileName + "\"";
+            //installerProces.WorkingDirectory = path;
             installerProces.WindowStyle = ProcessWindowStyle.Normal;
-            //innounpProces.RedirectStandardOutput = true;
+
+            installerProces.UserName = "test";
+            installerProces.PasswordInClearText = "test";
+   
+            //installerProces.RedirectStandardOutput = true;
          
             //innounpProces.Arguments = "-v \"" + filename + "\"";
 
