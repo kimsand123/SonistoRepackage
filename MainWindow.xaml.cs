@@ -70,25 +70,26 @@ namespace SonistoRepackage
             recorder.Abort();
             Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
+
+
             int idx = 0;
             List<string> cleanList = cleanTheList.doIt(eventStringList);
-
             InstalledElement installedElement = new InstalledElement();
             foreach (string element in eventStringList)
             {
                 installedElement = installedElementConverter.convertElement(element, filterElements);
                 if (installedElement != null) {
+                    //If element is already in the list
                     if (eventList.ContainsValue(installedElement))
                     {
+                        //get the key for the element and remove it.
                         var item = eventList.First(elementForErase => elementForErase.Value == installedElement);
                         eventList.Remove(item.Key);
                     }
                     eventList.Add(idx, installedElement);
                     idx += 1;
                 }
-
             }
-
         }
         
 
