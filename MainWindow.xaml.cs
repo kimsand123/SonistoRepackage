@@ -34,20 +34,17 @@ namespace SonistoRepackage
     public partial class MainWindow : Window
     {
 
-        int numberOfEntriesInList = 0;
-
-        Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
-        Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
         ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
         ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
         CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+        List<string> filterList = new List<string>();
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-        private void btnCreateJson_Click(object sender, RoutedEventArgs e)
+        private void btnCompare_Click(object sender, RoutedEventArgs e)
         {
             //Start recording
             //Start install file
@@ -57,12 +54,11 @@ namespace SonistoRepackage
             //the installed element into the dic at the same spot as the filter element
             //when installed elements dic and filter dic has same length
             //job done.
-            ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
+
             Detection fileDetector = new Detection();
             Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
             //Start thread
             recorder.Start();
-
             executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
             fileDetector.stop();
 
@@ -70,32 +66,64 @@ namespace SonistoRepackage
             recorder.Abort();
             Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
-            int idx = 0;
             List<string> cleanList = cleanTheList.doIt(eventStringList);
+            Dictionary<int, FilterElement> filterElementsDic = createFilterElementDic();
+            Dictionary<int, InstalledElement> installedElementsDic = createInstalledElementDic(cleanList);
 
-            InstalledElement installedElement = new InstalledElement();
-            foreach (string element in eventStringList)
+
+            //compare()
+
+
+        }
+
+        private Dictionary<int, FilterElement> createFilterElementDic ()
+        {
+            Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
+            ConvertStringToInnoElement innoElementConverter = new ConvertStringToInnoElement();
+            Dictionary<int, FilterElement> eventList = new Dictionary<int, FilterElement>();
+            FilterElement filterElement;
+            int idx = 0;
+            foreach(string element in filterList)
             {
-                installedElement = installedElementConverter.convertElement(element, filterElements);
-                if (installedElement != null) {
-                    if (eventList.ContainsValue(installedElement))
+                filterElement = innoElementConverter.convertElement(element);
+                if (filterElement != null)
+                {
+                    eventList.Add(idx, filterElement);
+                    idx += 1;
+                }
+            }
+            return filterElements;
+        }
+
+
+
+        private Dictionary<int, InstalledElement> createInstalledElementDic (List<string> cleanedList)
+        {
+            Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
+            ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
+            //converting the cleanList into a Dictionary of installedElements
+            InstalledElement installedElement;
+            int idx = 0;
+            foreach (string element in cleanedList)
+            {
+                installedElement = installedElementConverter.convertElement(element);
+                if (installedElement != null)
+                {
+                    /*if (eventList.ContainsValue(installedElement))
                     {
                         var item = eventList.First(elementForErase => elementForErase.Value == installedElement);
                         eventList.Remove(item.Key);
-                    }
+                    }*/
                     eventList.Add(idx, installedElement);
                     idx += 1;
                 }
-
             }
-
+            return eventList; 
         }
-        
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
         {
-            // run innounp.exe -v installerfile -> filter.txt
-            // Read filter.txt, and put the filenames into a Dictionary
+
             executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
         }
 
@@ -104,13 +132,24 @@ namespace SonistoRepackage
             // Use ProcessStartInfo class
             ProcessStartInfo installerProces = new ProcessStartInfo();
             installerProces.CreateNoWindow = false;
-            installerProces.UseShellExecute = true;
+            installerProces.UseShellExecute = false;
             installerProces.FileName = "\"" + fileName + "\"";
-            installerProces.WorkingDirectory = path;
+            installerProces.WorkingDirectory = "\"" + path + "\"";
             installerProces.WindowStyle = ProcessWindowStyle.Normal;
             //innounpProces.RedirectStandardOutput = true;
-         
+
             //innounpProces.Arguments = "-v \"" + filename + "\"";
+
+            //Executing process using working user.
+            /*installerProces.UserName = "test";
+            string rawPassword = "test";
+            System.Security.SecureString encPassword = new System.Security.SecureString();
+            foreach (Char c in rawPassword)
+            {
+                encPassword.AppendChar(c);
+            }
+            installerProces.Password = encPassword;*/
+
 
             try
             {
@@ -128,10 +167,11 @@ namespace SonistoRepackage
             }
         }
 
-
         private void executeInnounp(string path, string filename)
         {
-            // Use ProcessStartInfo class
+            // run innounp.exe -v installerfile -> filter.txt
+            // Read filter.txt, and put the filenames into a Dictionary
+            
             ProcessStartInfo innounpProces = new ProcessStartInfo();
             innounpProces.CreateNoWindow = false;
             innounpProces.UseShellExecute = false;
@@ -139,7 +179,7 @@ namespace SonistoRepackage
             innounpProces.WorkingDirectory = path;
             innounpProces.WindowStyle = ProcessWindowStyle.Normal;
             innounpProces.RedirectStandardOutput = true;
-            innounpProces.Arguments = "-v \"" + filename + "\"";                 
+            innounpProces.Arguments = "-v \"" + filename + "\"";
                 
             try
             {
@@ -158,7 +198,7 @@ namespace SonistoRepackage
                         {
                             if (tmpLine.Contains(":"))
                             {
-                                filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
+                                //filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
                                 line = line + tmpLine + "\n";
                             }
                         }
@@ -166,7 +206,7 @@ namespace SonistoRepackage
                     }
                     exeProcess.WaitForExit();
                     //Removing the last install_script.iss entry
-                    filterElements.Remove(counter - 2);
+                    //filterElements.Remove(counter - 2);
                     //Getting the filename, path
 
                     //Creating filename of filter file
@@ -256,6 +296,11 @@ namespace SonistoRepackage
             {
                 this.txtBxLogfile.Text = saveFileDlg.FileName;
             }
+        }
+
+        private void btnCreateJson_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

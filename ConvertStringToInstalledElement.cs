@@ -15,7 +15,7 @@ namespace SonistoRepackage
 
         }
 
-        public InstalledElement convertElement(string elementString, Dictionary<int, FilterElement> filterElements)
+        public InstalledElement convertElement(string elementString)
         {
             InstalledElement elementObject = new InstalledElement();
             //Getting the filestring from the elementstring
