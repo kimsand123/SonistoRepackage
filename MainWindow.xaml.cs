@@ -106,19 +106,16 @@ namespace SonistoRepackage
             ProcessStartInfo installerProces = new ProcessStartInfo();
             installerProces.CreateNoWindow = true;
             installerProces.UseShellExecute = false;
-            //installerProces.RedirectStandardError = true;
-            //installerProces.RedirectStandardOutput = true;
             installerProces.FileName = path + "\"" + fileName + "\"";
-            //installerProces.WorkingDirectory = path;
+
+            installerProces.WorkingDirectory = path;
             installerProces.WindowStyle = ProcessWindowStyle.Normal;
-
-            installerProces.UserName = "test";
-            installerProces.PasswordInClearText = "test";
-   
-            //installerProces.RedirectStandardOutput = true;
-         
-            //innounpProces.Arguments = "-v \"" + filename + "\"";
-
+            string strComputerName = Environment.MachineName.ToString();
+            //installerProces.Domain = "\"" + strComputerName + "\"";
+            installerProces.UserName = strComputerName+"\test";
+            //installerProces.PasswordInClearText = "test";
+            
+            installerProces.Password = getSecurePassword("test");
             try
             {
                 // Start the process with the info we specified.
@@ -133,8 +130,19 @@ namespace SonistoRepackage
             {
                 Console.WriteLine(e);
             }
-        }
 
+        }
+        private System.Security.SecureString getSecurePassword(string passwordText)
+        {
+            System.Security.SecureString encPassword = new System.Security.SecureString();
+
+            foreach (System.Char c in passwordText)
+            {
+                encPassword.AppendChar(c);
+            }
+
+            return encPassword;
+        }
 
         private void executeInnounp(string path, string filename)
         {
