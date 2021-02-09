@@ -106,16 +106,21 @@ namespace SonistoRepackage
             ProcessStartInfo installerProces = new ProcessStartInfo();
             installerProces.CreateNoWindow = true;
             installerProces.UseShellExecute = false;
-            installerProces.FileName = path + "\"" + fileName + "\"";
-
+            installerProces.FileName = "\"" + path + fileName + "\"";
             installerProces.WorkingDirectory = path;
             installerProces.WindowStyle = ProcessWindowStyle.Normal;
-            string strComputerName = Environment.MachineName.ToString();
-            //installerProces.Domain = "\"" + strComputerName + "\"";
-            installerProces.UserName = strComputerName+"\test";
+            installerProces.UserName = "test";
+            installerProces.PasswordInClearText = "test";
+
+
+            //string strComputerName = Environment.MachineName.ToString();
+            //string name = new ComputerUsers().get(); Just to see if the test user looked different. can be deleted from project
+            //result from above string strComputerName = @"WinNT://WORKGROUP/DESKTOP-N4BFU0F/";
+            //installerProces.Domain = @"WinNT:";
+            //installerProces.UserName = @"WinNT:\\WORKGROUP\" + strComputerName + @"\test";
             //installerProces.PasswordInClearText = "test";
-            
-            installerProces.Password = getSecurePassword("test");
+            //installerProces.Verb = @"runas /user:" + strComputerName + @"\test";
+            //installerProces.Password = getSecurePassword("test");
             try
             {
                 // Start the process with the info we specified.
@@ -130,7 +135,6 @@ namespace SonistoRepackage
             {
                 Console.WriteLine(e);
             }
-
         }
         private System.Security.SecureString getSecurePassword(string passwordText)
         {
