@@ -60,6 +60,8 @@ namespace SonistoRepackage
             ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
             Detection fileDetector = new Detection();
             Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
+            InstalledElement installedElement = new InstalledElement();
+
             //Start thread
             recorder.Start();
 
@@ -70,11 +72,17 @@ namespace SonistoRepackage
             recorder.Abort();
             Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
-
-
-            int idx = 0;
             List<string> cleanList = cleanTheList.doIt(eventStringList);
-            InstalledElement installedElement = new InstalledElement();
+            CreateFolderStructure folders = new CreateFolderStructure(cleanList);
+
+            
+
+
+
+
+            /*
+            //Create a Dictionary of Installed elements from the eventList
+            int idx = 0;
             foreach (string element in eventStringList)
             {
                 installedElement = installedElementConverter.convertElement(element, filterElements);
@@ -89,9 +97,10 @@ namespace SonistoRepackage
                     eventList.Add(idx, installedElement);
                     idx += 1;
                 }
-            }
+            }*/
         }
-        
+
+
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
         {
@@ -103,6 +112,7 @@ namespace SonistoRepackage
         private void executeInnoInstaller(string path, string fileName)
         {
             // Use ProcessStartInfo class
+            //Remember to lower the security og UAC to lowest level on the computer
             ProcessStartInfo installerProces = new ProcessStartInfo();
             installerProces.CreateNoWindow = true;
             installerProces.UseShellExecute = false;
@@ -112,15 +122,6 @@ namespace SonistoRepackage
             installerProces.UserName = "test";
             installerProces.PasswordInClearText = "test";
 
-
-            //string strComputerName = Environment.MachineName.ToString();
-            //string name = new ComputerUsers().get(); Just to see if the test user looked different. can be deleted from project
-            //result from above string strComputerName = @"WinNT://WORKGROUP/DESKTOP-N4BFU0F/";
-            //installerProces.Domain = @"WinNT:";
-            //installerProces.UserName = @"WinNT:\\WORKGROUP\" + strComputerName + @"\test";
-            //installerProces.PasswordInClearText = "test";
-            //installerProces.Verb = @"runas /user:" + strComputerName + @"\test";
-            //installerProces.Password = getSecurePassword("test");
             try
             {
                 // Start the process with the info we specified.

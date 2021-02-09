@@ -21,7 +21,6 @@ namespace SonistoRepackage.InstallDetection
         {
             
         }
-
         public void InstanceMethod()
         {
             startRecord = true;

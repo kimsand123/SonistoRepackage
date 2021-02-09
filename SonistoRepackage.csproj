@@ -119,7 +119,8 @@
     </Compile>
     <Compile Include="ConvertStringToInnoElement.cs" />
     <Compile Include="ConvertStringToInstalledElement.cs" />
-    <Compile Include="ComputerUsers.cs" />
+    <Compile Include="CreateFolderStructure.cs" />
+    <Compile Include="OldCode\ComputerUsers.cs" />
     <Compile Include="InstallDetection\CleanUpInstalledElementList.cs" />
     <Compile Include="InstallDetection\Detection.cs" />
     <Compile Include="InstallDetection\InstalledElement.cs" />
