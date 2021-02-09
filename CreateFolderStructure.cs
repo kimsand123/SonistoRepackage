@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,23 +13,54 @@ namespace SonistoRepackage
         public CreateFolderStructure(List<string> eventList)
         {
             this.eventList = eventList;
-            createFolders();
+            createPlaceHolderStructure();
         }
 
 
         //Workfolder is situated in Desktop
 
-        public void createFolders()
+        public void createPlaceHolderStructure()
         {
             List<string> placeholderFolderStructure = new List<string>();
             foreach (string element in eventList)
             {
                 placeholderFolderStructure.Add(createPlaceholderPath(element));
             }
+            CreateFolders(placeholderFolderStructure);
 
         }
 
-        public string createPlaceholderPath(string element)
+        private void CreateFolders(List<string> placeholderFolderStructure)
+        {
+            foreach (string path in placeholderFolderStructure)
+            {
+                string pathWithoutFile = path.Remove(path.LastIndexOf("/"), path.Length - path.LastIndexOf("/"));
+                if (Directory.Exists(pathWithoutFile))
+                {
+                    removeDirectory(pathWithoutFile);
+                }
+            }
+        }
+
+        //removing empty directories recursively
+        private void removeDirectory(string pathWithoutFile)
+        {
+            string[] directories = Directory.GetDirectories(pathWithoutFile);
+            foreach (string dir in directories)
+            {
+                string[] yetMoreDirectories = Directory.GetDirectories(dir);
+                if (yetMoreDirectories!=null)
+                {
+                    Directory.Delete(dir);
+                }
+                else
+                {
+                    removeDirectory(dir);
+                }
+            }
+        }
+
+            public string createPlaceholderPath(string element)
         {
             string value = "";
             string placeholder = "";
