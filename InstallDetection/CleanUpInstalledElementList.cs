@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,10 +9,8 @@ namespace SonistoRepackage.InstallDetection
 {
     class CleanUpInstalledElementList
     {
-        int installedElementsCount = 0;
         List<string> elements = new List<string>();
-        string oldRenamed = "";
-        bool registerRenamedActionInList = false;
+        List<string> firstPassList = new List<string>();
         List<string> cleanedList = new List<string>();
         public CleanUpInstalledElementList()
         {
@@ -21,6 +20,15 @@ namespace SonistoRepackage.InstallDetection
         public List<string> doIt(List<string> installedELements)
         {
             elements = installedELements;
+
+            firstPass();
+            secondPass();
+
+            return cleanedList;
+        }
+
+        private void firstPass()
+        {
             string action = "";
 
             foreach (string element in elements)
@@ -42,7 +50,27 @@ namespace SonistoRepackage.InstallDetection
                         break;
                 }
             }
-            return cleanedList;
+        }
+
+        private void secondPass()
+        {
+            foreach (string element in firstPassList)
+            {
+                string curFile = getFileFromEvent(element);
+                if (File.Exists(curFile)) 
+                {
+                    cleanedList.Add(curFile);
+                }
+            }
+        }
+
+        private string getFileFromEvent(string element)
+        {
+            //Getting the filestring from the elementstring
+            int changeTypeIdx = element.IndexOf(@"<");
+            int stringLength = element.Length - 1;
+            string filePathInfo = element.Substring(1, stringLength - (stringLength - changeTypeIdx + 1));
+            return filePathInfo;
         }
 
         private string determineAction (string element)
@@ -55,8 +83,7 @@ namespace SonistoRepackage.InstallDetection
 
         private void created(string element)
         {
-            cleanedList.Add(element);
-            installedElementsCount += 1;
+            firstPassList.Add(element);
         }
 
         private void renamed(string element)
@@ -64,26 +91,23 @@ namespace SonistoRepackage.InstallDetection
             //if (registerRenamedActionInList)
             string test = "";
             element = element.Replace("Renamed", "Created");
-            test = cleanedList.FirstOrDefault(s => s.Contains(element));
+            test = firstPassList.FirstOrDefault(s => s.Contains(element));
 
             //if test = null then the there is no temp file
             //present for the rename, and it is added
                 if (test==null)
             {
-                cleanedList.Add(element);
-                installedElementsCount += 1;
+                firstPassList.Add(element);
             }
             else
             {
-                cleanedList.Remove(element);
-                installedElementsCount -= 1;
+                firstPassList.Remove(element);
             }
         }
 
         private void deleted(string element)
         {
-            cleanedList.Remove(element);
-            installedElementsCount -= 1;
+            firstPassList.Remove(element);
         }
 
         private void changed(string element)

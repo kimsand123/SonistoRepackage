@@ -40,7 +40,8 @@ namespace SonistoRepackage
         Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
         ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
         ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
-        
+        CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -69,27 +70,26 @@ namespace SonistoRepackage
             recorder.Abort();
             Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
+
+
             int idx = 0;
-
-            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
             List<string> cleanList = cleanTheList.doIt(eventStringList);
-
             InstalledElement installedElement = new InstalledElement();
             foreach (string element in eventStringList)
             {
                 installedElement = installedElementConverter.convertElement(element, filterElements);
                 if (installedElement != null) {
+                    //If element is already in the list
                     if (eventList.ContainsValue(installedElement))
                     {
+                        //get the key for the element and remove it.
                         var item = eventList.First(elementForErase => elementForErase.Value == installedElement);
                         eventList.Remove(item.Key);
                     }
                     eventList.Add(idx, installedElement);
                     idx += 1;
                 }
-
             }
-
         }
         
 
@@ -104,15 +104,23 @@ namespace SonistoRepackage
         {
             // Use ProcessStartInfo class
             ProcessStartInfo installerProces = new ProcessStartInfo();
-            installerProces.CreateNoWindow = false;
-            installerProces.UseShellExecute = true;
-            installerProces.FileName = "\"" + fileName + "\"";
+            installerProces.CreateNoWindow = true;
+            installerProces.UseShellExecute = false;
+            installerProces.FileName = "\"" + path + fileName + "\"";
             installerProces.WorkingDirectory = path;
             installerProces.WindowStyle = ProcessWindowStyle.Normal;
-            //innounpProces.RedirectStandardOutput = true;
-         
-            //innounpProces.Arguments = "-v \"" + filename + "\"";
+            installerProces.UserName = "test";
+            installerProces.PasswordInClearText = "test";
 
+
+            //string strComputerName = Environment.MachineName.ToString();
+            //string name = new ComputerUsers().get(); Just to see if the test user looked different. can be deleted from project
+            //result from above string strComputerName = @"WinNT://WORKGROUP/DESKTOP-N4BFU0F/";
+            //installerProces.Domain = @"WinNT:";
+            //installerProces.UserName = @"WinNT:\\WORKGROUP\" + strComputerName + @"\test";
+            //installerProces.PasswordInClearText = "test";
+            //installerProces.Verb = @"runas /user:" + strComputerName + @"\test";
+            //installerProces.Password = getSecurePassword("test");
             try
             {
                 // Start the process with the info we specified.
@@ -128,7 +136,17 @@ namespace SonistoRepackage
                 Console.WriteLine(e);
             }
         }
+        private System.Security.SecureString getSecurePassword(string passwordText)
+        {
+            System.Security.SecureString encPassword = new System.Security.SecureString();
 
+            foreach (System.Char c in passwordText)
+            {
+                encPassword.AppendChar(c);
+            }
+
+            return encPassword;
+        }
 
         private void executeInnounp(string path, string filename)
         {
