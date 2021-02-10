@@ -70,7 +70,7 @@ namespace SonistoRepackage
 
             //End Thread
             recorder.Abort();
-            Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
+            //Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
             List<string> cleanList = cleanTheList.doIt(eventStringList);
             CreateFolderStructure folders = new CreateFolderStructure(cleanList);

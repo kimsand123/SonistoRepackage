@@ -35,60 +35,105 @@ namespace SonistoRepackage
         {
             if (Directory.Exists("C:\\Sonisto\\PackageFolder"))
             {
-                ProcessStartInfo innounpProces = new ProcessStartInfo();
-                innounpProces.CreateNoWindow = false;
-                innounpProces.UseShellExecute = false;
-                innounpProces.FileName = "rmdir";
-                innounpProces.WorkingDirectory = @"C:\Sonisto";
-                innounpProces.WindowStyle = ProcessWindowStyle.Normal;
-                innounpProces.RedirectStandardOutput = true;
-                innounpProces.Arguments = "/Q /S \"C:\\Sonisto\\PackageFolder\"";
-                try
-                {
-                    using (Process exeProcess = Process.Start(innounpProces))
-                    {
-                        exeProcess.WaitForExit();
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
+                EmptyFolder("C:\\Sonisto\\PackageFolder");  
+            } else
+            {
+                Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
             }
-
-            Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
 
             for (int idx = 0; idx < placeholderFolderStructure.Count - 1; idx++) 
             {
-                string placeHolderDir = getPlaceholderDir(placeholderFolderStructure[idx]);
-                string relativePath = getRelativePath(placeholderFolderStructure[idx]);
-                if (!Directory.Exists("C:\\Sonisto\\PackageFolder\\"+ placeholderFolderStructure[idx]))
-                {
+                //string placeHolderDir = getPlaceholderDir(placeholderFolderStructure[idx]);
+                //string relativePath = getRelativePath(placeholderFolderStructure[idx]);
+                //if (!Directory.Exists("C:\\Sonisto\\PackageFolder\\"+ placeholderFolderStructure[idx]))
+                //{
                     //Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeHolderDir + "\"" + relativePath + "\"");
                     File.Copy(eventList[idx], placeholderFolderStructure[idx]);
-                }
+                //}
             }
         }
 
-        //removing empty directories recursively
-       /* private void removeDirectory(string pathWithoutFile)
+        // https://stackoverflow.com/questions/1288718/how-to-delete-all-files-and-folders-in-a-directory
+
+        private bool EmptyFolder(string pathName)
         {
-            string[] directories = Directory.GetDirectories(pathWithoutFile);
-            foreach (string dir in directories)
+            bool errors = false;
+            DirectoryInfo dir = new DirectoryInfo(pathName);
+
+            foreach (FileInfo fi in dir.EnumerateFiles())
             {
-                string[] yetMoreDirectories = Directory.GetDirectories(dir);
-                if (yetMoreDirectories!=null)
+                try
                 {
-                    Directory.Delete(dir);
+                    fi.IsReadOnly = false;
+                    fi.Delete();
+
+                    //Wait for the item to disapear (avoid 'dir not empty' error).
+                    while (fi.Exists)
+                    {
+                        System.Threading.Thread.Sleep(10);
+                        fi.Refresh();
+                    }
                 }
-                else
+                catch (IOException e)
                 {
-                    removeDirectory(dir);
+                    Debug.WriteLine(e.Message);
+                    errors = true;
                 }
             }
-        }*/
 
-            public string createPlaceholderPath(string element)
+            foreach (DirectoryInfo di in dir.EnumerateDirectories())
+            {
+                try
+                {
+                    EmptyFolder(di.FullName);
+                    di.Delete();
+
+                    //Wait for the item to disapear (avoid 'dir not empty' error).
+                    while (di.Exists)
+                    {
+                        System.Threading.Thread.Sleep(10);
+                        di.Refresh();
+                    }
+                }
+                catch (IOException e)
+                {
+                    Debug.WriteLine(e.Message);
+                    errors = true;
+                }
+            }
+
+            return !errors;
+        }
+
+        private string getRelativePath(string v)
+        {
+            throw new NotImplementedException();
+        }
+
+        private string getPlaceholderDir(string v)
+        {
+            throw new NotImplementedException();
+        }
+
+        //removing empty directories recursively
+        /* private void removeDirectory(string pathWithoutFile)
+         {
+             string[] directories = Directory.GetDirectories(pathWithoutFile);
+             foreach (string dir in directories)
+             {
+                 string[] yetMoreDirectories = Directory.GetDirectories(dir);
+                 if (yetMoreDirectories!=null)
+                 {
+                     Directory.Delete(dir);
+                 }
+                 else
+                 {
+                     removeDirectory(dir);
+                 }
+             }
+         }*/
+
+        public string createPlaceholderPath(string element)
         {
             string value = "";
             string placeholder = "";
@@ -102,65 +147,47 @@ namespace SonistoRepackage
             {
                 placeholder = "{userdocs}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0,pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             } else pathToLookFor = @"C:\Users\test";  if (path.Contains(pathToLookFor))
             {
                 placeholder = "{home}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             } else pathToLookFor = @"C:\Program Files (x86)\Common Files\VST3"; if (path.Contains(pathToLookFor))
             {
-                //placeholder = "{plugin}";
-                placeholder = @"{VST3-32}";
+                placeholder = "{plugin}";
+                //placeholder = @"{VST3-32}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             } else pathToLookFor = @"C:\Program Files\Common Files\VST3"; if (path.Contains(pathToLookFor))
             {
-                //placeholder = "{plugin}";
-                placeholder = @"{VST3-64}";
+                placeholder = "{plugin}";
+                //placeholder = @"{VST3-64}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             } else pathToLookFor = @"\Library\Music\AAX"; if (path.Contains(pathToLookFor))
             {
-                //placeholder = "{plugin}";
-                placeholder = @"{AAX}";
+                placeholder = "{plugin}";
+                //placeholder = @"{AAX}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             }
             else pathToLookFor = @"\Library\Music\AU"; if (path.Contains(pathToLookFor))
             {
-                //placeholder = "{plugin}";
-                placeholder = @"{AU}";
+                placeholder = "{plugin}";
+                //placeholder = @"{AU}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             }
             else pathToLookFor = @"C:\vst2-64"; if (path.Contains(pathToLookFor))
             {
-                //placeholder = "{VST2}";
-                placeholder = "{VST2-64}";
+                placeholder = "{plugin}";
+                //placeholder = "{VST2-64}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             }
             else pathToLookFor = @"C:\vst2-32"; if (path.Contains(pathToLookFor))
             {
-                //placeholder = "{VST2}";
-                placeholder = "{VST2-32}";
+                placeholder = "{plugin}";
+                //placeholder = "{VST2-32}";
                 path = path.Replace(pathToLookFor, placeholder);
-                //path.Remove(0, pathToLookFor.Length - 1);
-                //path.Insert(0, placeholder);
             } else
             {
                 placeholder = "{absolute}";
                 path = path.Replace("C:", placeholder);
-                //path.Remove(0, 2);
-                //path.Insert(0, placeholder);
             }
             return path;
         }

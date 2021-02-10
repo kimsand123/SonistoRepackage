@@ -78,7 +78,7 @@ namespace SonistoRepackage.InstallDetection
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
                 //TODO: "Administratorer" er sprog afhængigt. Lav OS languagecheck og brug konstant.
 
-                if (owner.Contains("BUILTIN\\" + "test"))
+                if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
                 }
@@ -134,7 +134,7 @@ namespace SonistoRepackage.InstallDetection
             {
                 owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
 
-                if (owner.Contains("BUILTIN\\" + "Administratorer"))
+                if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
