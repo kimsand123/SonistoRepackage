@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,18 +33,45 @@ namespace SonistoRepackage
 
         private void CreateFolders(List<string> placeholderFolderStructure)
         {
-            foreach (string path in placeholderFolderStructure)
+            if (Directory.Exists("C:\\Sonisto\\PackageFolder"))
             {
-                string pathWithoutFile = path.Remove(path.LastIndexOf("/"), path.Length - path.LastIndexOf("/"));
-                if (Directory.Exists(pathWithoutFile))
+                ProcessStartInfo innounpProces = new ProcessStartInfo();
+                innounpProces.CreateNoWindow = false;
+                innounpProces.UseShellExecute = false;
+                innounpProces.FileName = "rmdir";
+                innounpProces.WorkingDirectory = @"C:\Sonisto";
+                innounpProces.WindowStyle = ProcessWindowStyle.Normal;
+                innounpProces.RedirectStandardOutput = true;
+                innounpProces.Arguments = "/Q /S \"C:\\Sonisto\\PackageFolder\"";
+                try
                 {
-                    removeDirectory(pathWithoutFile);
+                    using (Process exeProcess = Process.Start(innounpProces))
+                    {
+                        exeProcess.WaitForExit();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+
+            Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
+
+            for (int idx = 0; idx < placeholderFolderStructure.Count - 1; idx++) 
+            {
+                string placeHolderDir = getPlaceholderDir(placeholderFolderStructure[idx]);
+                string relativePath = getRelativePath(placeholderFolderStructure[idx]);
+                if (!Directory.Exists("C:\\Sonisto\\PackageFolder\\"+ placeholderFolderStructure[idx]))
+                {
+                    //Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeHolderDir + "\"" + relativePath + "\"");
+                    File.Copy(eventList[idx], placeholderFolderStructure[idx]);
                 }
             }
         }
 
         //removing empty directories recursively
-        private void removeDirectory(string pathWithoutFile)
+       /* private void removeDirectory(string pathWithoutFile)
         {
             string[] directories = Directory.GetDirectories(pathWithoutFile);
             foreach (string dir in directories)
@@ -58,7 +86,7 @@ namespace SonistoRepackage
                     removeDirectory(dir);
                 }
             }
-        }
+        }*/
 
             public string createPlaceholderPath(string element)
         {
