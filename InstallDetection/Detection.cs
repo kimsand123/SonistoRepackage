@@ -6,6 +6,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Security.AccessControl;
 
 namespace SonistoRepackage.InstallDetection
 {
@@ -19,7 +20,7 @@ namespace SonistoRepackage.InstallDetection
 
         public Detection()
         {
-            
+
         }
         public void InstanceMethod()
         {
@@ -67,7 +68,7 @@ namespace SonistoRepackage.InstallDetection
             //reference
             //https://stackoverflow.com/questions/40449973/how-to-modify-file-access-control-in-net-core
 
-           
+
             //string user = Environment.UserName;
             // WindowsPrincipal myPrincipal = (WindowsPrincipal)Thread.CurrentPrincipal;
             WatchedElement watchedElement = new WatchedElement();
@@ -75,10 +76,18 @@ namespace SonistoRepackage.InstallDetection
             string owner = "";
             try
             {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-                //TODO: "Administratorer" er sprog afhængigt. Lav OS languagecheck og brug konstant.
+                FileSecurity fs = File.GetAccessControl(e.FullPath);
 
-                if (owner.Contains("test"))
+                IdentityReference sid = fs.GetOwner(typeof(SecurityIdentifier));
+
+
+                IdentityReference ntAccount = sid.Translate(typeof(NTAccount));
+               
+                owner = new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
+                //TODO: "Administratorer" er sprog afhængigt. Lav OS languagecheck og brug konstant.
+               
+                //if (owner.Contains("BUILTIN\\Administratorer"))
+                if (ntAccount.Value.Contains("test")) 
                 {
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
                 }
@@ -93,48 +102,22 @@ namespace SonistoRepackage.InstallDetection
             //When renaming there will always be two entries in the dictionary
             //first the oldpath, after that the new path.
 
-            string user = Environment.UserName;
-            WatchedElement watchedElement = new WatchedElement();
+            //string user = Environment.UserName;
             string owner = "";
-
-            /*switch (e.ChangeType)
-            {
-                case WatcherChangeTypes.Changed:
-                    try
-                    {
-                        owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-
-                        if (owner.Contains("BUILTIN\\" + "Administratorer"))
-                        {
-                            eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
-                            eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                    break;
-                case WatcherChangeTypes.Deleted:
-                    try
-                    {
-                        owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
-
-                        if (owner.Contains("BUILTIN\\" + "Administratorer"))
-                        {
-                            eventList.Add(">" + e.FullPath + "<Deleted" + e.ChangeType + ":" + owner);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                    }
-                    break;
-
-            }*/
             try
             {
-                owner = (new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)) as NTAccount).Value;
+                FileSecurity fs = File.GetAccessControl(e.FullPath);
 
-                if (owner.Contains("test"))
+                IdentityReference sid = fs.GetOwner(typeof(SecurityIdentifier));
+
+
+                IdentityReference ntAccount = sid.Translate(typeof(NTAccount));
+
+                owner = new FileInfo(e.FullPath).GetAccessControl().GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
+                //TODO: "Administratorer" er sprog afhængigt. Lav OS languagecheck og brug konstant.
+
+                //if (owner.Contains("BUILTIN\\Administratorer"))
+                if (ntAccount.Value.Contains("test"))
                 {
                     eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);

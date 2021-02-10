@@ -41,14 +41,15 @@ namespace SonistoRepackage
                 Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
             }
 
-            for (int idx = 0; idx < placeholderFolderStructure.Count - 1; idx++) 
+            for (int idx = 0; idx < placeholderFolderStructure.Count; idx++) 
             {
                 //string placeHolderDir = getPlaceholderDir(placeholderFolderStructure[idx]);
                 //string relativePath = getRelativePath(placeholderFolderStructure[idx]);
                 //if (!Directory.Exists("C:\\Sonisto\\PackageFolder\\"+ placeholderFolderStructure[idx]))
                 //{
-                    //Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeHolderDir + "\"" + relativePath + "\"");
-                    File.Copy(eventList[idx], placeholderFolderStructure[idx]);
+                //Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeHolderDir + "\"" + relativePath + "\"");
+                Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + Path.GetDirectoryName(placeholderFolderStructure[idx]));
+                File.Copy(eventList[idx], "C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
                 //}
             }
         }

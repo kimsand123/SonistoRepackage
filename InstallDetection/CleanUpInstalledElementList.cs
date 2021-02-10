@@ -56,10 +56,20 @@ namespace SonistoRepackage.InstallDetection
         {
             foreach (string element in firstPassList)
             {
-                string curFile = getFileFromEvent(element);
-                if (File.Exists(curFile)) 
+                //if the file in the firstpass list still exists then add it to the cleanedList.
+                //
+                string fileAndPath = getFileFromEvent(element);
+                string curFile = Path.GetFileName(fileAndPath);
+                if (curFile == null)
                 {
-                    cleanedList.Add(curFile);
+                    cleanedList.Add(fileAndPath);
+                }
+                else
+                {
+                    if (File.Exists(fileAndPath))
+                    {
+                        cleanedList.Add(fileAndPath);
+                    }
                 }
             }
         }
