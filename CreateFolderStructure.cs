@@ -33,29 +33,33 @@ namespace SonistoRepackage
 
         private void CreateFolders(List<string> placeholderFolderStructure)
         {
+            //If package directory already exists, empty it just to be sure.
             if (Directory.Exists("C:\\Sonisto\\PackageFolder"))
             {
                 EmptyFolder("C:\\Sonisto\\PackageFolder");  
             } else
             {
+                //Otherwise create the packagefolder
                 Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
             }
 
             for (int idx = 0; idx < placeholderFolderStructure.Count; idx++) 
             {
-                //string placeHolderDir = getPlaceholderDir(placeholderFolderStructure[idx]);
-                //string relativePath = getRelativePath(placeholderFolderStructure[idx]);
-                //if (!Directory.Exists("C:\\Sonisto\\PackageFolder\\"+ placeholderFolderStructure[idx]))
-                //{
-                //Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeHolderDir + "\"" + relativePath + "\"");
-                Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + Path.GetDirectoryName(placeholderFolderStructure[idx]));
-                File.Copy(eventList[idx], "C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
-                //}
+                //Create the folder from the placeholderstructure
+                //Problem when creating folders with no content or with content with nu suffix.
+                //If the file in the eventlist exists, then it is a file, if not it is a folder.
+                if (File.Exists(eventList[idx])){
+                    Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + Path.GetDirectoryName(placeholderFolderStructure[idx]));
+                    File.Copy(eventList[idx], "C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
+                } else
+                {
+                    Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
+                }
+
             }
         }
 
         // https://stackoverflow.com/questions/1288718/how-to-delete-all-files-and-folders-in-a-directory
-
         private bool EmptyFolder(string pathName)
         {
             bool errors = false;
@@ -105,34 +109,6 @@ namespace SonistoRepackage
 
             return !errors;
         }
-
-        private string getRelativePath(string v)
-        {
-            throw new NotImplementedException();
-        }
-
-        private string getPlaceholderDir(string v)
-        {
-            throw new NotImplementedException();
-        }
-
-        //removing empty directories recursively
-        /* private void removeDirectory(string pathWithoutFile)
-         {
-             string[] directories = Directory.GetDirectories(pathWithoutFile);
-             foreach (string dir in directories)
-             {
-                 string[] yetMoreDirectories = Directory.GetDirectories(dir);
-                 if (yetMoreDirectories!=null)
-                 {
-                     Directory.Delete(dir);
-                 }
-                 else
-                 {
-                     removeDirectory(dir);
-                 }
-             }
-         }*/
 
         public string createPlaceholderPath(string element)
         {

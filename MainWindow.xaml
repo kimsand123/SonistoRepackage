@@ -33,7 +33,7 @@
 
         <Button Name="btnCreateJson" Content="4. Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103"/>
 
-        <RichTextBox Name="rtbInfoWindow" Margin="9.4,10,-0.4,-0.4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" Grid.RowSpan="2" />
+        <RichTextBox Name="rtbInfoWindow" Margin="9.4,10,9.6,9.6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" />
         <Button Name="btnCreateFilter" HorizontalAlignment="Left" Margin="26,119,0,0" VerticalAlignment="Top" Width="94" Height="30" Click="btnCreateFilter_Click">
             <StackPanel>
                 <Popup Name="myPopup">
