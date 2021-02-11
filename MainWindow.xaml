@@ -33,7 +33,52 @@
 
         <Button Name="btnCreateJson" Content="4. Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103"/>
 
-        <RichTextBox Name="rtbInfoWindow" Margin="9.4,10,9.6,9.6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" />
+        <ListBox Name="lstBoxInfoWindow" Margin="9.4,10,9.6,9.6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="Black"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <TextBlock Name="txtBlkPath" Text="{Binding path}" FontSize="10" Width="550" Height="20"/>
+                        <Button Name="btnFilterPath" Margin="10,0,0,0" Content ="Filter" Click="filterPath_Click" Width="60" Height="20" HorizontalAlignment="Right">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+                        <TextBlock Name="txtBlkFile" Margin="30,0,0,0" Text="{Binding file}"  FontSize="10" Width="150" Height="20"/>
+                        <Button Name="btnFilterfile" Margin="10,0,0,0" Content ="Filter" Click="btnFilterfile_Click" Width="60" Height="20" HorizontalAlignment="Right">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
+
+                        <RadioButton GroupName="KeepKill" Name="rdoBtnKeep" Content="Keep" HorizontalAlignment="Right"/>
+                        <RadioButton GroupName="KeepKill" Name="rdoBtnKill" Content="Kill" HorizontalAlignment="Right"/>
+
+                        <Separator  Name="MySeparator" 
+                                        Height="2"
+                                        Width="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Bottom"                   
+                                        Background="Red" />
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ListBox>
+        
         <Button Name="btnCreateFilter" HorizontalAlignment="Left" Margin="26,119,0,0" VerticalAlignment="Top" Width="94" Height="30" Click="btnCreateFilter_Click">
             <StackPanel>
                 <Popup Name="myPopup">

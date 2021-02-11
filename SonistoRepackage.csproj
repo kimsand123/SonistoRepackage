@@ -120,6 +120,7 @@
     <Compile Include="ConvertStringToInnoElement.cs" />
     <Compile Include="ConvertStringToInstalledElement.cs" />
     <Compile Include="CreateFolderStructure.cs" />
+    <Compile Include="InstallDetection\ItemForListbox.cs" />
     <Compile Include="OldCode\ComputerUsers.cs" />
     <Compile Include="InstallDetection\CleanUpInstalledElementList.cs" />
     <Compile Include="InstallDetection\Detection.cs" />

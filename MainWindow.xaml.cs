@@ -23,6 +23,8 @@ using System.Windows.Shapes;
 using JetBrains.Annotations;
 using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
+using ItemForListbox = SonistoRepackage.InstallDetection.ItemForListbox;
+using Path = System.IO.Path;
 
 namespace SonistoRepackage
 {
@@ -74,10 +76,33 @@ namespace SonistoRepackage
             List<string> eventStringList = fileDetector.getEventList();
             List<string> cleanList = cleanTheList.doIt(eventStringList);
             CreateFolderStructure folders = new CreateFolderStructure(cleanList);
+            List<string> foldersList = folders.getFolders();
+            FillListBox(cleanList, folders.getFolders());
 
         }
 
+        private void FillListBox(List<string> clean, List<string> placeHolderFolders)
+        {
+            List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
 
+
+
+            //If the file in the cleanlist exists, then it is a file, if not it is a folder.
+            for (int idx = 0; idx < clean.Count; idx++)
+            {
+                if (File.Exists(clean[idx]))
+                {
+                        listBoxItems.Add(new ItemForListbox() {path=Path.GetDirectoryName(clean[idx]), file=Path.GetFileName(clean[idx])}); 
+                    
+                }
+                else
+                {
+                        listBoxItems.Add(new ItemForListbox() { path = Path.GetDirectoryName(clean[idx]), file = "" });
+                }
+            }
+
+            this.lstBoxInfoWindow.ItemsSource = listBoxItems;
+        }
 
         private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
         {
@@ -253,6 +278,16 @@ namespace SonistoRepackage
             {
                 this.txtBxLogfile.Text = saveFileDlg.FileName;
             }
+        }
+
+        private void filterPath_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnFilterfile_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

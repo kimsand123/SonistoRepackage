@@ -11,6 +11,7 @@ namespace SonistoRepackage
     class CreateFolderStructure
     {
         List<string> eventList;
+        List<string> placeHolderFolderStructure;
         public CreateFolderStructure(List<string> eventList)
         {
             this.eventList = eventList;
@@ -22,12 +23,13 @@ namespace SonistoRepackage
 
         public void createPlaceHolderStructure()
         {
-            List<string> placeholderFolderStructure = new List<string>();
+            List<string> placeHolderFolderStructure = new List<string>();
             foreach (string element in eventList)
             {
-                placeholderFolderStructure.Add(createPlaceholderPath(element));
+                placeHolderFolderStructure.Add(createPlaceholderPath(element));
             }
-            CreateFolders(placeholderFolderStructure);
+            this.placeHolderFolderStructure = placeHolderFolderStructure;
+            CreateFolders(placeHolderFolderStructure);
 
         }
 
@@ -108,6 +110,11 @@ namespace SonistoRepackage
             }
 
             return !errors;
+        }
+
+        internal List<string> getFolders()
+        {
+            return placeHolderFolderStructure;
         }
 
         public string createPlaceholderPath(string element)
