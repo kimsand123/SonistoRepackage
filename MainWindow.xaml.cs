@@ -289,5 +289,10 @@ namespace SonistoRepackage
         {
 
         }
+
+        private void btnPackageVersion_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

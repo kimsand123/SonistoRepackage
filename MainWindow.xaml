@@ -48,6 +48,13 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Name="btnPackageVersion" Margin="10,0,0,0" Content ="Filter" Click="btnPackageVersion_Click" Width="60" Height="20" HorizontalAlignment="Right">
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                </Style>
+                            </Button.Resources>
+                        </Button>
                         <TextBlock Name="txtBlkPath" Text="{Binding path}" FontSize="10" Width="550" Height="20"/>
                         <Button Name="btnFilterPath" Margin="10,0,0,0" Content ="Filter" Click="filterPath_Click" Width="60" Height="20" HorizontalAlignment="Right">
                             <Button.Resources>
@@ -65,7 +72,7 @@
                             </Button.Resources>
                         </Button>
 
-                        <RadioButton GroupName="KeepKill" Name="rdoBtnKeep" Content="Keep" HorizontalAlignment="Right"/>
+                        <RadioButton GroupName="KeepKill" IsChecked="True" Name="rdoBtnKeep" Content="Keep" HorizontalAlignment="Right"/>
                         <RadioButton GroupName="KeepKill" Name="rdoBtnKill" Content="Kill" HorizontalAlignment="Right"/>
 
                         <Separator  Name="MySeparator" 
