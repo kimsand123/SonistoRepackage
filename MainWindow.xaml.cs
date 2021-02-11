@@ -23,6 +23,7 @@ using System.Windows.Shapes;
 using JetBrains.Annotations;
 using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
+using SonistoRepackage.View;
 using ItemForListbox = SonistoRepackage.InstallDetection.ItemForListbox;
 using Path = System.IO.Path;
 
@@ -33,7 +34,7 @@ namespace SonistoRepackage
     /// </summary>
     /// 
 
-    public partial class MainWindow : Window
+    public partial class btnFilterPath_Click : Window
     {
 
         int numberOfEntriesInList = 0;
@@ -43,10 +44,18 @@ namespace SonistoRepackage
         ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
         ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
         CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+        string FILTERFILE = @"C:\Sonisto\RepackageFilter.txt";
 
-        public MainWindow()
+        public btnFilterPath_Click()
         {
             InitializeComponent();
+            if (!File.Exists(FILTERFILE))
+            {
+                using (StreamWriter sw = File.CreateText(FILTERFILE))
+                {
+
+                }
+            }
         }
 
         private void btnCreateJson_Click(object sender, RoutedEventArgs e)
@@ -280,19 +289,43 @@ namespace SonistoRepackage
             }
         }
 
-        private void filterPath_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnFilterfile_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void btnPackageVersion_Click(object sender, RoutedEventArgs e)
         {
 
         }
+
+
+
+        private void btnFilterfile_Click(object sender, RoutedEventArgs e)
+        {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            WriteToFile(listBoxElement.file);
+        }
+        private void btnFilterpath_Click(object sender, RoutedEventArgs e)
+        {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            var window = new PathPopup();
+            if (window.ShowDialog() == true)
+            {
+                WriteToFile(window.pathResult);
+            }
+        }
+
+        private object getListBoxElement(object sender)
+        {
+            Button button = sender as Button;
+            int index = this.lstBoxInfoWindow.Items.IndexOf(button.DataContext);
+            return this.lstBoxInfoWindow.Items[index];
+        }
+
+        private void WriteToFile(string filterText)
+        {
+            using (StreamWriter sw = File.AppendText(FILTERFILE))
+            {
+                sw.WriteLine(filterText);
+            }
+        }
+
+
     }
 }
