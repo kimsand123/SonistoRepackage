@@ -54,12 +54,19 @@ namespace SonistoRepackage.InstallDetection
 
         private void secondPass()
         {
+            // An event can be 
+            // .. Valid file
+            // .. Valid folder
+
             foreach (string element in firstPassList)
             {
-                string curFile = getFileFromEvent(element);
-                if (File.Exists(curFile)) 
+                //if the file in the firstpass list still exists then add it to the cleanedList.
+                //
+                string fileAndPath = getFileFromEvent(element);
+                //If event is either a valid file or directory, and they still exist
+                if (Directory.Exists(fileAndPath) || File.Exists(fileAndPath))
                 {
-                    cleanedList.Add(curFile);
+                    cleanedList.Add(fileAndPath);
                 }
             }
         }
@@ -88,9 +95,14 @@ namespace SonistoRepackage.InstallDetection
 
         private void renamed(string element)
         {
+            //because a rename is shown as an oldpath and then directly followed by a new path
+            //the first old path will be removed from the firstpasslist, and when the new comes,
+            //which it will next time, it will be created.
+
             //if (registerRenamedActionInList)
             string test = "";
             element = element.Replace("Renamed", "Created");
+            //check if the firstpasslist contains the event with the temp file. 
             test = firstPassList.FirstOrDefault(s => s.Contains(element));
 
             //if test = null then the there is no temp file

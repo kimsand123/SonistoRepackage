@@ -70,34 +70,11 @@ namespace SonistoRepackage
 
             //End Thread
             recorder.Abort();
-            Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
+            //Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
             List<string> eventStringList = fileDetector.getEventList();
             List<string> cleanList = cleanTheList.doIt(eventStringList);
             CreateFolderStructure folders = new CreateFolderStructure(cleanList);
 
-            
-
-
-
-
-            /*
-            //Create a Dictionary of Installed elements from the eventList
-            int idx = 0;
-            foreach (string element in eventStringList)
-            {
-                installedElement = installedElementConverter.convertElement(element, filterElements);
-                if (installedElement != null) {
-                    //If element is already in the list
-                    if (eventList.ContainsValue(installedElement))
-                    {
-                        //get the key for the element and remove it.
-                        var item = eventList.First(elementForErase => elementForErase.Value == installedElement);
-                        eventList.Remove(item.Key);
-                    }
-                    eventList.Add(idx, installedElement);
-                    idx += 1;
-                }
-            }*/
         }
 
 
