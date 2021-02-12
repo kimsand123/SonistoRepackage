@@ -24,6 +24,7 @@ using JetBrains.Annotations;
 using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
 using SonistoRepackage.Model;
+using SonistoRepackage.Tests;
 using SonistoRepackage.View;
 using ItemForListbox = SonistoRepackage.InstallDetection.ItemForListbox;
 using Path = System.IO.Path;
@@ -72,14 +73,15 @@ namespace SonistoRepackage
 
             if (SettingsAndData.TEST)
             {
-
+                Testing tests = new Testing();
                 //testArea
-                InstallationPackageChoice packageChoices = new InstallationPackageChoice();
-                packageChoices.all = true;
-                packageChoices.bit32 = true;
+
+                //tests.testInstallationPackageDTO();
+
+                tests.testRadioButtonPopUp();
+
 
                 //testArea ending
-
             }
             else
             {
@@ -106,12 +108,10 @@ namespace SonistoRepackage
 
         }
 
+        //Method to fill up the listbox
         private void FillListBox(List<string> clean, List<string> placeHolderFolders)
         {
             List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
-
-
-
             //If the file in the cleanlist exists, then it is a file, if not it is a folder.
             for (int idx = 0; idx < clean.Count; idx++)
             {
@@ -133,7 +133,7 @@ namespace SonistoRepackage
         {
             // run innounp.exe -v installerfile -> filter.txt
             // Read filter.txt, and put the filenames into a Dictionary
-            executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
+            //executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
         }
 
         private void executeInnoInstaller(string path, string fileName)
@@ -176,7 +176,7 @@ namespace SonistoRepackage
             return encPassword;
         }
 
-        private void executeInnounp(string path, string filename)
+        /*private void executeInnounp(string path, string filename)
         {
             // Use ProcessStartInfo class
             ProcessStartInfo innounpProces = new ProcessStartInfo();
@@ -234,7 +234,7 @@ namespace SonistoRepackage
             {
                 Console.WriteLine(e);
             } 
-        }
+        }*/
 
         private void btnFindInstaller_Click(object sender, RoutedEventArgs e)
         {
@@ -305,7 +305,7 @@ namespace SonistoRepackage
             }
         }
 
-        private void btnPackageVersion_Click(object sender, RoutedEventArgs e)
+        private void btnInstallPackage_Click(object sender, RoutedEventArgs e)
         {
 
         }

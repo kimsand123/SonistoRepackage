@@ -111,6 +111,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\InstallationPackageChoice.cs" />
     <Compile Include="SettingsAndData.cs" />
+    <Compile Include="Tests\Testing.cs" />
     <Compile Include="View\InstallationPackagePopup.xaml.cs">
       <DependentUpon>InstallationPackagePopup.xaml</DependentUpon>
     </Compile>

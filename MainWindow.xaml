@@ -60,7 +60,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="btnPackageVersion" Margin="10,0,0,0" Content ="Filter" Click="btnPackageVersion_Click" Width="60" Height="20" HorizontalAlignment="Right">
+                        <Button Name="btnPackageVersion" Margin="10,0,0,0" Content ="Filter" Click="btnInstallPackage_Click" Width="60" Height="20" HorizontalAlignment="Right">
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="10"/>

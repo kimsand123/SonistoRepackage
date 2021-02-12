@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SonistoRepackage.Model;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
 
 namespace SonistoRepackage.View
 {
@@ -19,10 +11,43 @@ namespace SonistoRepackage.View
     /// </summary>
     public partial class InstallationPackagePopup : Window
     {
+        InstallationPackageChoice packageChoices = new InstallationPackageChoice();
+
+        private bool[] _modeArray = new bool[] { true, false, false, false, false, false };
+        public bool[] ModeArray
+        { 
+            get 
+            { 
+                return _modeArray; 
+            } 
+        }
+
+        public int SelectedMode
+        {
+            get 
+            { 
+                return Array.IndexOf(_modeArray, true);
+            }
+        }
+
+        public bool[] ClickResult;
 
         public InstallationPackagePopup()
         {
             InitializeComponent();
+        }
+
+        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            ClickResult = null;
+            this.Close();
+        }
+
+        public static InstallationPackageChoice choice()
+        {
+            InstallationPackagePopup dialog = new InstallationPackagePopup();
+            dialog.Show();
+            return dialog.packageChoices;
         }
 
         private void btnDone_Click(object sender, RoutedEventArgs e)
@@ -37,27 +62,21 @@ namespace SonistoRepackage.View
             {
                 this.rdBtnAll.IsChecked = true;
             }
-            
-            registerButtons();
-
+            ClickResult = _modeArray;
+            this.Close();
         }
         private void rdBtnAll_GotFocus(object sender, RoutedEventArgs e)
         {
-            this.rdBtn32Bit.IsChecked = false;
-            this.rdBtn64Bit.IsChecked = false;
-            this.rdBtnAax.IsChecked = false;
-            this.rdBtnVst2.IsChecked = false;
-            this.rdBtnVst3.IsChecked = false;
+            for(int idx = 0; idx <_modeArray.Count();idx++) 
+            {
+                _modeArray[idx] = false;
+            }
+            _modeArray[0] = true;
         }
 
         private void clearAllPackages(object sender, RoutedEventArgs e)
         {
-            this.rdBtnAll.IsChecked = false;
-        }
-
-        private void registerButtons()
-        {
-
+            _modeArray[0] = false;
         }
     }
 }

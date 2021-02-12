@@ -5,31 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SonistoRepackage.View"
         mc:Ignorable="d"
-       Title="Install Package" Height="270.8" Width="186"
-        HorizontalContentAlignment="Center">
+       Title="Install Package" Height="270" Width="180">
     <Grid>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="45,122,0,0" VerticalAlignment="Top" Width="82" RenderTransformOrigin="0.5,0.5">
-            <Border.RenderTransform>
-                <TransformGroup>
-                    <ScaleTransform/>
-                    <SkewTransform AngleX="-0.641"/>
-                    <RotateTransform/>
-                    <TranslateTransform X="-0.386"/>
-                </TransformGroup>
-            </Border.RenderTransform>
-        </Border>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
 
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="25" Margin="35,23,0,0" VerticalAlignment="Top" Width="104"/>
+        </Grid.RowDefinitions>
 
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="45" Margin="45,61,0,0" VerticalAlignment="Top" Width="82"/>
+    <!--   <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="25" Margin="35,23,0,0" VerticalAlignment="Top" Width="104"/>
+        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="45,122,0,0" VerticalAlignment="Top" Width="82"/>
+        <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="45" Margin="45,61,0,0" VerticalAlignment="Top" Width="82"/> -->
 
-        <RadioButton x:Name="rdBtnAll" Content="All Packages" HorizontalAlignment="Left" Margin="45,28,0,0" VerticalAlignment="Top" IsChecked="True" GotFocus="rdBtnAll_GotFocus"/>
-        <RadioButton x:Name="rdBtn32Bit" GroupName="Architechture" Content="32 bit" HorizontalAlignment="Left" Margin="54,66,0,0" VerticalAlignment="Top" GotFocus="clearAllPackages"/>
-        <RadioButton x:Name="rdBtn64Bit" GroupName="Architechture" Content="64 bit" HorizontalAlignment="Left" Margin="54,86,0,0" VerticalAlignment="Top" GotFocus="clearAllPackages"/>
-        <RadioButton x:Name="rdBtnVst2" GroupName="Format" Content="VST 2" HorizontalAlignment="Left" Margin="54,126,0,0" VerticalAlignment="Top" GotFocus="clearAllPackages"/>
-        <RadioButton x:Name="rdBtnVst3" GroupName="Format" Content="VST 3" HorizontalAlignment="Left" Margin="54,146,0,0" VerticalAlignment="Top" GotFocus="clearAllPackages"/>
-        <RadioButton x:Name="rdBtnAax" GroupName="Format" Content="AAX" HorizontalAlignment="Left" Margin="54,166,0,0" VerticalAlignment="Top" GotFocus="clearAllPackages"/>
-        <Button x:Name="btnDone" Content="Done" HorizontalAlignment="Left" Margin="48,198,0,0" VerticalAlignment="Top" Width="75" Click="btnDone_Click"/>
+        <RadioButton Grid.Row="1" Grid.Column="0" x:Name="rdBtnAll" Content="All Packages" HorizontalAlignment="Left" Margin="45,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[0], Mode=TwoWay}" GotFocus="rdBtnAll_GotFocus"/>
+        <RadioButton Grid.Row="3" Grid.Column="0" x:Name="rdBtn32Bit" GroupName="Architechture" Content="32 bit" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[1], Mode=TwoWay}" GotFocus="clearAllPackages"/>
+        <RadioButton Grid.Row="4" Grid.Column="0" x:Name="rdBtn64Bit" GroupName="Architechture" Content="64 bit" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[2], Mode=TwoWay}" GotFocus="clearAllPackages"/>
+        <RadioButton Grid.Row="6" Grid.Column="0" x:Name="rdBtnVst2" GroupName="Format" Content="VST 2" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[3], Mode=TwoWay}" GotFocus="clearAllPackages"/>
+        <RadioButton Grid.Row="7" Grid.Column="0" x:Name="rdBtnVst3" GroupName="Format" Content="VST 3" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[4], Mode=TwoWay}" GotFocus="clearAllPackages"/>
+        <RadioButton Grid.Row="8" Grid.Column="0" x:Name="rdBtnAax" GroupName="Format" Content="AAX" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[5], Mode=TwoWay}"  GotFocus="clearAllPackages"/>
 
+        <Button Grid.Row="10" Grid.Column="0" x:Name="btnDone" Content="Done" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top" Width="50" Click="btnDone_Click"/>
+        <Button Grid.Row="10" Grid.Column="0" x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="100,0,0,0"  VerticalAlignment="Top" Width="50" Click="btnCancel_Click"/>
     </Grid>
 </Window>

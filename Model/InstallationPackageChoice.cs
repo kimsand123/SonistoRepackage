@@ -6,51 +6,68 @@ using System.Threading.Tasks;
 
 namespace SonistoRepackage.Model
 {
-    class InstallationPackageChoice
+    public class InstallationPackageChoice
     {
+        // If all is true all other is faLse
+        // if bit32 is true, all and bit64 are false
+        // if bit 64 is true, all and bit32 are false
+        // if vst2 is true, all and vst3 and aax are false
+        // if vst3 is true, all and vst2 and aax are false
+        // if aax is true, all and vst2 and vst3 are false
+        private bool _all;
+        private bool _bit32;
+        private bool _bit64;
+        private bool _vst2;
+        private bool _vst3;
+        private bool _aax;
         public bool all
         {
             get
             {
-                return all;
+                return this._all;
             }
             set
             {
-                if (value == true)
+                this._all = value;
+                if (this._all == true)
                 {
-                    bit32 = false;
-                    bit64 = false;
-                    vst2 = false;
-                    vst3 = false;
-                    aax = false;
+                    this._bit32 = false;
+                    this._bit64 = false;
+                    this._vst2 = false;
+                    this._vst3 = false;
+                    this._aax = false;
                 }
             }
         }
         public bool bit32 {
             get
-            { 
-                return bit32; 
-            }
-            set 
             {
-                if (value == true)
+                return this._bit32;
+            }
+            set
+            {
+                this._bit32 = value;
+                if (this._bit32 == true)
                 {
-                    all = false;
+                    this._bit64 = false;
+                    this._all = false;
                 }
-            } 
+            }
         }
 
         public bool bit64
         {
             get
             {
-                return bit64;
+                return this._bit64;
             }
             set
             {
-                if (value == true)
+                this._bit64 = value;
+                if (this._bit64 == true)
                 {
-                    all = false;
+                    this._bit32 = false;
+                    this._all = false;
                 }
             }
         }
@@ -58,13 +75,16 @@ namespace SonistoRepackage.Model
         {
             get
             {
-                return vst2;
+                return this._vst2;
             }
             set
             {
-                if (value == true)
+                this._vst2 = value;
+                if (this._vst2 == true)
                 {
-                    all = false;
+                    this._vst3 = false;
+                    this._aax = false;
+                    this._all = false;
                 }
             }
         }
@@ -72,13 +92,16 @@ namespace SonistoRepackage.Model
         {
             get
             {
-                return vst3;
+                return this._vst3;
             }
             set
             {
-                if (value == true)
+                this._vst3 = value;
+                if (this._vst3 == true)
                 {
-                    all = false;
+                    this._vst2 = false;
+                    this._aax = false;
+                    this._all = false;
                 }
             }
         }
@@ -86,13 +109,16 @@ namespace SonistoRepackage.Model
         {
             get
             {
-                return aax;
+                return this._aax;
             }
             set
             {
-                if (value == true)
+                this._aax = value;
+                if (this._aax == true)
                 {
-                    all = false;
+                    this._vst2 = false;
+                    this._vst3 = false;
+                    this._all = false;
                 }
             }
         }
