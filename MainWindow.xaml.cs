@@ -44,14 +44,14 @@ namespace SonistoRepackage
         ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
         ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
         CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
-        string FILTERFILE = @"C:\Sonisto\RepackageFilter.txt";
+
 
         public btnFilterPath_Click()
         {
             InitializeComponent();
-            if (!File.Exists(FILTERFILE))
+            if (!File.Exists(SettingsAndData.FILTERFILE))
             {
-                using (StreamWriter sw = File.CreateText(FILTERFILE))
+                using (StreamWriter sw = File.CreateText(SettingsAndData.FILTERFILE))
                 {
 
                 }
@@ -294,8 +294,6 @@ namespace SonistoRepackage
 
         }
 
-
-
         private void btnFilterfile_Click(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
@@ -305,6 +303,8 @@ namespace SonistoRepackage
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
             var window = new PathPopup();
+            window.txtBxPathResult.Text = listBoxElement.path;
+
             if (window.ShowDialog() == true)
             {
                 WriteToFile(window.pathResult);
@@ -320,7 +320,7 @@ namespace SonistoRepackage
 
         private void WriteToFile(string filterText)
         {
-            using (StreamWriter sw = File.AppendText(FILTERFILE))
+            using (StreamWriter sw = File.AppendText(SettingsAndData.FILTERFILE))
             {
                 sw.WriteLine(filterText);
             }

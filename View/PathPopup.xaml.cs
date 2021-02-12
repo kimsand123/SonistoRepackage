@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,11 +24,16 @@ namespace SonistoRepackage.View
         public PathPopup()
         {
             InitializeComponent();
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.pathResult = this.txtBxPathResult.Text;
+            using (StreamWriter sw = File.AppendText(SettingsAndData.FILTERFILE))
+            {
+                sw.WriteLine(this.txtBxPathResult.Text);
+            }
+            this.Close();
         }
     }
 }

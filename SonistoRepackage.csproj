@@ -109,6 +109,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="SettingsAndData.cs" />
     <Compile Include="View\PathPopup.xaml.cs">
       <DependentUpon>PathPopup.xaml</DependentUpon>
     </Compile>
