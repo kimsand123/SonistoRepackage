@@ -109,7 +109,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\InstallationPackageChoice.cs" />
     <Compile Include="SettingsAndData.cs" />
+    <Compile Include="View\InstallationPackagePopup.xaml.cs">
+      <DependentUpon>InstallationPackagePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\PathPopup.xaml.cs">
       <DependentUpon>PathPopup.xaml</DependentUpon>
     </Compile>
@@ -121,20 +125,24 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConvertStringToInnoElement.cs" />
-    <Compile Include="ConvertStringToInstalledElement.cs" />
-    <Compile Include="CreateFolderStructure.cs" />
-    <Compile Include="InstallDetection\ItemForListbox.cs" />
+    <Compile Include="Utils\ConvertStringToInnoElement.cs" />
+    <Compile Include="Utils\ConvertStringToInstalledElement.cs" />
+    <Compile Include="Utils\CreateFolderStructure.cs" />
+    <Compile Include="Model\ItemForListbox.cs" />
     <Compile Include="OldCode\ComputerUsers.cs" />
-    <Compile Include="InstallDetection\CleanUpInstalledElementList.cs" />
-    <Compile Include="InstallDetection\Detection.cs" />
-    <Compile Include="InstallDetection\InstalledElement.cs" />
-    <Compile Include="InstallDetection\FilterElement.cs" />
-    <Compile Include="InstallDetection\WatchedElement.cs" />
+    <Compile Include="Utils\CleanUpInstalledElementList.cs" />
+    <Compile Include="Utils\Detection.cs" />
+    <Compile Include="Model\InstalledElement.cs" />
+    <Compile Include="Model\FilterElement.cs" />
+    <Compile Include="Model\WatchedElement.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\InstallationPackagePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\PathPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -171,12 +179,10 @@
   <ItemGroup>
     <Folder Include="Filter\" />
     <Folder Include="Graphics\" />
+    <Folder Include="InstallDetection\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="innounp.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="rmdir.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

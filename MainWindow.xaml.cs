@@ -23,6 +23,7 @@ using System.Windows.Shapes;
 using JetBrains.Annotations;
 using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
+using SonistoRepackage.Model;
 using SonistoRepackage.View;
 using ItemForListbox = SonistoRepackage.InstallDetection.ItemForListbox;
 using Path = System.IO.Path;
@@ -68,25 +69,40 @@ namespace SonistoRepackage
             //the installed element into the dic at the same spot as the filter element
             //when installed elements dic and filter dic has same length
             //job done.
-            ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
-            Detection fileDetector = new Detection();
-            Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
-            InstalledElement installedElement = new InstalledElement();
 
-            //Start thread
-            recorder.Start();
+            if (SettingsAndData.TEST)
+            {
 
-            executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
-            fileDetector.stop();
+                //testArea
+                InstallationPackageChoice packageChoices = new InstallationPackageChoice();
+                packageChoices.all = true;
+                packageChoices.bit32 = true;
 
-            //End Thread
-            recorder.Abort();
-            //Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
-            List<string> eventStringList = fileDetector.getEventList();
-            List<string> cleanList = cleanTheList.doIt(eventStringList);
-            CreateFolderStructure folders = new CreateFolderStructure(cleanList);
-            List<string> foldersList = folders.getFolders();
-            FillListBox(cleanList, folders.getFolders());
+                //testArea ending
+
+            }
+            else
+            {
+                ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
+                Detection fileDetector = new Detection();
+                Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
+                InstalledElement installedElement = new InstalledElement();
+
+                //Start thread
+                recorder.Start();
+
+                executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
+                fileDetector.stop();
+
+                //End Thread
+                recorder.Abort();
+                //Dictionary<int, WatchedElement> watchedElements = fileDetector.getWatchedElements();
+                List<string> eventStringList = fileDetector.getEventList();
+                List<string> cleanList = cleanTheList.doIt(eventStringList);
+                CreateFolderStructure folders = new CreateFolderStructure(cleanList);
+                List<string> foldersList = folders.getFolders();
+                FillListBox(cleanList, folders.getFolders());
+            }
 
         }
 

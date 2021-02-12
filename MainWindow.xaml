@@ -16,7 +16,13 @@
         </Grid.ColumnDefinitions>
 
 
-        <Button Name="btnFindInstaller" Content="1. Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,10,0,0" Height="30" Width="94"/>
+        <Button Name="btnFindInstaller" Content="1. Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,10,0,0" Height="30" Width="94">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
 
         <Label Name="lblPath" Content="Path" HorizontalAlignment="Left" Margin="25,43,0,0" VerticalAlignment="Top" Width="71"/>
         <TextBox Name="txtBxPath" Height="23" Margin="80,43,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
@@ -31,7 +37,13 @@
         <Label Name="lblLogfile" Content="Logfile" HorizontalAlignment="Left" Margin="26,350,0,0" VerticalAlignment="Top" Width="94"/>
         <TextBox Name="txtBxLogfile" Height="23" Margin="90,353,9.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" GotFocus="txtBxLogfile_GotFocus"/>
 
-        <Button Name="btnCreateJson" Content="4. Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103"/>
+        <Button Name="btnCreateJson" Content="4. Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
+        </Button>
 
         <ListBox Name="lstBoxInfoWindow" Margin="9.4,10,9.6,9.6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
             <ListBox.ItemContainerStyle>
