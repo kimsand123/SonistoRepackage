@@ -36,11 +36,8 @@ namespace SonistoRepackage
     /// </summary>
     /// 
 
-    public partial class btnFilterPath_Click : Window
+    public partial class MainWindow : Window
     {
-
-        int numberOfEntriesInList = 0;
-
         Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
         Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
         ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
@@ -48,7 +45,7 @@ namespace SonistoRepackage
         CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
 
 
-        public btnFilterPath_Click()
+        public MainWindow()
         {
             InitializeComponent();
             if (!File.Exists(SettingsAndData.FILTERFILE))

@@ -119,7 +119,6 @@ namespace SonistoRepackage
 
         public string createPlaceholderPath(string element)
         {
-            string value = "";
             string placeholder = "";
             string path = element;
             string pathToLookFor = "";

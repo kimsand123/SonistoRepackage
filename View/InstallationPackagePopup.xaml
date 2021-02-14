@@ -29,12 +29,12 @@
         <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="64" Margin="45,122,0,0" VerticalAlignment="Top" Width="82"/>
         <Border Grid.Column="0" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="45" Margin="45,61,0,0" VerticalAlignment="Top" Width="82"/> -->
 
-        <RadioButton Grid.Row="1" Grid.Column="0" x:Name="rdBtnAll" Content="All Packages" HorizontalAlignment="Left" Margin="45,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[0], Mode=TwoWay}" GotFocus="rdBtnAll_GotFocus"/>
-        <RadioButton Grid.Row="3" Grid.Column="0" x:Name="rdBtn32Bit" GroupName="Architechture" Content="32 bit" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[1], Mode=TwoWay}" GotFocus="clearAllPackages"/>
-        <RadioButton Grid.Row="4" Grid.Column="0" x:Name="rdBtn64Bit" GroupName="Architechture" Content="64 bit" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[2], Mode=TwoWay}" GotFocus="clearAllPackages"/>
-        <RadioButton Grid.Row="6" Grid.Column="0" x:Name="rdBtnVst2" GroupName="Format" Content="VST 2" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[3], Mode=TwoWay}" GotFocus="clearAllPackages"/>
-        <RadioButton Grid.Row="7" Grid.Column="0" x:Name="rdBtnVst3" GroupName="Format" Content="VST 3" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[4], Mode=TwoWay}" GotFocus="clearAllPackages"/>
-        <RadioButton Grid.Row="8" Grid.Column="0" x:Name="rdBtnAax" GroupName="Format" Content="AAX" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" IsChecked="{Binding ModeArray[5], Mode=TwoWay}"  GotFocus="clearAllPackages"/>
+        <CheckBox Grid.Row="1" Grid.Column="0" x:Name="chkBxAll" Content="All Packages" HorizontalAlignment="Left" Margin="45,0,0,0" VerticalAlignment="Top" Checked="chkBxAll_Checked"/>
+        <CheckBox Grid.Row="3" Grid.Column="0" x:Name="chkBx32Bit"  Content="32 bit" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" Checked="chkBx32Bit_Checked"/>
+        <CheckBox Grid.Row="4" Grid.Column="0" x:Name="chkBx64Bit" Content="64 bit" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" Checked="chkBx64Bit_Checked"/>
+        <CheckBox Grid.Row="6" Grid.Column="0" x:Name="chkBxVst2"  Content="VST 2" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" Checked="chkBxVst2_Checked"/>
+        <CheckBox Grid.Row="7" Grid.Column="0" x:Name="chkBxVst3"  Content="VST 3" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" Checked="chkBxVst3_Checked"/>
+        <CheckBox Grid.Row="8" Grid.Column="0" x:Name="chkBxAax"  Content="AAX" HorizontalAlignment="Left" Margin="60,0,0,0" VerticalAlignment="Top" Checked="chkBxAax_Checked"/>
 
         <Button Grid.Row="10" Grid.Column="0" x:Name="btnDone" Content="Done" HorizontalAlignment="Left" Margin="20,0,0,0" VerticalAlignment="Top" Width="50" Click="btnDone_Click"/>
         <Button Grid.Row="10" Grid.Column="0" x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="100,0,0,0"  VerticalAlignment="Top" Width="50" Click="btnCancel_Click"/>

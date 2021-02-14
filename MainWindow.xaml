@@ -1,4 +1,4 @@
-﻿<Window x:Class="SonistoRepackage.btnFilterPath_Click"
+﻿<Window x:Class="SonistoRepackage.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,7 +16,7 @@
         </Grid.ColumnDefinitions>
 
 
-        <Button Name="btnFindInstaller" Content="1. Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,10,0,0" Height="30" Width="94">
+        <Button x:Name="btnFindInstaller" Content="1. Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,10,0,0" Height="30" Width="94">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
