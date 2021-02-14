@@ -34,14 +34,20 @@ namespace SonistoRepackage.Tests
 
         public void testRadioButtonPopUp()
         {
-
-            InstallationPackagePopup popup = new InstallationPackagePopup();
-            if ((bool)popup.ShowDialog() == true)
+            object sender = new object();
+            InstallationPackageChoice testChoiceFromListBox = new InstallationPackageChoice();
+            InstallationPackageChoice resultChoice = new InstallationPackageChoice();
+            InstallationPackagePopup popup = new InstallationPackagePopup(testChoiceFromListBox);
+            if ((bool)popup.ShowDialog() && popup.DialogResult.Value == true)
             {
-                InstallationPackagePopup content = popup.Content as InstallationPackagePopup;
-                InstallationPackageChoice packageChoices = content.packageChoices;
-
+                resultChoice = popup.getChoices();
             }
+
+
+
+
+            
+
         }
     }
 

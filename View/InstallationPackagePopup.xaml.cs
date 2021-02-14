@@ -3,42 +3,73 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+
 
 namespace SonistoRepackage.View
 {
     /// <summary>
     /// Interaction logic for InstallationPackagePopup.xaml
     /// </summary>
-    public partial class InstallationPackagePopup : UserControl
+    public partial class InstallationPackagePopup : Window
     {
-        public InstallationPackageChoice packageChoices 
+
+        public InstallationPackageChoice packageChoices = new InstallationPackageChoice();
+
+        public InstallationPackagePopup(InstallationPackageChoice listBoxEntryChoices)
         {
-            get {return packageChoices; }
+            this.packageChoices = listBoxEntryChoices;
+
+            InitializeComponent();
+            setTheCurrentValues();
+
         }
 
-        public InstallationPackagePopup()
+        private void setTheCurrentValues()
         {
-            InitializeComponent();
-            this.chkBxAll.IsChecked = true;
+            if (packageChoices.all)
+            {
+                chkBxAll_Checked(new object(), new RoutedEventArgs());
+            }
+            else
+            {
+                if (packageChoices.bit32)
+                {
+                    chkBx32Bit_Checked(new object(), new RoutedEventArgs());
+                }
+                if (packageChoices.bit64)
+                {
+                    chkBx64Bit_Checked(new object(), new RoutedEventArgs());
+                }
+                if (packageChoices.vst2)
+                {
+                    chkBxVst2_Checked(new object(), new RoutedEventArgs());
+                }
+                if (packageChoices.vst3)
+                {
+                    chkBxVst3_Checked(new object(), new RoutedEventArgs());
+                }
+                if (packageChoices.aax)
+                {
+                    chkBxAax_Checked(new object(), new RoutedEventArgs());
+                }
+            }
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            chkBxAll_Checked(new object(), new RoutedEventArgs());
+            sender = null;
+            this.DialogResult = false;
             this.Close();
         }
 
-        public static InstallationPackageChoice choice()
+        public InstallationPackageChoice getChoices()
         {
-            InstallationPackagePopup dialog = new InstallationPackagePopup();
-            dialog.Show();
-            return dialog.packageChoices;
+            return this.packageChoices;
         }
-
         private void btnDone_Click(object sender, RoutedEventArgs e)
         {
-            Window.GetWindow(this).DialogResult = true;
+            sender = this.packageChoices;
+            this.DialogResult=true;
             this.Close();
         }
 

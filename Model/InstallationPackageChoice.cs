@@ -14,12 +14,13 @@ namespace SonistoRepackage.Model
         // if vst2 is true, all and vst3 and aax are false
         // if vst3 is true, all and vst2 and aax are false
         // if aax is true, all and vst2 and vst3 are false
-        private bool _all;
+        private bool _all = true;
         private bool _bit32;
         private bool _bit64;
         private bool _vst2;
         private bool _vst3;
         private bool _aax;
+
         public bool all
         {
             get
