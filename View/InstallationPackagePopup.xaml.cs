@@ -85,6 +85,7 @@ namespace SonistoRepackage.View
             this.chkBxVst2.IsChecked = false;
             this.chkBxVst3.IsChecked = false;
             this.chkBxAax.IsChecked = false;
+            this.chkBxAll.IsChecked = true;
             packageChoices.all = this.chkBxAll.IsChecked.HasValue;
             packageChoices.bit32 = false;
             packageChoices.bit64 = false;
@@ -95,7 +96,8 @@ namespace SonistoRepackage.View
         private void chkBx32Bit_Checked(object sender, RoutedEventArgs e)
         {
             this.chkBxAll.IsChecked = false;
-            this.chkBx64Bit.IsChecked=false;
+            this.chkBx32Bit.IsChecked = true;
+            this.chkBx64Bit.IsChecked = false;
             packageChoices.bit32 = this.chkBx32Bit.IsChecked.HasValue;
             packageChoices.all = false;
             packageChoices.bit64 = false;
@@ -105,6 +107,7 @@ namespace SonistoRepackage.View
         {
             this.chkBxAll.IsChecked = false;
             this.chkBx32Bit.IsChecked = false;
+            this.chkBx64Bit.IsChecked = true;
             packageChoices.bit64 = this.chkBx64Bit.IsChecked.HasValue;
             packageChoices.all = false;
             packageChoices.bit32 = false;
@@ -113,6 +116,7 @@ namespace SonistoRepackage.View
         private void chkBxVst2_Checked(object sender, RoutedEventArgs e)
         {
             this.chkBxAll.IsChecked = false;
+            this.chkBxVst2.IsChecked = false;
             this.chkBxVst3.IsChecked = false;
             this.chkBxAax.IsChecked = false;
             packageChoices.vst2 = this.chkBxVst2.IsChecked.HasValue;
@@ -125,6 +129,7 @@ namespace SonistoRepackage.View
         {
             this.chkBxAll.IsChecked = false;
             this.chkBxVst2.IsChecked = false;
+            this.chkBxVst3.IsChecked = true;
             this.chkBxAax.IsChecked = false;
             packageChoices.vst3 = this.chkBxVst3.IsChecked.HasValue;
             packageChoices.all = false;
@@ -137,6 +142,7 @@ namespace SonistoRepackage.View
             this.chkBxAll.IsChecked = false;
             this.chkBxVst2.IsChecked = false;
             this.chkBxVst3.IsChecked = false;
+            this.chkBxAax.IsChecked = true;
             packageChoices.aax = this.chkBxAax.IsChecked.HasValue;
             packageChoices.all = false;
             packageChoices.vst2 = false;

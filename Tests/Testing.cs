@@ -36,20 +36,14 @@ namespace SonistoRepackage.Tests
         {
             object sender = new object();
             InstallationPackageChoice testChoiceFromListBox = new InstallationPackageChoice();
+            testChoiceFromListBox.aax = true;
+            testChoiceFromListBox.bit32 = true;
             InstallationPackageChoice resultChoice = new InstallationPackageChoice();
             InstallationPackagePopup popup = new InstallationPackagePopup(testChoiceFromListBox);
             if ((bool)popup.ShowDialog() && popup.DialogResult.Value == true)
             {
                 resultChoice = popup.getChoices();
             }
-
-
-
-
-            
-
         }
     }
-
-
 }

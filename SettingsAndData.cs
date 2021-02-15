@@ -26,7 +26,7 @@ namespace SonistoRepackage
             internal static readonly SettingsAndData instance = new SettingsAndData();
         }
         public const string FILTERFILE = @"C:\Sonisto\RepackageFilter.txt";
-        public const bool TEST = true;
+        public const bool TEST = false;
     }
 }
 
