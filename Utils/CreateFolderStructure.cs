@@ -23,18 +23,23 @@ namespace SonistoRepackage
 
         public void createPlaceHolderStructure()
         {
+            // for each of the elements in the eventlist passed to the object
+            // create the placeholderpath
             List<string> placeHolderFolderStructure = new List<string>();
             foreach (string element in eventList)
             {
+                //add the replaced path to the placeholder structure.
                 placeHolderFolderStructure.Add(createPlaceholderPath(element));
             }
             this.placeHolderFolderStructure = placeHolderFolderStructure;
-            CreateFolders(placeHolderFolderStructure);
+            //CreateFolders(placeHolderFolderStructure);
 
         }
 
         private void CreateFolders(List<string> placeholderFolderStructure)
         {
+            //Create the placeholder structure on disk
+
             //If package directory already exists, empty it just to be sure.
             if (Directory.Exists("C:\\Sonisto\\PackageFolder"))
             {
@@ -119,11 +124,11 @@ namespace SonistoRepackage
 
         public string createPlaceholderPath(string element)
         {
+            //Replace the relative paths with the placeholderfolders
+
             string placeholder = "";
             string path = element;
             string pathToLookFor = "";
-
-     
 
             pathToLookFor = @"C:\Users\test\Documents";
             if (path.Contains(pathToLookFor))

@@ -13,11 +13,11 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Border CornerRadius="10" BorderThickness="1" BorderBrush="Black" Background="#FFCDCDCD">
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="2" RenderingBias="Quality"/>
-                                </Border.Effect>
-                                <TextBlock Text="{TemplateBinding Content}" Margin="2,0,2,0" FontSize="10" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
-                            </Border>
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="2" RenderingBias="Quality"/>
+                            </Border.Effect>
+                            <TextBlock Text="{TemplateBinding Content}" Margin="2,0,2,0" FontSize="10" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
+                        </Border>
 
                     </ControlTemplate>
                 </Setter.Value>
@@ -59,20 +59,21 @@
             </Button.Resources>
         </Button>
 
-        <Label Name="lblPath" Content="Path" HorizontalAlignment="Left" Margin="25,43,0,0" VerticalAlignment="Top" Width="71"/>
-        <TextBox Name="txtBxPath" Height="23" Margin="80,43,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
-        <Label Name="lblInstaller" Content="Installer" HorizontalAlignment="Left" Margin="25,74,0,0" VerticalAlignment="Top" Width="71"/>
-        <TextBox Name="txtBxInstaller" Height="23" Margin="80,74,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
-        <Label Name="lblPayload" HorizontalAlignment="Left" Margin="26,255,0,0" VerticalAlignment="Top" Height="41" Width="59" Grid.RowSpan="2">
+        <Label Name="lblPath" Content="Path" HorizontalAlignment="Left" Margin="25,50,0,0" VerticalAlignment="Top" Width="71"/>
+        <TextBox Name="txtBxPath" Height="23" Margin="80,50,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
+        <Label Name="lblInstaller" Content="Installer" HorizontalAlignment="Left" Margin="25,81,0,0" VerticalAlignment="Top" Width="71"/>
+        <TextBox Name="txtBxInstaller" Height="23" Margin="80,80,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
+        <Label Name="lblPayload" HorizontalAlignment="Left" Margin="26,351,0,0" VerticalAlignment="Top" Height="41" Width="59">
             <Label.Content>
                 <AccessText TextWrapping="Wrap" Text="json filename" Width="53"/>
             </Label.Content>
         </Label>
-        <TextBox Name="txtBxJsonFileName" Height="23" Margin="90,269,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
-        <Label Name="lblLogfile" Content="Logfile" HorizontalAlignment="Left" Margin="26,350,0,0" VerticalAlignment="Top" Width="94"/>
-        <TextBox Name="txtBxLogfile" Height="23" Margin="90,353,9.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" GotFocus="txtBxLogfile_GotFocus"/>
+        <TextBox Name="txtBxJsonFileName" Height="23" Margin="90,366,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
+        <Label Name="lblLogfile" Content="Logfile" HorizontalAlignment="Left" Margin="27,396,0,0" VerticalAlignment="Top" Width="94"/>
+        <TextBox Name="txtBxLogfile" Height="23" Margin="91,399,8.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" GotFocus="txtBxLogfile_GotFocus"/>
 
-        <Button Name="btnCreateJson" Content="4. Create Json" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,381,0,0" Height="30" Width="103">
+        <Button Name="btnCreateJson" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,116,0,0" Height="40" Width="94">
+            <TextBlock Text="2. Create install data" TextWrapping="Wrap" TextAlignment="Center"/>
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -80,7 +81,7 @@
             </Button.Resources>
         </Button>
 
-        <ListBox Name="lstBoxInfoWindow" Margin="9.4,10,9.6,9.6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
+        <ListBox Name="lstBoxInfoWindow" Margin="9.4,43,9.6,9.6" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" Grid.Column="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
 
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
@@ -96,7 +97,7 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="btnPackageVersion" Style="{StaticResource ListBoxButtonFormat}" Content ="Package version" Click="btnInstallPackage_Click" HorizontalAlignment="Right"/>
+                        <Button Name="btnPackageVersion" Style="{StaticResource ListBoxButtonFormat}" Content ="Package version" Click="btnPackageVersion_Click" HorizontalAlignment="Right"/>
 
                         <TextBlock Name="txtBlkPath" Text="{Binding path}" FontSize="10" Width="500" Height="20" Margin="10,10,0,0"/>
                         <Button Name="btnFilterPath" Style="{StaticResource ListBoxButtonFormat}" Content ="Filter path" Click="btnFilterpath_Click" HorizontalAlignment="Right"/>
@@ -117,24 +118,26 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>
-        
-        <Button Name="btnCreateFilter" HorizontalAlignment="Left" Margin="26,119,0,0" VerticalAlignment="Top" Width="94" Height="30" Click="btnCreateFilter_Click">
-            <StackPanel>
-                <Popup Name="myPopup">
-                    <TextBlock  Name="myPopupText" 
-                                Background="LightBlue" 
-                                Foreground="Blue">
-                     Filter is being created
-                    </TextBlock>
-                </Popup>
-                <TextBlock><Run Text="2. "/><Run Text="Create Filter"/></TextBlock>
-            </StackPanel>
+
+        <Button Name="btnKillMarkedFiles" HorizontalAlignment="Left" Margin="26,161,0,0" VerticalAlignment="Top" Width="94" Height="40" Click="btnKillMarkedFiles_Click">
+            <TextBlock TextWrapping="Wrap" Text="3. Kill the marked files"/>
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
         </Button>
-        <Button Name="btnSelectJsonPath" HorizontalAlignment="Left" Margin="26,164,0,0" VerticalAlignment="Top" Width="94" Height="55" Click="btnSelectJsonPath_Click">
-            <TextBlock Text="3. Select Json Path and filename" TextWrapping="Wrap" TextAlignment="Center"/>
+        <Button Name="btnCreatePackages" HorizontalAlignment="Left" Margin="25,206,0,0" VerticalAlignment="Top" Width="95" Height="55" Click="btnCreatePackages_Click">
+            <TextBlock Text="4. Create Installation Packages" TextWrapping="Wrap" TextAlignment="Center"/>
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="10"/>
+                </Style>
+            </Button.Resources>
         </Button>
-        <TextBox Name="txtBxJsonPath" Height="25" Margin="90,224,8,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
-        <Label Content="Json Path" HorizontalAlignment="Left" Margin="26,224,0,0" VerticalAlignment="Top"/>
+        <TextBox Name="txtBxJsonPath" Height="25" Margin="90,320,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0"/>
+        <Label Content="Json Path" HorizontalAlignment="Left" Margin="26,320,0,0" VerticalAlignment="Top"/>
+        <Button Content="Button" Grid.Column="1" HorizontalAlignment="Left" Margin="398.4,10,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>

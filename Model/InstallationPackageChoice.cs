@@ -8,6 +8,7 @@ namespace SonistoRepackage.Model
 {
     public class InstallationPackageChoice
     {
+
         // If all is true all other is faLse
         // if bit32 is true, all and bit64 are false
         // if bit 64 is true, all and bit32 are false
