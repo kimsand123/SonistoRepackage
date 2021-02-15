@@ -120,6 +120,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Model\InstallationPackageChoice.cs" />
+    <Compile Include="Model\KeepKill.cs" />
     <Compile Include="SettingsAndData.cs" />
     <Compile Include="Tests\Testing.cs" />
     <Compile Include="View\InstallationPackagePopup.xaml.cs">

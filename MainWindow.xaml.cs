@@ -75,7 +75,7 @@ namespace SonistoRepackage
 
                 //tests.testInstallationPackageDTO();
 
-                tests.testRadioButtonPopUp();
+                //tests.testRadioButtonPopUp();
 
 
                 //testArea ending
@@ -109,17 +109,18 @@ namespace SonistoRepackage
         private void FillListBox(List<string> clean, List<string> placeHolderFolders)
         {
             List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
+
             //If the file in the cleanlist exists, then it is a file, if not it is a folder.
             for (int idx = 0; idx < clean.Count; idx++)
             {
                 if (File.Exists(clean[idx]))
                 {
-                        listBoxItems.Add(new ItemForListbox() {path=Path.GetDirectoryName(clean[idx]), file=Path.GetFileName(clean[idx])}); 
+                        listBoxItems.Add(new ItemForListbox() {choices=new InstallationPackageChoice(), keepKill = new KeepKill(), path=Path.GetDirectoryName(clean[idx]), file=Path.GetFileName(clean[idx])}); 
                     
                 }
                 else
                 {
-                        listBoxItems.Add(new ItemForListbox() { path = Path.GetDirectoryName(clean[idx]), file = "" });
+                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(clean[idx]), file = "" });
                 }
             }
 
@@ -304,7 +305,14 @@ namespace SonistoRepackage
 
         private void btnInstallPackage_Click(object sender, RoutedEventArgs e)
         {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            InstallationPackageChoice elementChoice = listBoxElement.choices;
+            InstallationPackagePopup popup = new InstallationPackagePopup(elementChoice);
 
+            if ((bool)popup.ShowDialog() && popup.DialogResult.Value == true)
+            {
+                listBoxElement.choices = popup.getChoices();
+            }
         }
 
         private void btnFilterfile_Click(object sender, RoutedEventArgs e)
@@ -326,8 +334,18 @@ namespace SonistoRepackage
 
         private object getListBoxElement(object sender)
         {
-            Button button = sender as Button;
-            int index = this.lstBoxInfoWindow.Items.IndexOf(button.DataContext);
+            int index = 0;
+            switch (sender.GetType().Name)
+            {
+                case "Button":
+                    Button button = sender as Button;
+                    index = this.lstBoxInfoWindow.Items.IndexOf(button.DataContext);
+                    break;
+                case "CheckBox":
+                    CheckBox box = sender as CheckBox;
+                    index = this.lstBoxInfoWindow.Items.IndexOf(box.DataContext);
+                    break;
+            }
             return this.lstBoxInfoWindow.Items[index];
         }
 
@@ -339,6 +357,16 @@ namespace SonistoRepackage
             }
         }
 
+        private void chkBxKeep_Checked(object sender, RoutedEventArgs e)
+        {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            listBoxElement.keepKill.keep = true;          
+        }
 
+        private void chkBxKill_Checked(object sender, RoutedEventArgs e)
+        {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            listBoxElement.keepKill.kill = true;
+        }
     }
 }

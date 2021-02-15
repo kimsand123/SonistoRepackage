@@ -17,11 +17,21 @@ namespace SonistoRepackage.View
 
         public InstallationPackagePopup(InstallationPackageChoice listBoxEntryChoices)
         {
-            this.packageChoices = listBoxEntryChoices;
-
+            //this.packageChoices = listBoxEntryChoices;
+            copyPackageChoices(listBoxEntryChoices);
             InitializeComponent();
             setTheCurrentValues();
 
+        }
+
+        private void copyPackageChoices(InstallationPackageChoice listBoxEntryChoices)
+        {
+            packageChoices.all = listBoxEntryChoices.all;
+            packageChoices.bit32 = listBoxEntryChoices.bit32;
+            packageChoices.bit64 = listBoxEntryChoices.bit64;
+            packageChoices.vst2 = listBoxEntryChoices.vst2;
+            packageChoices.vst3 = listBoxEntryChoices.vst3;
+            packageChoices.aax = listBoxEntryChoices.aax;
         }
 
         private void setTheCurrentValues()
@@ -57,8 +67,13 @@ namespace SonistoRepackage.View
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            sender = null;
             this.DialogResult = false;
+            this.Close();
+        }
+        private void btnDone_Click(object sender, RoutedEventArgs e)
+        {
+            //TODO:Check if anything but all is checked, you need to have 1 checked in architecture and 1 in format.
+            this.DialogResult = true;
             this.Close();
         }
 
@@ -66,18 +81,7 @@ namespace SonistoRepackage.View
         {
             return this.packageChoices;
         }
-        private void btnDone_Click(object sender, RoutedEventArgs e)
-        {
-            sender = this.packageChoices;
-            this.DialogResult=true;
-            this.Close();
-        }
 
-        private void clearAllPackages(object sender, RoutedEventArgs e)
-        {
-            this.chkBxAll.IsChecked = false;
-            packageChoices.all = false;
-        }
         private void chkBxAll_Checked(object sender, RoutedEventArgs e)
         {
             this.chkBx32Bit.IsChecked = false;
@@ -86,7 +90,7 @@ namespace SonistoRepackage.View
             this.chkBxVst3.IsChecked = false;
             this.chkBxAax.IsChecked = false;
             this.chkBxAll.IsChecked = true;
-            packageChoices.all = this.chkBxAll.IsChecked.HasValue;
+            packageChoices.all = true;
             packageChoices.bit32 = false;
             packageChoices.bit64 = false;
             packageChoices.vst2 = false;
@@ -98,7 +102,7 @@ namespace SonistoRepackage.View
             this.chkBxAll.IsChecked = false;
             this.chkBx32Bit.IsChecked = true;
             this.chkBx64Bit.IsChecked = false;
-            packageChoices.bit32 = this.chkBx32Bit.IsChecked.HasValue;
+            packageChoices.bit32 = true;
             packageChoices.all = false;
             packageChoices.bit64 = false;
         }
@@ -108,7 +112,7 @@ namespace SonistoRepackage.View
             this.chkBxAll.IsChecked = false;
             this.chkBx32Bit.IsChecked = false;
             this.chkBx64Bit.IsChecked = true;
-            packageChoices.bit64 = this.chkBx64Bit.IsChecked.HasValue;
+            packageChoices.bit64 = true;
             packageChoices.all = false;
             packageChoices.bit32 = false;
         }
@@ -116,10 +120,10 @@ namespace SonistoRepackage.View
         private void chkBxVst2_Checked(object sender, RoutedEventArgs e)
         {
             this.chkBxAll.IsChecked = false;
-            this.chkBxVst2.IsChecked = false;
+            this.chkBxVst2.IsChecked = true;
             this.chkBxVst3.IsChecked = false;
             this.chkBxAax.IsChecked = false;
-            packageChoices.vst2 = this.chkBxVst2.IsChecked.HasValue;
+            packageChoices.vst2 = true;
             packageChoices.all = false;
             packageChoices.vst3 = false;
             packageChoices.aax = false;
@@ -131,7 +135,7 @@ namespace SonistoRepackage.View
             this.chkBxVst2.IsChecked = false;
             this.chkBxVst3.IsChecked = true;
             this.chkBxAax.IsChecked = false;
-            packageChoices.vst3 = this.chkBxVst3.IsChecked.HasValue;
+            packageChoices.vst3 = true;
             packageChoices.all = false;
             packageChoices.vst2 = false;
             packageChoices.aax = false;
@@ -143,7 +147,7 @@ namespace SonistoRepackage.View
             this.chkBxVst2.IsChecked = false;
             this.chkBxVst3.IsChecked = false;
             this.chkBxAax.IsChecked = true;
-            packageChoices.aax = this.chkBxAax.IsChecked.HasValue;
+            packageChoices.aax = true;
             packageChoices.all = false;
             packageChoices.vst2 = false;
             packageChoices.vst3 = false;
