@@ -246,7 +246,6 @@ namespace SonistoRepackage
                 packageElement.placeHolderPath = placeHolderFoldersList[idx];
                 packageElement.realPath = cleanList[idx];
                 int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
-
                 packageLists.Add(properPackageIndex, packageElement);
             }
 
