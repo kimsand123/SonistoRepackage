@@ -27,6 +27,7 @@ namespace SonistoRepackage
         }
         public const string FILTERFILE = @"C:\Sonisto\RepackageFilter.txt";
         public const bool TEST = false;
+        public const string WORKINGFOLDER = @"C:\Sonisto\PackageFolders\";
     }
 }
 

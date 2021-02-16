@@ -36,6 +36,7 @@ namespace SonistoRepackage
         
         CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
         List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
+        CreateFolderStructure placeHolderStructure = new CreateFolderStructure();
         List<string> eventStringList = null;
         List<string> cleanList = null;
         List<string> placeHolderFoldersList = null;
@@ -101,13 +102,11 @@ namespace SonistoRepackage
                 //First User pass of data created by the install proces
                 //Creating the total folder structure.
 
-                CreateFolderStructure placeHolderStructure = new CreateFolderStructure(cleanList);
-
+                placeHolderStructure.createPlaceHolderStructure(cleanList);
                 placeHolderFoldersList = placeHolderStructure.getFolders();
                 //FillListBox (the clean list, the actual folders)
                 FillListBox();
             }
-
         }
 
         //Method to fill up the listbox
@@ -209,6 +208,7 @@ namespace SonistoRepackage
                 {
                     listBoxItems.RemoveAt(idx);
                     cleanList.RemoveAt(idx);
+                    placeHolderFoldersList.RemoveAt(idx);
                 }
             }
             FillListBox();
@@ -226,7 +226,7 @@ namespace SonistoRepackage
             //if so add the element to the proper kombination list, with the belonging element from cleanlist
             //
 
-            Dictionary<int, List<PackageElement>> packageLists = new Dictionary<int, List<PackageElement>>();
+            Dictionary<string, List<PackageElement>> packageLists = new Dictionary<string, List<PackageElement>>();
             List<string> differentCombinations = new List<string>();//a string build to show the package combination like "bit32vst2" or "all"
 
             //Getting the different combinations strings that is existent in this install and 
@@ -244,7 +244,7 @@ namespace SonistoRepackage
             //so the first packagelist will be recognized on the first combination string.
             for (int idx = 0; idx < differentCombinations.Count; idx++)
             {
-                packageLists.Add(idx, new List<PackageElement>());
+                packageLists.Add(differentCombinations[idx], new List<PackageElement>());
             }
 
             //disperse the original lists into the proper packagelists on the basis of the index of the combinationlist
@@ -255,18 +255,43 @@ namespace SonistoRepackage
                 packageElement.placeHolderPath = placeHolderFoldersList[idx];
                 packageElement.realPath = cleanList[idx];
 
+                List<PackageElement> list = null;
                 //converting the combinationstring into the proper int.
                 int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
-                List<PackageElement> list = null;
-                if (packageLists.ContainsKey(properPackageIndex))
+
+                //If the key in the packaglist contains the packagecombination string
+                if (packageLists.ContainsKey(differentCombinations[properPackageIndex]))
                 {
-                    list = packageLists[properPackageIndex];
-                    if (list == null)
+                    /*if (list == null)
                     {
                         list = new List<PackageElement>();
+                    }*/
 
+                    //if all add it to all the lists.
+                    if(differentCombinations[properPackageIndex] == "all")
+                    {
+                        foreach(KeyValuePair<string, List<PackageElement>> x in packageLists)
+                        {
+                            List<PackageElement> y = x.Value;
+                            y.Add(packageElement);
+                        }
                     }
-                    list.Add(packageElement);
+                    else
+                    {
+                        list = packageLists[differentCombinations[properPackageIndex]];
+                        list.Add(packageElement);
+                    }
+
+                }
+            }
+
+            placeHolderStructure.prepareWorkingFolder();
+            foreach (KeyValuePair<string, List<PackageElement>> x in packageLists) 
+            {
+                string key = x.Key;
+                if (key != "all")
+                {
+                    placeHolderStructure.CreateFolders(key, x.Value);
                 }
             }
         }
@@ -377,12 +402,14 @@ namespace SonistoRepackage
             listBoxElement.keepKill.kill = true;
         }
 
-        //Code to die
-        //Code to die
-        //Code to die
-        //Code to die
-        //Code to die
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
 
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        
 
         private void txtBxLogfile_GotFocus(object sender, RoutedEventArgs e)
         {

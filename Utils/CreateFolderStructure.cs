@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SonistoRepackage.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,17 +13,15 @@ namespace SonistoRepackage
     {
         List<string> eventList;
         List<string> placeHolderFolderStructure;
-        public CreateFolderStructure(List<string> eventList)
+        public CreateFolderStructure()
         {
-            this.eventList = eventList;
-            createPlaceHolderStructure();
         }
-
 
         //Workfolder is situated in Desktop
 
-        public void createPlaceHolderStructure()
+        public void createPlaceHolderStructure(List<string> eventList)
         {
+            this.eventList = eventList;
             // for each of the elements in the eventlist passed to the object
             // create the placeholderpath
             List<string> placeHolderFolderStructure = new List<string>();
@@ -36,31 +35,37 @@ namespace SonistoRepackage
 
         }
 
-        private void CreateFolders(List<string> placeholderFolderStructure)
+        public void prepareWorkingFolder()
         {
             //Create the placeholder structure on disk
 
             //If package directory already exists, empty it just to be sure.
-            if (Directory.Exists("C:\\Sonisto\\PackageFolder"))
+            if (Directory.Exists(SettingsAndData.WORKINGFOLDER))
             {
-                EmptyFolder("C:\\Sonisto\\PackageFolder");  
-            } else
+                EmptyFolder(SettingsAndData.WORKINGFOLDER);
+            }
+            else
             {
                 //Otherwise create the packagefolder
-                Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
+                Directory.CreateDirectory(SettingsAndData.WORKINGFOLDER);
             }
+        }
 
+        public void CreateFolders(string topfolder, List<PackageElement> placeholderFolderStructure)
+        {
+            Directory.CreateDirectory(SettingsAndData.WORKINGFOLDER + "\\" + topfolder);
+            string copyFolder = SettingsAndData.WORKINGFOLDER + "\\" + topfolder;
             for (int idx = 0; idx < placeholderFolderStructure.Count; idx++) 
             {
                 //Create the folder from the placeholderstructure
                 //Problem when creating folders with no content or with content with nu suffix.
                 //If the file in the eventlist exists, then it is a file, if not it is a folder.
                 if (File.Exists(eventList[idx])){
-                    Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + Path.GetDirectoryName(placeholderFolderStructure[idx]));
-                    File.Copy(eventList[idx], "C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
+                    Directory.CreateDirectory(copyFolder + "\\" + Path.GetDirectoryName(placeholderFolderStructure[idx].placeHolderPath));
+                    File.Copy(placeholderFolderStructure[idx].realPath, copyFolder + "\\" + placeholderFolderStructure[idx].placeHolderPath);
                 } else
                 {
-                    Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
+                    Directory.CreateDirectory(copyFolder + "\\" + placeholderFolderStructure[idx].placeHolderPath);
                 }
 
             }
