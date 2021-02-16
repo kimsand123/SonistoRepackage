@@ -216,42 +216,6 @@ namespace SonistoRepackage
 
         private void btnCreatePackages_Click(object sender, RoutedEventArgs e)
         {
-            Dictionary<int, List<PackageElement>> packageLists = new Dictionary<int, List<PackageElement>>();
-            List<string> differentCombinations = new List<string>();
-
-
-
-            for (int idx = 0; idx < listBoxItems.Count; idx++)
-            {
-                string packageChoiceString = generatePackageChoiceString(listBoxItems[idx].choices);
-                if (!differentCombinations.Contains(packageChoiceString))
-                {
-                    differentCombinations.Add(packageChoiceString);
-                }
-                //packageLists.Add(listBoxItems[idx].choices, new PackageElement() { placeHolderPath = placeHolderFoldersList[idx], realPath = cleanList[idx] });
-            }
-
-            //Initialize the packageLists
-            for (int idx = 0; idx < differentCombinations.Count; idx++)
-            {
-                packageLists.Add(idx, new List<PackageElement>());
-            }
-
-
-            //disperse the original lists into the proper packagelists
-            // differentCombinations.IndexOf(combination);
-            for (int idx = 0; idx < listBoxItems.Count; idx++)
-            {
-                PackageElement packageElement = new PackageElement();
-                packageElement.placeHolderPath = placeHolderFoldersList[idx];
-                packageElement.realPath = cleanList[idx];
-                int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
-                packageLists.Add(properPackageIndex, packageElement);
-            }
-
-            
-
-
             //Find all the kombinations of arcchitecture and format in the listBoxItems
             //create a list 
             //For each element in listBoxItems
@@ -261,6 +225,50 @@ namespace SonistoRepackage
             //check if this kombination has been before.
             //if so add the element to the proper kombination list, with the belonging element from cleanlist
             //
+
+            Dictionary<int, List<PackageElement>> packageLists = new Dictionary<int, List<PackageElement>>();
+            List<string> differentCombinations = new List<string>();//a string build to show the package combination like "bit32vst2" or "all"
+
+            //Getting the different combinations strings that is existent in this install and 
+            //put them in a list to use later so that it is converted to an integer index.
+            for (int idx = 0; idx < listBoxItems.Count; idx++)
+            {
+                string packageChoiceString = generatePackageChoiceString(listBoxItems[idx].choices);
+                if (!differentCombinations.Contains(packageChoiceString))
+                {
+                    differentCombinations.Add(packageChoiceString);
+                }
+            }
+
+            //Initialize the packageLists on the basis of how many combination strings there has been discovered
+            //so the first packagelist will be recognized on the first combination string.
+            for (int idx = 0; idx < differentCombinations.Count; idx++)
+            {
+                packageLists.Add(idx, new List<PackageElement>());
+            }
+
+            //disperse the original lists into the proper packagelists on the basis of the index of the combinationlist
+            // differentCombinations.IndexOf(combination);
+            for (int idx = 0; idx < listBoxItems.Count; idx++)
+            {
+                PackageElement packageElement = new PackageElement();
+                packageElement.placeHolderPath = placeHolderFoldersList[idx];
+                packageElement.realPath = cleanList[idx];
+
+                //converting the combinationstring into the proper int.
+                int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
+                List<PackageElement> list = null;
+                if (packageLists.ContainsKey(properPackageIndex))
+                {
+                    list = packageLists[properPackageIndex];
+                    if (list == null)
+                    {
+                        list = new List<PackageElement>();
+
+                    }
+                    list.Add(packageElement);
+                }
+            }
         }
 
         private int getCombinationIdx(string combination, List<string> differentCombinations)
@@ -283,19 +291,19 @@ namespace SonistoRepackage
                 }
                 if (element.bit64)
                 {
-                    result = String.Concat("bit64");
+                    result = String.Concat(result, "bit64");
                 }
                 if (element.vst2)
                 {
-                    result = String.Concat("vst2");
+                    result = String.Concat(result, "vst2");
                 }
                 if (element.vst3)
                 {
-                    result = String.Concat("vst3");
+                    result = String.Concat(result, "vst3");
                 }
                 if (element.aax)
                 {
-                    result = String.Concat("aax");
+                    result = String.Concat(result, "aax");
                 }
             }
             return result;
