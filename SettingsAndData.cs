@@ -25,9 +25,17 @@ namespace SonistoRepackage
             }
             internal static readonly SettingsAndData instance = new SettingsAndData();
         }
-        public const string FILTERFILE = @"C:\Sonisto\RepackageFilter.txt";
         public const bool TEST = false;
-        public const string WORKINGFOLDER = @"C:\Sonisto\PackageFolders\";
+
+        public string filterFile = @"C:\Sonisto\RepackageFilter.txt";
+        public string workingFolder = @"C:\Sonisto\PackageFolders\";
+        public string userDocFolder = @"C:\Users\test\Documents";
+        public string homeFolder = @"C:\Users\test";
+        public string pluginVst3_32Folder = @"C:\Program Files (x86)\Common Files\VST3";
+        public string pluginVst3_64Folder = @"C:\Program Files\Common Files\VST3";
+        public string pluginAaxFolder = @"\Library\Music\AAX";
+        public string pluginAuFolder = @"\Library\Music\AU";
+
     }
 }
 

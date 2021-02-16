@@ -29,7 +29,7 @@ namespace SonistoRepackage.View
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            using (StreamWriter sw = File.AppendText(SettingsAndData.FILTERFILE))
+            using (StreamWriter sw = File.AppendText(SettingsAndData.filterFile))
             {
                 sw.WriteLine(this.txtBxPathResult.Text);
             }

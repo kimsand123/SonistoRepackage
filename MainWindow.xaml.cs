@@ -48,9 +48,9 @@ namespace SonistoRepackage
         public MainWindow()
         {
             InitializeComponent();
-            if (!File.Exists(SettingsAndData.FILTERFILE))
+            if (!File.Exists(SettingsAndData.filterFile))
             {
-                using (StreamWriter sw = File.CreateText(SettingsAndData.FILTERFILE))
+                using (StreamWriter sw = File.CreateText(SettingsAndData.filterFile))
                 {
 
                 }
@@ -172,8 +172,6 @@ namespace SonistoRepackage
 
             return encPassword;
         }
-
-        //UI events
 
         private void btnFindInstaller_Click(object sender, RoutedEventArgs e)
         {
@@ -367,7 +365,7 @@ namespace SonistoRepackage
 
         private void WriteToFile(string filterText)
         {
-            using (StreamWriter sw = File.AppendText(SettingsAndData.FILTERFILE))
+            using (StreamWriter sw = File.AppendText(SettingsAndData.filterFile))
             {
                 sw.WriteLine(filterText);
             }
