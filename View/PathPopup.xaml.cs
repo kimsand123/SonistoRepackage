@@ -24,12 +24,11 @@ namespace SonistoRepackage.View
         public PathPopup()
         {
             InitializeComponent();
-
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            using (StreamWriter sw = File.AppendText(SettingsAndData.filterFile))
+            using (StreamWriter sw = File.AppendText(SettingsAndData.Instance.filterFile))
             {
                 sw.WriteLine(this.txtBxPathResult.Text);
             }

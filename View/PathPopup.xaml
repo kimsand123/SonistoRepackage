@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="PathPopup" Height="264.22" Width="1518.349">
     <Grid>
-        <TextBox Name="txtBxPathResult" HorizontalAlignment="Left" Height="43" Margin="26,40,0,0" TextWrapping="Wrap" Text="dd" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" VerticalAlignment="Top" Width="1342"/>
+        <TextBox Name="txtBxPathResult" HorizontalAlignment="Left" Height="43" Margin="26,40,0,0" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" FontSize="15" VerticalAlignment="Top" Width="1342"/>
         <Button Name="btnFilter"  Content="Filter" HorizontalAlignment="Left" Margin="1395,39,0,0" VerticalAlignment="Top" Width="107" Height="44" FontSize="25" Click="Button_Click"/>
 
     </Grid>

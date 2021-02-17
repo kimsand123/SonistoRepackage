@@ -26,6 +26,8 @@ namespace SonistoRepackage.View
 
         private void copyPackageChoices(InstallationPackageChoice listBoxEntryChoices)
         {
+            //Works on the class instance of the choices class
+            //So it is possible to cancel the last setting of the choices.
             packageChoices.all = listBoxEntryChoices.all;
             packageChoices.bit32 = listBoxEntryChoices.bit32;
             packageChoices.bit64 = listBoxEntryChoices.bit64;
@@ -36,6 +38,7 @@ namespace SonistoRepackage.View
 
         private void setTheCurrentValues()
         {
+            //sets the current value of the chosen listbox elements choices in the user interface
             if (packageChoices.all)
             {
                 chkBxAll_Checked(new object(), new RoutedEventArgs());
@@ -82,6 +85,11 @@ namespace SonistoRepackage.View
             return this.packageChoices;
         }
 
+
+        //view and model data handling
+        //should be done with mvvm, but cannot figure out the databinding.
+        //needs to get on. 
+        //TODO: make this work with MVVM databinding.
         private void chkBxAll_Checked(object sender, RoutedEventArgs e)
         {
             this.chkBx32Bit.IsChecked = false;

@@ -20,20 +20,26 @@ using Path = System.IO.Path;
 
 namespace SonistoRepackage
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    /// 
+    //Find the installer
+    //Start recording
+    //Start install plugin
+    //When installation is done.
+    //Stop recording
+    //Take list of elements created during installation and 
+    //pass them through filters. 
+    //1. pass is if the element is created or renamed they pass through the filter
+    //2. pass is if the file still exists, and was not a temporary file.
+    //Show clean list of installed elements in listbox
+    //kill user marked elements from lists
+    //create the placeHolderStructure for the cleaned list
+    //assign each element to an install package. Default is all
+    //Create package list for each install package
+    //create and copy the filestructure from their real placement to their package placement
+    //Job done.
 
     public partial class MainWindow : Window
     {
-        //Used for old crap
         Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
-        //Dictionary<int, FilterElement> filterElements = new Dictionary<int, FilterElement>();
-        //ConvertStringToInstalledElement convertInstallList = new ConvertStringToInstalledElement();
-        //ConvertStringToInnoElement convertInnoList = new ConvertStringToInnoElement();
-        //Used for old crap
-        
         CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
         List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
         CreateFolderStructure placeHolderStructure = new CreateFolderStructure();
@@ -41,16 +47,12 @@ namespace SonistoRepackage
         List<string> cleanList = null;
         List<string> placeHolderFoldersList = null;
 
-
-
-
-
         public MainWindow()
         {
             InitializeComponent();
-            if (!File.Exists(SettingsAndData.filterFile))
+            if (!File.Exists(SettingsAndData.Instance.filterFile))
             {
-                using (StreamWriter sw = File.CreateText(SettingsAndData.filterFile))
+                using (StreamWriter sw = File.CreateText(SettingsAndData.Instance.filterFile))
                 {
 
                 }
@@ -59,33 +61,22 @@ namespace SonistoRepackage
 
         private void btnCreateJson_Click(object sender, RoutedEventArgs e)
         {
-            //Start recording
-            //Start install file
-            //Stop recording
-            //Convert recording into dictionary of installed elements
-            //by comparing each element to the filter dictionary, and putting
-            //the installed element into the dic at the same spot as the filter element
-            //when installed elements dic and filter dic has same length
-            //job done.
-
+            //testArea
             if (SettingsAndData.TEST)
             {
                 Testing tests = new Testing();
-                //testArea
+
 
                 //tests.testInstallationPackageDTO();
-
                 //tests.testRadioButtonPopUp();
 
-
-                //testArea ending
             }
+            //testArea ending
             else
             {
                 ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
                 Detection fileDetector = new Detection();
                 Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
-                InstalledElement installedElement = new InstalledElement();
 
                 //Getting data from the installation proces
                 //Start thread
@@ -129,10 +120,8 @@ namespace SonistoRepackage
             this.lstBoxInfoWindow.ItemsSource = listBoxItems;
         }
 
-
-
         // Try to execute the installer with another user... Does not work properly
-
+        // TODO: get the above to work
         private void executeInnoInstaller(string path, string fileName)
         {
             // Use ProcessStartInfo class
@@ -160,17 +149,6 @@ namespace SonistoRepackage
             {
                 Console.WriteLine(e);
             }
-        }
-        private System.Security.SecureString getSecurePassword(string passwordText)
-        {
-            System.Security.SecureString encPassword = new System.Security.SecureString();
-
-            foreach (System.Char c in passwordText)
-            {
-                encPassword.AppendChar(c);
-            }
-
-            return encPassword;
         }
 
         private void btnFindInstaller_Click(object sender, RoutedEventArgs e)
@@ -260,11 +238,6 @@ namespace SonistoRepackage
                 //If the key in the packaglist contains the packagecombination string
                 if (packageLists.ContainsKey(differentCombinations[properPackageIndex]))
                 {
-                    /*if (list == null)
-                    {
-                        list = new List<PackageElement>();
-                    }*/
-
                     //if all add it to all the lists.
                     if(differentCombinations[properPackageIndex] == "all")
                     {
@@ -274,7 +247,7 @@ namespace SonistoRepackage
                             y.Add(packageElement);
                         }
                     }
-                    else
+                    else //add the element to the proper list
                     {
                         list = packageLists[differentCombinations[properPackageIndex]];
                         list.Add(packageElement);
@@ -283,7 +256,10 @@ namespace SonistoRepackage
                 }
             }
 
+            //clear the working folder
             placeHolderStructure.prepareWorkingFolder();
+
+            //For each package list, create and copy the files and folders from their real position to their package positions.
             foreach (KeyValuePair<string, List<PackageElement>> x in packageLists) 
             {
                 string key = x.Key;
@@ -292,11 +268,6 @@ namespace SonistoRepackage
                     placeHolderStructure.CreateFolders(key, x.Value);
                 }
             }
-        }
-
-        private int getCombinationIdx(string combination, List<string> differentCombinations)
-        {
-            return differentCombinations.IndexOf(combination);
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
@@ -365,7 +336,7 @@ namespace SonistoRepackage
 
         private void WriteToFile(string filterText)
         {
-            using (StreamWriter sw = File.AppendText(SettingsAndData.filterFile))
+            using (StreamWriter sw = File.AppendText(SettingsAndData.Instance.filterFile))
             {
                 sw.WriteLine(filterText);
             }
@@ -400,65 +371,79 @@ namespace SonistoRepackage
             listBoxElement.keepKill.kill = true;
         }
 
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
+        //Code concerning user handling of process SAVE UNTIL IDEA ABANDONED
 
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        
-
-        private void txtBxLogfile_GotFocus(object sender, RoutedEventArgs e)
+        /*private System.Security.SecureString getSecurePassword(string passwordText)
         {
-            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
-            // Create OpenFileDialog
-            SaveFileDialog saveFileDlg = new SaveFileDialog();
-            saveFileDlg.DefaultExt = ".log";
-            saveFileDlg.Filter = "JsonInstall log (.log)| *.log";
-            saveFileDlg.Title = "Select folder and filename for Sonisto Json logfile";
+            System.Security.SecureString encPassword = new System.Security.SecureString();
 
-            // Launch OpenFileDialog by calling ShowDialog method
-            //Nullable<bool> result = saveFileDlg.ShowDialog();
-            saveFileDlg.ShowDialog();
-
-            if (saveFileDlg.FileName != "")
+            foreach (System.Char c in passwordText)
             {
-                this.txtBxLogfile.Text = saveFileDlg.FileName;
+                encPassword.AppendChar(c);
             }
-        }
 
-        private void btnSelectJsonPath_Click(object sender, RoutedEventArgs e)
-        {
-            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
-            // Create OpenFileDialog
-            SaveFileDialog saveFileDlg = new SaveFileDialog();
-            saveFileDlg.DefaultExt = ".json";
-            saveFileDlg.Filter = "Sonisto json (.json)| *.json";
-            saveFileDlg.Title = "Select folder and filename for Sonisto JSON";
+            return encPassword;
+        }*/
 
-            // Launch OpenFileDialog by calling ShowDialog method
-            //Nullable<bool> result = saveFileDlg.ShowDialog();
-            saveFileDlg.ShowDialog();
 
-            if (saveFileDlg.FileName != "")
-            {
-                string file = saveFileDlg.FileName;
-                int to = file.Length - 1;
-                int lastOccurance = file.LastIndexOf(@"\");
-                string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
-                string path = file.Replace(filename, "");
-                this.txtBxJsonPath.Text = path;
-                this.txtBxJsonFileName.Text = filename;
-            }
-        }
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
+        //Code to die-----------------------------------------------------------------------------------
 
-        private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
-        {
-            // run innounp.exe -v installerfile -> filter.txt
-            // Read filter.txt, and put the filenames into a Dictionary
-            //executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
-        }
+
+        /*  private void txtBxLogfile_GotFocus(object sender, RoutedEventArgs e)
+          {
+              // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
+              // Create OpenFileDialog
+              SaveFileDialog saveFileDlg = new SaveFileDialog();
+              saveFileDlg.DefaultExt = ".log";
+              saveFileDlg.Filter = "JsonInstall log (.log)| *.log";
+              saveFileDlg.Title = "Select folder and filename for Sonisto Json logfile";
+
+              // Launch OpenFileDialog by calling ShowDialog method
+              //Nullable<bool> result = saveFileDlg.ShowDialog();
+              saveFileDlg.ShowDialog();
+
+              if (saveFileDlg.FileName != "")
+              {
+                  this.txtBxLogfile.Text = saveFileDlg.FileName;
+              }
+          }*/
+
+        /* private void btnSelectJsonPath_Click(object sender, RoutedEventArgs e)
+         {
+             // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
+             // Create OpenFileDialog
+             SaveFileDialog saveFileDlg = new SaveFileDialog();
+             saveFileDlg.DefaultExt = ".json";
+             saveFileDlg.Filter = "Sonisto json (.json)| *.json";
+             saveFileDlg.Title = "Select folder and filename for Sonisto JSON";
+
+             // Launch OpenFileDialog by calling ShowDialog method
+             //Nullable<bool> result = saveFileDlg.ShowDialog();
+             saveFileDlg.ShowDialog();
+
+             if (saveFileDlg.FileName != "")
+             {
+                 string file = saveFileDlg.FileName;
+                 int to = file.Length - 1;
+                 int lastOccurance = file.LastIndexOf(@"\");
+                 string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
+                 string path = file.Replace(filename, "");
+                 this.txtBxJsonPath.Text = path;
+                 this.txtBxJsonFileName.Text = filename;
+             }
+         }*/
+
+        /* private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
+         {
+             // run innounp.exe -v installerfile -> filter.txt
+             // Read filter.txt, and put the filenames into a Dictionary
+             //executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
+         }*/
 
         /*private void executeInnounp(string path, string filename)
         {

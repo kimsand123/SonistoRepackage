@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SonistoRepackage.InstallDetection
 {
@@ -57,6 +54,8 @@ namespace SonistoRepackage.InstallDetection
             // An event can be 
             // .. Valid file
             // .. Valid folder
+            // if the folder or file still exists after the installation process is over
+            // It is a strong candidate to keep.
 
             foreach (string element in firstPassList)
             {

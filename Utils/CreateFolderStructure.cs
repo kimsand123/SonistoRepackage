@@ -1,11 +1,7 @@
 ﻿using SonistoRepackage.Model;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SonistoRepackage
 {
@@ -34,23 +30,22 @@ namespace SonistoRepackage
         public void prepareWorkingFolder()
         {
             //Create the placeholder structure on disk
-
             //If package directory already exists, empty it just to be sure.
-            if (Directory.Exists(SettingsAndData.workingFolder))
+            if (Directory.Exists(SettingsAndData.Instance.workingFolder))
             {
-                EmptyFolder(SettingsAndData.workingFolder);
+                EmptyFolder(SettingsAndData.Instance.workingFolder);
             }
             else
             {
                 //Otherwise create the packagefolder
-                Directory.CreateDirectory(SettingsAndData.workingFolder);
+                Directory.CreateDirectory(SettingsAndData.Instance.workingFolder);
             }
         }
 
         public void CreateFolders(string topfolder, List<PackageElement> placeholderFolderStructure)
         {
-            Directory.CreateDirectory(SettingsAndData.workingFolder + "\\" + topfolder);
-            string copyFolder = SettingsAndData.workingFolder + "\\" + topfolder;
+            Directory.CreateDirectory(SettingsAndData.Instance.workingFolder + "\\" + topfolder);
+            string copyFolder = SettingsAndData.Instance.workingFolder + "\\" + topfolder;
             for (int idx = 0; idx < placeholderFolderStructure.Count; idx++) 
             {
                 //Create the folder from the placeholderstructure
