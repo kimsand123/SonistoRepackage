@@ -84,12 +84,11 @@ namespace SonistoRepackage.InstallDetection
             //hvis ikke check hvor mange gange fileAndPath indeholdes i firstpasslisten.
             //hvis det er der flere gange, så er det fordi det er en instans af events som bare er en 
             //del af en path. Derfor skal der returneres falsk da den skal sorteres fra.
-
             int nrOfApperances = 0;
             foreach (string element in firstPassList)
             {
                 //filter if the element is in the filterfile
-               /* if (filterFilePass(element) == false)
+                /*if (filterFilePass(element) == false)
                 {
                     return false;
                 }
@@ -100,7 +99,7 @@ namespace SonistoRepackage.InstallDetection
                     {
                         nrOfApperances += 1;
                     }
-               // }
+                //}
             }
 
             //filter if the fileAndPath is in the firstPassList more than once. i.e. is just a part of a path 
@@ -113,6 +112,7 @@ namespace SonistoRepackage.InstallDetection
 
         private bool filterFilePass(string element)
         {
+            //for hver linje i filteret, check om elementet fra firstFilterPass indeholder linjen.
             foreach (string filterElement in filterFileElements)
             {
                 if (element.Contains(filterElement))
