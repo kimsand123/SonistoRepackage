@@ -67,6 +67,15 @@
       <HintPath>packages\JetBrains.Annotations.2020.3.0\lib\net20\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory, Version=5.2.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism, Version=8.0.0.1909, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>packages\Prism.Core.8.0.0.1909\lib\net47\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism.Wpf, Version=8.0.0.1909, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>packages\Prism.Wpf.8.0.0.1909\lib\net48\Prism.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -74,6 +83,7 @@
     <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\System.Collections.Immutable.5.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
@@ -109,6 +119,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\InstallationPackageChoice.cs" />
+    <Compile Include="Model\KeepKill.cs" />
+    <Compile Include="Model\PackageElement.cs" />
+    <Compile Include="SettingsAndData.cs" />
+    <Compile Include="Tests\Testing.cs" />
+    <Compile Include="View\InstallationPackagePopup.xaml.cs">
+      <DependentUpon>InstallationPackagePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\PathPopup.xaml.cs">
+      <DependentUpon>PathPopup.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -117,19 +138,28 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ConvertStringToInnoElement.cs" />
-    <Compile Include="ConvertStringToInstalledElement.cs" />
-    <Compile Include="CreateFolderStructure.cs" />
+    <Compile Include="Utils\ConvertStringToInnoElement.cs" />
+    <Compile Include="Utils\ConvertStringToInstalledElement.cs" />
+    <Compile Include="Utils\CreateFolderStructure.cs" />
+    <Compile Include="Model\ItemForListbox.cs" />
     <Compile Include="OldCode\ComputerUsers.cs" />
-    <Compile Include="InstallDetection\CleanUpInstalledElementList.cs" />
-    <Compile Include="InstallDetection\Detection.cs" />
-    <Compile Include="InstallDetection\InstalledElement.cs" />
-    <Compile Include="InstallDetection\FilterElement.cs" />
-    <Compile Include="InstallDetection\WatchedElement.cs" />
+    <Compile Include="Utils\CleanUpInstalledElementList.cs" />
+    <Compile Include="Utils\Detection.cs" />
+    <Compile Include="Model\InstalledElement.cs" />
+    <Compile Include="Model\FilterElement.cs" />
+    <Compile Include="Model\WatchedElement.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\InstallationPackagePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\PathPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -162,13 +192,10 @@
   <ItemGroup>
     <Folder Include="Filter\" />
     <Folder Include="Graphics\" />
-    <Folder Include="View\" />
+    <Folder Include="InstallDetection\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="innounp.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="rmdir.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

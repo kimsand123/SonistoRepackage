@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SonistoRepackage.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,51 +12,57 @@ namespace SonistoRepackage
     class CreateFolderStructure
     {
         List<string> eventList;
-        public CreateFolderStructure(List<string> eventList)
+        List<string> placeHolderFolderStructure;
+        public CreateFolderStructure()
+        {
+        }
+
+        public void createPlaceHolderStructure(List<string> eventList)
         {
             this.eventList = eventList;
-            createPlaceHolderStructure();
-        }
-
-
-        //Workfolder is situated in Desktop
-
-        public void createPlaceHolderStructure()
-        {
-            List<string> placeholderFolderStructure = new List<string>();
+            // for each of the elements in the eventlist passed to the object
+            // create the placeholderpath
+            List<string> placeHolderFolderStructure = new List<string>();
             foreach (string element in eventList)
             {
-                placeholderFolderStructure.Add(createPlaceholderPath(element));
+                //add the replaced path to the placeholder structure.
+                placeHolderFolderStructure.Add(createPlaceholderPath(element));
             }
-            CreateFolders(placeholderFolderStructure);
-
+            this.placeHolderFolderStructure = placeHolderFolderStructure;
         }
 
-        private void CreateFolders(List<string> placeholderFolderStructure)
+        public void prepareWorkingFolder()
         {
+            //Create the placeholder structure on disk
+
             //If package directory already exists, empty it just to be sure.
-            if (Directory.Exists("C:\\Sonisto\\PackageFolder"))
+            if (Directory.Exists(SettingsAndData.workingFolder))
             {
-                EmptyFolder("C:\\Sonisto\\PackageFolder");  
-            } else
+                EmptyFolder(SettingsAndData.workingFolder);
+            }
+            else
             {
                 //Otherwise create the packagefolder
-                Directory.CreateDirectory("C:\\Sonisto\\PackageFolder");
+                Directory.CreateDirectory(SettingsAndData.workingFolder);
             }
+        }
 
+        public void CreateFolders(string topfolder, List<PackageElement> placeholderFolderStructure)
+        {
+            Directory.CreateDirectory(SettingsAndData.workingFolder + "\\" + topfolder);
+            string copyFolder = SettingsAndData.workingFolder + "\\" + topfolder;
             for (int idx = 0; idx < placeholderFolderStructure.Count; idx++) 
             {
                 //Create the folder from the placeholderstructure
-                //Problem when creating folders with no content or with content with nu suffix.
+                //Problem when creating folders with no content or with content with no suffix.
                 //If the file in the eventlist exists, then it is a file, if not it is a folder.
                 if (File.Exists(eventList[idx])){
-                    Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + Path.GetDirectoryName(placeholderFolderStructure[idx]));
-                    File.Copy(eventList[idx], "C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
+                    Directory.CreateDirectory(copyFolder + "\\" + Path.GetDirectoryName(placeholderFolderStructure[idx].placeHolderPath));
+                    File.Copy(placeholderFolderStructure[idx].realPath, copyFolder + "\\" + placeholderFolderStructure[idx].placeHolderPath);
                 } else
                 {
-                    Directory.CreateDirectory("C:\\Sonisto\\PackageFolder\\" + placeholderFolderStructure[idx]);
+                    Directory.CreateDirectory(copyFolder + "\\" + placeholderFolderStructure[idx].placeHolderPath);
                 }
-
             }
         }
 
@@ -110,53 +117,64 @@ namespace SonistoRepackage
             return !errors;
         }
 
+        internal List<string> getFolders()
+        {
+            return placeHolderFolderStructure;
+        }
+
+
+        //Replace the relative paths with the placeholderfolders
         public string createPlaceholderPath(string element)
         {
-            string value = "";
             string placeholder = "";
             string path = element;
             string pathToLookFor = "";
 
-     
-
-            pathToLookFor = @"C:\Users\test\Documents";
+            pathToLookFor = SettingsAndData.Instance.userDocFolder;
             if (path.Contains(pathToLookFor))
             {
                 placeholder = "{userdocs}";
                 path = path.Replace(pathToLookFor, placeholder);
-            } else pathToLookFor = @"C:\Users\test";  if (path.Contains(pathToLookFor))
+            } else pathToLookFor = SettingsAndData.Instance.homeFolder;  
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{home}";
                 path = path.Replace(pathToLookFor, placeholder);
-            } else pathToLookFor = @"C:\Program Files (x86)\Common Files\VST3"; if (path.Contains(pathToLookFor))
+            } else pathToLookFor = SettingsAndData.Instance.pluginVst3_32Folder; 
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{plugin}";
                 //placeholder = @"{VST3-32}";
                 path = path.Replace(pathToLookFor, placeholder);
-            } else pathToLookFor = @"C:\Program Files\Common Files\VST3"; if (path.Contains(pathToLookFor))
+            } else pathToLookFor = SettingsAndData.Instance.pluginVst3_64Folder; 
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{plugin}";
                 //placeholder = @"{VST3-64}";
                 path = path.Replace(pathToLookFor, placeholder);
-            } else pathToLookFor = @"\Library\Music\AAX"; if (path.Contains(pathToLookFor))
+            } else pathToLookFor = SettingsAndData.Instance.pluginAaxFolder; 
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{plugin}";
                 //placeholder = @"{AAX}";
                 path = path.Replace(pathToLookFor, placeholder);
             }
-            else pathToLookFor = @"\Library\Music\AU"; if (path.Contains(pathToLookFor))
+            else pathToLookFor = SettingsAndData.Instance.pluginAuFolder; 
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{plugin}";
                 //placeholder = @"{AU}";
                 path = path.Replace(pathToLookFor, placeholder);
             }
-            else pathToLookFor = @"C:\vst2-64"; if (path.Contains(pathToLookFor))
+            else pathToLookFor = SettingsAndData.Instance.pluginVst2_64Folder; 
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{plugin}";
                 //placeholder = "{VST2-64}";
                 path = path.Replace(pathToLookFor, placeholder);
             }
-            else pathToLookFor = @"C:\vst2-32"; if (path.Contains(pathToLookFor))
+            else pathToLookFor = SettingsAndData.Instance.pluginVst2_32Folder; 
+            if (path.Contains(pathToLookFor))
             {
                 placeholder = "{plugin}";
                 //placeholder = "{VST2-32}";
@@ -164,7 +182,7 @@ namespace SonistoRepackage
             } else
             {
                 placeholder = "{absolute}";
-                path = path.Replace("C:", placeholder);
+                path = path.Replace(SettingsAndData.Instance.absoluteFolder, placeholder);
             }
             return path;
         }
