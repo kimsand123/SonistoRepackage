@@ -10,6 +10,7 @@ namespace SonistoRepackage.InstallDetection
         List<string> elements = new List<string>();
         List<string> firstPassList = new List<string>();
         List<string> cleanedList = new List<string>();
+        List<string> filterFileElements = File.ReadAllLines(SettingsAndData.Instance.filterFile).ToList();
         public CleanUpInstalledElementList()
         {
 
@@ -77,20 +78,48 @@ namespace SonistoRepackage.InstallDetection
 
         private bool checkFileAndPathForRelevans(string fileAndPath)
         {
+            //for hvert element i firstPassListen
+            //undersøg om elementet er i filterpass filen, hvis den er skal det sorteres fra
+            //returner false
+            //hvis ikke check hvor mange gange fileAndPath indeholdes i firstpasslisten.
+            //hvis det er der flere gange, så er det fordi det er en instans af events som bare er en 
+            //del af en path. Derfor skal der returneres falsk da den skal sorteres fra.
+
             int nrOfApperances = 0;
             foreach (string element in firstPassList)
             {
-                if (element.Contains(fileAndPath))
+                //filter if the element is in the filterfile
+               /* if (filterFilePass(element) == false)
                 {
-                    nrOfApperances += 1;
+                    return false;
                 }
+                else
+                {*/
+                    //record the number of times the fileAndPath is in the firstPassList
+                    if (element.Contains(fileAndPath))
+                    {
+                        nrOfApperances += 1;
+                    }
+               // }
             }
 
+            //filter if the fileAndPath is in the firstPassList more than once. i.e. is just a part of a path 
             if (nrOfApperances > 1)
             {
                 return false;
             }
+            return true;
+        }
 
+        private bool filterFilePass(string element)
+        {
+            foreach (string filterElement in filterFileElements)
+            {
+                if (element.Contains(filterElement))
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
