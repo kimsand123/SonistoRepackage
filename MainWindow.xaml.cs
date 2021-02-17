@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Threading;
 
 using System.Windows;
@@ -114,7 +113,8 @@ namespace SonistoRepackage
                 }
                 else
                 {
-                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(cleanList[idx]), file = "" });
+                    //listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(cleanList[idx]), file = "" });
+                    listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = cleanList[idx] });
                 }
             }
             this.lstBoxInfoWindow.ItemsSource = listBoxItems;
@@ -178,13 +178,15 @@ namespace SonistoRepackage
 
         private void btnKillMarkedFiles_Click(object sender, RoutedEventArgs e)
         {
-            for (int idx = 0; idx < listBoxItems.Count; idx++)
+            int numberOfElementsInListBox = listBoxItems.Count;
+            for (int idx = 0; idx < numberOfElementsInListBox; idx++)
             {
                 if (listBoxItems[idx].keepKill.kill == true)
                 {
                     listBoxItems.RemoveAt(idx);
                     cleanList.RemoveAt(idx);
                     placeHolderFoldersList.RemoveAt(idx);
+                    numberOfElementsInListBox -= 1;
                 }
             }
             FillListBox();
@@ -223,8 +225,7 @@ namespace SonistoRepackage
                 packageLists.Add(differentCombinations[idx], new List<PackageElement>());
             }
 
-            //disperse the original lists into the proper packagelists on the basis of the index of the combinationlist
-            // differentCombinations.IndexOf(combination);
+            //disperse the original list into the proper packagelists on the basis of the index of the combinationlist
             for (int idx = 0; idx < listBoxItems.Count; idx++)
             {
                 PackageElement packageElement = new PackageElement();
@@ -252,7 +253,6 @@ namespace SonistoRepackage
                         list = packageLists[differentCombinations[properPackageIndex]];
                         list.Add(packageElement);
                     }
-
                 }
             }
 

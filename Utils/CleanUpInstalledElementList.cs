@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -61,16 +62,39 @@ namespace SonistoRepackage.InstallDetection
             {
                 //if the file in the firstpass list still exists then add it to the cleanedList.
                 //
-                string fileAndPath = getFileFromEvent(element);
+                string fileAndPath = getFileAndPathFromEvent(element);
                 //If event is either a valid file or directory, and they still exist
                 if (Directory.Exists(fileAndPath) || File.Exists(fileAndPath))
                 {
-                    cleanedList.Add(fileAndPath);
+                    //TODO: figure out if the event is a part of a path in other events. If so do not add it.
+                    if (checkFileAndPathForRelevans(fileAndPath))
+                    {
+                        cleanedList.Add(fileAndPath);
+                    }
                 }
             }
         }
 
-        private string getFileFromEvent(string element)
+        private bool checkFileAndPathForRelevans(string fileAndPath)
+        {
+            int nrOfApperances = 0;
+            foreach (string element in firstPassList)
+            {
+                if (element.Contains(fileAndPath))
+                {
+                    nrOfApperances += 1;
+                }
+            }
+
+            if (nrOfApperances > 1)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private string getFileAndPathFromEvent(string element)
         {
             //Getting the filestring from the elementstring
             int changeTypeIdx = element.IndexOf(@"<");
