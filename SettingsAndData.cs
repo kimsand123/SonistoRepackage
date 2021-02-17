@@ -35,6 +35,9 @@ namespace SonistoRepackage
         public string pluginVst3_64Folder = @"C:\Program Files\Common Files\VST3";
         public string pluginAaxFolder = @"\Library\Music\AAX";
         public string pluginAuFolder = @"\Library\Music\AU";
+        public string pluginVst2_32Folder = @"C:\vst2-32";
+        public string pluginVst2_64Folder = @"C:\vst2-64";
+        public string absoluteFolder = "C:";
 
     }
 }

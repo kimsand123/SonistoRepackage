@@ -70,7 +70,7 @@
         </Label>
         <TextBox Name="txtBxJsonFileName" Height="23" Margin="90,366,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" Visibility="Hidden"/>
         <Label Name="lblLogfile" Content="Logfile" HorizontalAlignment="Left" Margin="27,396,0,0" VerticalAlignment="Top" Width="94" Visibility="Hidden"/>
-        <TextBox Name="txtBxLogfile" Height="23" Margin="91,399,8.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" GotFocus="txtBxLogfile_GotFocus" Visibility="Hidden"/>
+        <TextBox Name="txtBxLogfile" Height="23" Margin="91,399,8.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" Visibility="Hidden"/>
 
         <Button Name="btnCreateJson" Click="btnCreateJson_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,116,0,0" Height="40" Width="94">
             <TextBlock Text="2. Create install data" TextWrapping="Wrap" TextAlignment="Center"/>
