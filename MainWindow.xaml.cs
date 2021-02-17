@@ -96,6 +96,10 @@ namespace SonistoRepackage
                 placeHolderFoldersList = placeHolderStructure.getFolders();
                 //FillListBox (the clean list, the actual folders)
                 FillListBox();
+
+
+                //Måske man kan bruge original eventlisten - cleanList til at forbedre på filtret.
+                //Den resulterende liste skal renses.
             }
         }
 
