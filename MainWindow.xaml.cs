@@ -261,12 +261,19 @@ namespace SonistoRepackage
                 }
             }
 
+            if (differentCombinations.Count == 1)
+            {
+                MessageBox.Show("You need to choose an architecture and format for at least one of the files.", "No Arch/Form");
+                return;
+            }
+
             //Initialize the packageLists on the basis of how many combination strings there has been discovered
             //so the first packagelist will be recognized on the first combination string.
             for (int idx = 0; idx < differentCombinations.Count; idx++)
             {
                 packageLists.Add(differentCombinations[idx], new List<PackageElement>());
             }
+
 
             //disperse the original list into the proper packagelists on the basis of the index of the combinationlist
             for (int idx = 0; idx < listBoxItems.Count; idx++)
@@ -302,22 +309,19 @@ namespace SonistoRepackage
             //clear the working folder
             placeHolderStructure.prepareWorkingFolder();
 
-            bool done = false;
+
             //For each package list, create and copy the files and folders from their real position to their package positions.
             //If there were no selections of packages, do the process again. There always needs to be one architecture and format selection.
-            while (!done)
+            foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists)
             {
-                foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists)
+                string key = installPackage.Key;
+                if (key != "all")
                 {
-                    string key = installPackage.Key;
-                    if (key != "all")
-                    {
-                        placeHolderStructure.CreateFolders(key, installPackage.Value);
-                        zipThePackageFolder(key);
-                        done = true;
-                    }
+                    placeHolderStructure.CreateFolders(key, installPackage.Value);
+                    zipThePackageFolder(key);
                 }
             }
+            
             MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
             ResetApplication();
         }
