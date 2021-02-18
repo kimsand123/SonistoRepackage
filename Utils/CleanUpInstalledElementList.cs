@@ -22,6 +22,9 @@ namespace SonistoRepackage.InstallDetection
 
             firstPass();
             secondPass();
+            //Could have chosen to put the filterFile pass into the detection class, but im not sure that the program can keep up the detection if 
+            //the filterFile becomes too large.
+            thirdPass();
 
             return cleanedList;
         }
@@ -76,6 +79,35 @@ namespace SonistoRepackage.InstallDetection
             }
         }
 
+        private void thirdPass()
+        {
+            //foreach element in the cleanedList check if that element contains one of the lines in the filter.
+            //if it does, it should be deleted from the cleanedList, 
+            for (int cleanListIdx = cleanedList.Count-1; cleanListIdx > -1; cleanListIdx--)
+            {
+                for (int filterListIdx = 0; filterListIdx < filterFileElements.Count; filterListIdx++) 
+                { 
+                    if (cleanedList[cleanListIdx].Contains(filterFileElements[filterListIdx]))
+                    {
+                        cleanedList.RemoveAt(cleanListIdx);
+                        break;
+                    }
+                }
+            }
+            
+            foreach (string cleanListElement in cleanedList)
+            {
+                foreach (string filterElement in filterFileElements)
+                {
+                    if (cleanListElement.Contains(filterElement))
+                    {
+
+                    }
+                }
+
+            }
+        }
+
         private bool checkFileAndPathForRelevans(string fileAndPath)
         {
             //for hvert element i firstPassListen
@@ -87,38 +119,16 @@ namespace SonistoRepackage.InstallDetection
             int nrOfApperances = 0;
             foreach (string element in firstPassList)
             {
-                //filter if the element is in the filterfile
-                /*if (filterFilePass(element) == false)
+                if (element.Contains(fileAndPath))
                 {
-                    return false;
+                    nrOfApperances += 1;
                 }
-                else
-                {*/
-                    //record the number of times the fileAndPath is in the firstPassList
-                    if (element.Contains(fileAndPath))
-                    {
-                        nrOfApperances += 1;
-                    }
-                //}
             }
 
             //filter if the fileAndPath is in the firstPassList more than once. i.e. is just a part of a path 
             if (nrOfApperances > 1)
             {
                 return false;
-            }
-            return true;
-        }
-
-        private bool filterFilePass(string element)
-        {
-            //for hver linje i filteret, check om elementet fra firstFilterPass indeholder linjen.
-            foreach (string filterElement in filterFileElements)
-            {
-                if (element.Contains(filterElement))
-                {
-                    return false;
-                }
             }
             return true;
         }

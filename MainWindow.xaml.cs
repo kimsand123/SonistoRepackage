@@ -48,7 +48,9 @@ namespace SonistoRepackage
 
         public MainWindow()
         {
+            //Read the ini file and store it in SettingsAndData Singleton
             InitializeComponent();
+            //Create the filterfile if it does not exist
             if (!File.Exists(SettingsAndData.Instance.filterFile))
             {
                 using (StreamWriter sw = File.CreateText(SettingsAndData.Instance.filterFile))
@@ -58,7 +60,7 @@ namespace SonistoRepackage
             }
         }
 
-        private void btnCreateJson_Click(object sender, RoutedEventArgs e)
+        private void btnCreateInstallData_Click(object sender, RoutedEventArgs e)
         {
             CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
 
@@ -119,7 +121,6 @@ namespace SonistoRepackage
                 }
                 else
                 {
-                    //listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(cleanList[idx]), file = "" });
                     listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = cleanList[idx] });
                 }
             }
@@ -275,13 +276,8 @@ namespace SonistoRepackage
                     zipThePackageFolder(key);
                 }
             }
-            
-
-
             MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
             ResetApplication();
-
-
         }
 
         private void zipThePackageFolder(string key)
@@ -293,16 +289,13 @@ namespace SonistoRepackage
 
         private void ResetApplication()
         {
-
             listBoxItems.Clear(); 
             eventStringList.Clear();
             cleanList.Clear();
             placeHolderFoldersList.Clear();
-
             FillListBox();
             this.txtBxInstaller.Text = "";
             this.txtBxPath.Text = "";
-
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
@@ -357,6 +350,7 @@ namespace SonistoRepackage
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
             WriteToFile(listBoxElement.file);
         }
+
         private void btnFilterpath_Click(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
