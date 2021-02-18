@@ -302,14 +302,20 @@ namespace SonistoRepackage
             //clear the working folder
             placeHolderStructure.prepareWorkingFolder();
 
+            bool done = false;
             //For each package list, create and copy the files and folders from their real position to their package positions.
-            foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists) 
+            //If there were no selections of packages, do the process again. There always needs to be one architecture and format selection.
+            while (!done)
             {
-                string key = installPackage.Key;
-                if (key != "all")
+                foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists)
                 {
-                    placeHolderStructure.CreateFolders(key, installPackage.Value);
-                    zipThePackageFolder(key);
+                    string key = installPackage.Key;
+                    if (key != "all")
+                    {
+                        placeHolderStructure.CreateFolders(key, installPackage.Value);
+                        zipThePackageFolder(key);
+                        done = true;
+                    }
                 }
             }
             MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
