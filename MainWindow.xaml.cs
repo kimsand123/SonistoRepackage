@@ -38,8 +38,7 @@ namespace SonistoRepackage
 
     public partial class MainWindow : Window
     {
-        Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
-        CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
         List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
         CreateFolderStructure placeHolderStructure = new CreateFolderStructure();
         List<string> eventStringList = null;
@@ -60,6 +59,8 @@ namespace SonistoRepackage
 
         private void btnCreateJson_Click(object sender, RoutedEventArgs e)
         {
+            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
             //testArea
             if (SettingsAndData.TEST)
             {
@@ -264,14 +265,35 @@ namespace SonistoRepackage
             placeHolderStructure.prepareWorkingFolder();
 
             //For each package list, create and copy the files and folders from their real position to their package positions.
-            foreach (KeyValuePair<string, List<PackageElement>> x in packageLists) 
+            foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists) 
             {
-                string key = x.Key;
+                string key = installPackage.Key;
                 if (key != "all")
                 {
-                    placeHolderStructure.CreateFolders(key, x.Value);
+                    placeHolderStructure.CreateFolders(key, installPackage.Value);
                 }
             }
+            
+
+
+            MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
+            ResetApplication();
+
+
+        }
+
+        private void ResetApplication()
+        {
+
+            listBoxItems.Clear(); 
+            eventStringList.Clear();
+            cleanList.Clear();
+            placeHolderFoldersList.Clear();
+
+            FillListBox();
+            this.txtBxInstaller.Text = "";
+            this.txtBxPath.Text = "";
+
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
