@@ -130,7 +130,6 @@
     <Compile Include="Model\PackageElement.cs" />
     <Compile Include="SettingsAndData.cs" />
     <Compile Include="Tests\Testing.cs" />
-    <Compile Include="Utils\ConsoleForWPFApplications.cs" />
     <Compile Include="View\InstallationPackagePopup.xaml.cs">
       <DependentUpon>InstallationPackagePopup.xaml</DependentUpon>
     </Compile>
@@ -210,6 +209,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="SonistoRepackageSettings.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
