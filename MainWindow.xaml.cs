@@ -185,7 +185,7 @@ namespace SonistoRepackage
         private void btnKillMarkedFiles_Click(object sender, RoutedEventArgs e)
         {
             int numberOfElementsInListBox = listBoxItems.Count;
-            for (int idx = 0; idx < numberOfElementsInListBox; idx++)
+            for (int idx = numberOfElementsInListBox - 1; idx > -1; idx--)
             {
                 if (listBoxItems[idx].keepKill.kill == true)
                 {
