@@ -10,6 +10,7 @@ namespace SonistoRepackage.InstallDetection
         List<string> elements = new List<string>();
         List<string> firstPassList = new List<string>();
         List<string> cleanedList = new List<string>();
+        List<string> filterFileElements = File.ReadAllLines(SettingsAndData.Instance.filterFile).ToList();
         public CleanUpInstalledElementList()
         {
 
@@ -21,6 +22,9 @@ namespace SonistoRepackage.InstallDetection
 
             firstPass();
             secondPass();
+            //Could have chosen to put the filterFile pass into the detection class, but im not sure that the program can keep up the detection if 
+            //the filterFile becomes too large.
+            thirdPass();
 
             return cleanedList;
         }
@@ -75,8 +79,43 @@ namespace SonistoRepackage.InstallDetection
             }
         }
 
+        private void thirdPass()
+        {
+            //foreach element in the cleanedList check if that element contains one of the lines in the filter.
+            //if it does, it should be deleted from the cleanedList, 
+            for (int cleanListIdx = cleanedList.Count-1; cleanListIdx > -1; cleanListIdx--)
+            {
+                for (int filterListIdx = 0; filterListIdx < filterFileElements.Count; filterListIdx++) 
+                { 
+                    if (cleanedList[cleanListIdx].Contains(filterFileElements[filterListIdx]))
+                    {
+                        cleanedList.RemoveAt(cleanListIdx);
+                        break;
+                    }
+                }
+            }
+            
+            foreach (string cleanListElement in cleanedList)
+            {
+                foreach (string filterElement in filterFileElements)
+                {
+                    if (cleanListElement.Contains(filterElement))
+                    {
+
+                    }
+                }
+
+            }
+        }
+
         private bool checkFileAndPathForRelevans(string fileAndPath)
         {
+            //for hvert element i firstPassListen
+            //undersøg om elementet er i filterpass filen, hvis den er skal det sorteres fra
+            //returner false
+            //hvis ikke check hvor mange gange fileAndPath indeholdes i firstpasslisten.
+            //hvis det er der flere gange, så er det fordi det er en instans af events som bare er en 
+            //del af en path. Derfor skal der returneres falsk da den skal sorteres fra.
             int nrOfApperances = 0;
             foreach (string element in firstPassList)
             {
@@ -86,11 +125,11 @@ namespace SonistoRepackage.InstallDetection
                 }
             }
 
+            //filter if the fileAndPath is in the firstPassList more than once. i.e. is just a part of a path 
             if (nrOfApperances > 1)
             {
                 return false;
             }
-
             return true;
         }
 

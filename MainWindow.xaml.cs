@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Threading;
 
 using System.Windows;
@@ -38,8 +39,7 @@ namespace SonistoRepackage
 
     public partial class MainWindow : Window
     {
-        Dictionary<int, InstalledElement> eventList = new Dictionary<int, InstalledElement>();
-        CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
         List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
         CreateFolderStructure placeHolderStructure = new CreateFolderStructure();
         List<string> eventStringList = null;
@@ -48,7 +48,9 @@ namespace SonistoRepackage
 
         public MainWindow()
         {
+            //Read the ini file and store it in SettingsAndData Singleton
             InitializeComponent();
+            //Create the filterfile if it does not exist
             if (!File.Exists(SettingsAndData.Instance.filterFile))
             {
                 using (StreamWriter sw = File.CreateText(SettingsAndData.Instance.filterFile))
@@ -58,8 +60,10 @@ namespace SonistoRepackage
             }
         }
 
-        private void btnCreateJson_Click(object sender, RoutedEventArgs e)
+        private void btnCreateInstallData_Click(object sender, RoutedEventArgs e)
         {
+            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
             //testArea
             if (SettingsAndData.TEST)
             {
@@ -96,6 +100,10 @@ namespace SonistoRepackage
                 placeHolderFoldersList = placeHolderStructure.getFolders();
                 //FillListBox (the clean list, the actual folders)
                 FillListBox();
+
+
+                //Måske man kan bruge original eventlisten - cleanList til at forbedre på filtret.
+                //Den resulterende liste skal renses.
             }
         }
 
@@ -113,7 +121,6 @@ namespace SonistoRepackage
                 }
                 else
                 {
-                    //listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(cleanList[idx]), file = "" });
                     listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = cleanList[idx] });
                 }
             }
@@ -179,7 +186,7 @@ namespace SonistoRepackage
         private void btnKillMarkedFiles_Click(object sender, RoutedEventArgs e)
         {
             int numberOfElementsInListBox = listBoxItems.Count;
-            for (int idx = 0; idx < numberOfElementsInListBox; idx++)
+            for (int idx = numberOfElementsInListBox - 1; idx > -1; idx--)
             {
                 if (listBoxItems[idx].keepKill.kill == true)
                 {
@@ -260,14 +267,35 @@ namespace SonistoRepackage
             placeHolderStructure.prepareWorkingFolder();
 
             //For each package list, create and copy the files and folders from their real position to their package positions.
-            foreach (KeyValuePair<string, List<PackageElement>> x in packageLists) 
+            foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists) 
             {
-                string key = x.Key;
+                string key = installPackage.Key;
                 if (key != "all")
                 {
-                    placeHolderStructure.CreateFolders(key, x.Value);
+                    placeHolderStructure.CreateFolders(key, installPackage.Value);
+                    zipThePackageFolder(key);
                 }
             }
+            MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
+            ResetApplication();
+        }
+
+        private void zipThePackageFolder(string key)
+        {
+            string startPath = SettingsAndData.Instance.workingFolder + "\\" + key;
+            string zipPath = SettingsAndData.Instance.workingFolder + "\\" + key + ".zip";
+            ZipFile.CreateFromDirectory(startPath, zipPath);
+        }
+
+        private void ResetApplication()
+        {
+            listBoxItems.Clear(); 
+            eventStringList.Clear();
+            cleanList.Clear();
+            placeHolderFoldersList.Clear();
+            FillListBox();
+            this.txtBxInstaller.Text = "";
+            this.txtBxPath.Text = "";
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
@@ -322,6 +350,7 @@ namespace SonistoRepackage
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
             WriteToFile(listBoxElement.file);
         }
+
         private void btnFilterpath_Click(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
