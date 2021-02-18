@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Threading;
 
 using System.Windows;
@@ -271,6 +272,7 @@ namespace SonistoRepackage
                 if (key != "all")
                 {
                     placeHolderStructure.CreateFolders(key, installPackage.Value);
+                    zipThePackageFolder(key);
                 }
             }
             
@@ -280,6 +282,13 @@ namespace SonistoRepackage
             ResetApplication();
 
 
+        }
+
+        private void zipThePackageFolder(string key)
+        {
+            string startPath = SettingsAndData.Instance.workingFolder + "\\" + key;
+            string zipPath = SettingsAndData.Instance.workingFolder + "\\" + key + ".zip";
+            ZipFile.CreateFromDirectory(startPath, zipPath);
         }
 
         private void ResetApplication()
