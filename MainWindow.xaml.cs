@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 using System.Windows;
@@ -48,6 +50,7 @@ namespace SonistoRepackage
 
         public MainWindow()
         {
+            initializeApplication();
             //Read the ini file and store it in SettingsAndData Singleton
             InitializeComponent();
             //Create the filterfile if it does not exist
@@ -58,6 +61,39 @@ namespace SonistoRepackage
 
                 }
             }
+        }
+
+        private void initializeApplication()
+        {
+
+            string _filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+            _filePath = Directory.GetParent(Directory.GetParent(_filePath).FullName).FullName;
+            string settingsFile = _filePath + "\\SonistoRepackageSettings.txt";
+            List<string> settingsFileELements = File.ReadAllLines(settingsFile).ToList();
+
+            List<PropertyInfo> settingsProperties = new List<PropertyInfo>();
+            foreach (PropertyInfo property in SettingsAndData.Instance.GetType().GetProperties())
+            {
+                settingsProperties.Add(property);
+            }
+
+            foreach (string element in settingsFileELements)
+            {
+                int dividerPosition = element.IndexOf("|");
+                string attribute =  element.Substring(0, dividerPosition) ;
+                string value = element.Substring(dividerPosition + 1, element.Length - dividerPosition - 1 ) ;
+
+                foreach (PropertyInfo property in settingsProperties)
+                {
+                    if (attribute == property.Name)
+                    {
+                        property.SetValue(SettingsAndData.Instance, value);
+                        break;
+                    }
+                }
+            }
+
+
         }
 
         private void btnCreateInstallData_Click(object sender, RoutedEventArgs e)

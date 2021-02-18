@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SonistoRepackage
 {
-// Adapted from https://csharpindepth.com/articles/singleton
-// fully lazy instantiation. Den bliver udløst første gang der er en reference til det statiske medlem af den 
-// indeholdte klasse i Instance, og den bliver kun udført en gang pr Appdomæne hvilket gør at det kun er en tråd
-// ad gangen der kan køre den. Disse to ting gør den lazy og threadsafe.
+    // Adapted from https://csharpindepth.com/articles/singleton
+    // fully lazy instantiation. Den bliver udløst første gang der er en reference til det statiske medlem af den 
+    // indeholdte klasse i Instance, og den bliver kun udført en gang pr Appdomæne hvilket gør at det kun er en tråd
+    // ad gangen der kan køre den. Disse to ting gør den lazy og threadsafe.
 
     public sealed class SettingsAndData
     {
@@ -27,17 +27,17 @@ namespace SonistoRepackage
         }
         public const bool TEST = false;
 
-        public string filterFile = @"C:\Sonisto\RepackageFilter.txt";
-        public string workingFolder = @"C:\Sonisto\PackageFolders\";
-        public string userDocFolder = @"C:\Users\test\Documents";
-        public string homeFolder = @"C:\Users\test";
-        public string pluginVst3_32Folder = @"C:\Program Files (x86)\Common Files\VST3";
-        public string pluginVst3_64Folder = @"C:\Program Files\Common Files\VST3";
-        public string pluginAaxFolder = @"\Library\Music\AAX";
-        public string pluginAuFolder = @"\Library\Music\AU";
-        public string pluginVst2_32Folder = @"C:\vst2-32";
-        public string pluginVst2_64Folder = @"C:\vst2-64";
-        public string absoluteFolder = "C:";
+        public string filterFile {get;set;}
+        public string workingFolder { get; set; }
+        public string userDocFolder { get; set; }
+        public string homeFolder { get; set; }
+        public string pluginVst3_32Folder { get; set; }
+        public string pluginVst3_64Folder { get; set; }
+        public string pluginAaxFolder { get; set; }
+        public string pluginAuFolder { get; set; }
+        public string pluginVst2_32Folder { get; set; }
+        public string pluginVst2_64Folder { get; set; }
+        public string absoluteFolder { get; set; }
 
     }
 }
