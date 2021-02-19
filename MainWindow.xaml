@@ -12,13 +12,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border CornerRadius="10" BorderThickness="1" BorderBrush="Black" Background="#FFCDCDCD">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="2" RenderingBias="Quality"/>
-                            </Border.Effect>
+                        <Border CornerRadius="10" BorderThickness="1" BorderBrush="Black" Background="{StaticResource ButtonDefaultColor}">
                             <TextBlock Text="{TemplateBinding Content}" Margin="2,0,2,0" FontSize="10" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
                         </Border>
-
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -29,7 +25,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
                         <Button>
-                            <Border CornerRadius="10" BorderThickness="2" BorderBrush="Black" Background="#FFCDCDCD">
+                            <Border CornerRadius="10" BorderThickness="2" BorderBrush="Black" Background="{StaticResource ButtonDefaultColor}">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="2" RenderingBias="Quality" ShadowDepth="3" Direction="175" Opacity="0.75" Color="#FFBFBFBF"/>
                                 </Border.Effect>
@@ -42,16 +38,14 @@
         </Style>
     </Window.Resources>
 
-
     <Grid>
-
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>
             <ColumnDefinition Width="8*"/>
         </Grid.ColumnDefinitions>
 
 
-        <Button x:Name="btnFindInstaller" Content="1. Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,45,0,0" Height="30" Width="94">
+        <Button x:Name="btnFindInstaller" Content="Find installer" Click="btnFindInstaller_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,45,0,0" Height="30" Width="81" Background="{StaticResource ButtonDefaultColor}">
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -72,8 +66,8 @@
         <Label Name="lblLogfile" Content="Logfile" HorizontalAlignment="Left" Margin="27,396,0,0" VerticalAlignment="Top" Width="94" Visibility="Hidden"/>
         <TextBox Name="txtBxLogfile" Height="23" Margin="91,399,8.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" Visibility="Hidden"/>
 
-        <Button Name="btnCreateInstallData" Click="btnCreateInstallData_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,151,0,0" Height="40" Width="94">
-            <TextBlock Text="2. Create install data" TextWrapping="Wrap" TextAlignment="Center"/>
+        <Button Name="btnCreateInstallData" Click="btnCreateInstallData_Click" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,151,0,0" Height="40" Width="81" Background="{StaticResource ButtonDefaultColor}">
+            <TextBlock Text="Create install data" TextWrapping="Wrap" TextAlignment="Center" Width="62"/>
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
@@ -97,16 +91,16 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="btnPackageVersion" Style="{StaticResource ListBoxButtonFormat}" Content ="Package version" Click="btnPackageVersion_Click" HorizontalAlignment="Right"/>
-
-                        <TextBlock Name="txtBlkPath" Text="{Binding path}" FontSize="10" Width="500" Height="20" Margin="10,10,0,0"/>
+                        <Button Name="btnPackageVersion" Style="{StaticResource ListBoxButtonFormat}" Content ="Package version" Click="btnPackageVersion_Click" HorizontalAlignment="Right" Margin="10,0,10,0"/>
+                        
                         <Button Name="btnFilterPath" Style="{StaticResource ListBoxButtonFormat}" Content ="Filter path" Click="btnFilterpath_Click" HorizontalAlignment="Right"/>
+                        <TextBlock Name="txtBlkPath" Text="{Binding path}" FontSize="10" Width="500" Height="20" Margin="10,0,10,0"/>
 
-                        <TextBlock Name="txtBlkFile" Text="{Binding file}" FontSize="10" Width="150" Height="20" Margin="10,10,0,0"/>
                         <Button Name="btnFilterfile" Style="{StaticResource ListBoxButtonFormat}" Content="Filter file" Click="btnFilterfile_Click" HorizontalAlignment="Right"/>
-
-                        <CheckBox Name="chkBxKeep" Content="Keep" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="True" Checked="chkBxKeep_Checked"/>
-                        <CheckBox Name="chkBxKill" Content="Kill" VerticalAlignment="Center" HorizontalAlignment="Right" Checked="chkBxKill_Checked"/>
+                        <TextBlock Name="txtBlkFile" Text="{Binding file}" FontSize="10" Width="150" Height="20" Margin="10,0,10,0"/>
+                        
+                        <CheckBox Name="chkBxKeep" Content="Keep" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.keep}" Margin="5,0,5,0" Checked="chkBxKeep_Checked"/>
+                        <CheckBox Name="chkBxKill" Content="Kill" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.kill}" Margin="5,0,5,0" Checked="chkBxKill_Checked"/>
 
                         <Separator  Name="MySeparator" 
                                         Height="3"
@@ -119,28 +113,36 @@
             </ItemsControl.ItemTemplate>
         </ListBox>
 
-        <Button Name="btnKillMarkedFiles" HorizontalAlignment="Left" Margin="26,241,0,0" VerticalAlignment="Top" Width="94" Height="40" Click="btnKillMarkedFiles_Click">
-            <TextBlock TextWrapping="Wrap" Text="3. Kill the marked files"/>
+        <Button Name="btnKillMarkedFiles"  HorizontalAlignment="Left" Margin="26,241,0,0" VerticalAlignment="Top" Width="81" Height="40" Click="btnKillMarkedFiles_Click" Background="{StaticResource ButtonDefaultColor}">
+            <TextBlock TextWrapping="Wrap" Width="71" VerticalAlignment="Center" TextAlignment="Center"><Run Text="Kill the "/><LineBreak/><Run/><Run Text="marked files"/></TextBlock>
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <Button Name="btnCreatePackages" HorizontalAlignment="Left" Margin="25,311,0,0" VerticalAlignment="Top" Width="95" Height="55" Click="btnCreatePackages_Click">
-            <TextBlock Text="4. Create Installation Packages" TextWrapping="Wrap" TextAlignment="Center"/>
+        <Button Name="btnCreatePackages" HorizontalAlignment="Left" Margin="25,337,0,0" VerticalAlignment="Top" Width="82" Height="55" Click="btnCreatePackages_Click" Background="{StaticResource ButtonDefaultColor}">
+            <TextBlock Text="Create Installation Packages" TextWrapping="Wrap" TextAlignment="Center"/>
             <Button.Resources>
                 <Style TargetType="Border">
                     <Setter Property="CornerRadius" Value="10"/>
                 </Style>
             </Button.Resources>
         </Button>
-        <TextBox Name="txtBxJsonPath" Height="25" Margin="90,320,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" Visibility="Hidden"/>
-        <Label Content="Json Path" HorizontalAlignment="Left" Margin="26,320,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
+
         <Rectangle Fill="#FFCBCBCB" HorizontalAlignment="Left" Height="4" Margin="0,201,0,0" Stroke="White" VerticalAlignment="Top" Grid.Column="0" Stretch="UniformToFill"/>
         <Label Content="Manual Cleaning Proces. Set the Killboxes" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top" Width="234"/>
         <Rectangle Fill="#FFCBCBCB" HorizontalAlignment="Left" Height="4" Margin="0,294,0,0" Stroke="White" VerticalAlignment="Top" Grid.Column="0" Stretch="UniformToFill"/>
-        <Label Content="Repackage Plugin Installer Process" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="234"/>
+        <Label Content="Repackage Plugin Installer Process" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="234" FontSize="13" FontWeight="Bold"/>
+        <Label Content="Mark the files to their proper package" HorizontalAlignment="Left" Margin="10,305,0,0" VerticalAlignment="Top" Width="234"/>
+        <Label Content="1" HorizontalAlignment="Left" Margin="2,40,0,0" VerticalAlignment="Top" Width="23" Height="37" FontSize="20"/>
+        <Label Content="2" HorizontalAlignment="Left" Margin="2,151,0,0" VerticalAlignment="Top" Width="23" Height="37" FontSize="20"/>
+        <Label Content="3" HorizontalAlignment="Left" Margin="2,241,0,0" VerticalAlignment="Top" Width="23" Height="37" FontSize="20"/>
+        <Label Content="4" HorizontalAlignment="Left" Margin="2,342,0,0" VerticalAlignment="Top" Width="23" Height="37" FontSize="20"/>
+
+
+        <TextBox Name="txtBxJsonPath" Height="25" Margin="90,320,7.6,0" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Stretch" Grid.Column="0" Visibility="Hidden"/>
+        <Label Content="Json Path" HorizontalAlignment="Left" Margin="26,320,0,0" VerticalAlignment="Top" Visibility="Hidden"/>
 
     </Grid>
 </Window>

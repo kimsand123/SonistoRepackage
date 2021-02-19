@@ -10,7 +10,7 @@ using System.Threading;
 
 using System.Windows;
 using System.Windows.Controls;
-
+using System.Windows.Media;
 using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
 using SonistoRepackage.Model;
@@ -233,6 +233,8 @@ namespace SonistoRepackage
                 }
             }
             FillListBox();
+            
+            btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
         }
 
         private void btnCreatePackages_Click(object sender, RoutedEventArgs e)
@@ -444,6 +446,7 @@ namespace SonistoRepackage
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
             listBoxElement.keepKill.kill = true;
+            btnKillMarkedFiles.Background = Brushes.Red;
         }
 
         //Code concerning user handling of process SAVE UNTIL IDEA ABANDONED

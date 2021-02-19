@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:SonistoRepackage"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <SolidColorBrush x:Key="ButtonDefaultColor" Color="#FFDDDDDD"/>
     </Application.Resources>
 </Application>
