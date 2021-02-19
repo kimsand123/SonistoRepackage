@@ -140,6 +140,8 @@ namespace SonistoRepackage
 
                 //Måske man kan bruge original eventlisten - cleanList til at forbedre på filtret.
                 //Den resulterende liste skal renses.
+
+                btnCreateInstallData.Background = (Brush)Application.Current.Resources["DoneColor"];
             }
         }
 
@@ -217,6 +219,7 @@ namespace SonistoRepackage
                 this.txtBxPath.Text = path;
                 this.txtBxInstaller.Text = filename;
             }
+            btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
         }
 
         private void btnKillMarkedFiles_Click(object sender, RoutedEventArgs e)
@@ -248,6 +251,7 @@ namespace SonistoRepackage
             //check if this kombination has been before.
             //if so add the element to the proper kombination list, with the belonging element from cleanlist
             //
+
 
             Dictionary<string, List<PackageElement>> packageLists = new Dictionary<string, List<PackageElement>>();
             List<string> differentCombinations = new List<string>();//a string build to show the package combination like "bit32vst2" or "all"
@@ -344,6 +348,11 @@ namespace SonistoRepackage
             FillListBox();
             this.txtBxInstaller.Text = "";
             this.txtBxPath.Text = "";
+
+            btnFindInstaller.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            btnCreateInstallData.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            btnCreatePackages.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
