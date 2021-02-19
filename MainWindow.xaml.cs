@@ -54,9 +54,11 @@ namespace SonistoRepackage
             //Read the ini file and store it in SettingsAndData Singleton
             InitializeComponent();
             //Create the filterfile if it does not exist
-            if (!File.Exists(SettingsAndData.Instance.filterFile))
+
+            string filterFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsAndData.Instance.filterFile);
+            if (!File.Exists(filterFile))
             {
-                using (StreamWriter sw = File.CreateText(SettingsAndData.Instance.filterFile))
+                using (StreamWriter sw = File.CreateText(filterFile))
                 {
 
                 }
@@ -65,10 +67,19 @@ namespace SonistoRepackage
 
         private void initializeApplication()
         {
+            string settingsFile = "";
+            if (SettingsAndData.Instance.deployBuild)
+            {
 
-            string _filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
-            _filePath = Directory.GetParent(Directory.GetParent(_filePath).FullName).FullName;
-            string settingsFile = _filePath + "\\SonistoRepackageSettings.txt";
+                string _filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+                _filePath = Directory.GetParent(Directory.GetParent(_filePath).FullName).FullName;
+                settingsFile = _filePath + "\\SonistoRepackageSettings.txt";
+
+            }
+            else
+            {
+                settingsFile = Directory.GetCurrentDirectory() + "\\SonistoRepackageSettings.txt";
+            }
             List<string> settingsFileELements = File.ReadAllLines(settingsFile).ToList();
 
             List<PropertyInfo> settingsProperties = new List<PropertyInfo>();
@@ -101,7 +112,7 @@ namespace SonistoRepackage
             CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
 
             //testArea
-            if (SettingsAndData.TEST)
+            if (SettingsAndData.Instance.test)
             {
                 Testing tests = new Testing();
 
@@ -341,6 +352,7 @@ namespace SonistoRepackage
 
         private void ResetApplication()
         {
+
             listBoxItems.Clear(); 
             eventStringList.Clear();
             cleanList.Clear();
@@ -353,6 +365,22 @@ namespace SonistoRepackage
             btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
             btnCreateInstallData.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
             btnCreatePackages.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+
+
+            if (Directory.Exists(SettingsAndData.Instance.workingFolder))
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        Arguments = SettingsAndData.Instance.workingFolder,
+                        FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show(string.Format("{0} Directory does not exist!", SettingsAndData.Instance.workingFolder));
+            }     
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
@@ -422,7 +450,8 @@ namespace SonistoRepackage
 
         private void WriteToFile(string filterText)
         {
-            using (StreamWriter sw = File.AppendText(SettingsAndData.Instance.filterFile))
+            string filterFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsAndData.Instance.filterFile);
+            using (StreamWriter sw = File.AppendText(filterFile))
             {
                 sw.WriteLine(filterText);
             }

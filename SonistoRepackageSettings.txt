@@ -1,4 +1,4 @@
-﻿filterFile|C:\Sonisto\RepackageFilter.txt
+﻿filterFile|RepackageFilter.txt
 workingFolder|C:\Sonisto\PackageFolders\
 userDocFolder|C:\Users\test\Documents
 homeFolder|C:\Users\test

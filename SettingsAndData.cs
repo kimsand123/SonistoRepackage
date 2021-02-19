@@ -25,8 +25,8 @@ namespace SonistoRepackage
             }
             internal static readonly SettingsAndData instance = new SettingsAndData();
         }
-        public const bool TEST = false;
-
+        public  bool test = false;
+        public bool deployBuild = false;
         public string filterFile {get;set;}
         public string workingFolder { get; set; }
         public string userDocFolder { get; set; }
