@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,10 +28,14 @@ namespace SonistoRepackage
         }
         public  bool test = false;
         public bool deployBuild = false;
+        public string userDocFolder = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents");
+        public string homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
         public string filterFile {get;set;}
         public string workingFolder { get; set; }
-        public string userDocFolder { get; set; }
-        public string homeFolder { get; set; }
+        //public string userDocFolder { get; set; }
+        //public string homeFolder { get; set; }
+        public string logFile { get; set; }
         public string pluginVst3_32Folder { get; set; }
         public string pluginVst3_64Folder { get; set; }
         public string pluginAaxFolder { get; set; }

@@ -15,6 +15,7 @@ using Microsoft.Win32;
 using SonistoRepackage.InstallDetection;
 using SonistoRepackage.Model;
 using SonistoRepackage.Tests;
+using SonistoRepackage.Utils;
 using SonistoRepackage.View;
 
 using ItemForListbox = SonistoRepackage.InstallDetection.ItemForListbox;
@@ -47,6 +48,7 @@ namespace SonistoRepackage
         List<string> eventStringList = null;
         List<string> cleanList = null;
         List<string> placeHolderFoldersList = null;
+        Log log = new Log();
 
         public MainWindow()
         {
@@ -67,41 +69,47 @@ namespace SonistoRepackage
 
         private void initializeApplication()
         {
-            string settingsFile = "";
-            if (SettingsAndData.Instance.deployBuild)
+            try
             {
-
-                string _filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
-                _filePath = Directory.GetParent(Directory.GetParent(_filePath).FullName).FullName;
-                settingsFile = _filePath + "\\SonistoRepackageSettings.txt";
-
-            }
-            else
-            {
-                settingsFile = Directory.GetCurrentDirectory() + "\\SonistoRepackageSettings.txt";
-            }
-            List<string> settingsFileELements = File.ReadAllLines(settingsFile).ToList();
-
-            List<PropertyInfo> settingsProperties = new List<PropertyInfo>();
-            foreach (PropertyInfo property in SettingsAndData.Instance.GetType().GetProperties())
-            {
-                settingsProperties.Add(property);
-            }
-
-            foreach (string element in settingsFileELements)
-            {
-                int dividerPosition = element.IndexOf("|");
-                string attribute =  element.Substring(0, dividerPosition) ;
-                string value = element.Substring(dividerPosition + 1, element.Length - dividerPosition - 1 ) ;
-
-                foreach (PropertyInfo property in settingsProperties)
+                string settingsFile = "";
+                if (SettingsAndData.Instance.deployBuild)
                 {
-                    if (attribute == property.Name)
+
+                    string _filePath = Path.GetDirectoryName(System.AppDomain.CurrentDomain.BaseDirectory);
+                    _filePath = Directory.GetParent(Directory.GetParent(_filePath).FullName).FullName;
+                    settingsFile = _filePath + "\\SonistoRepackageSettings.txt";
+
+                }
+                else
+                {
+                    settingsFile = Directory.GetCurrentDirectory() + "\\SonistoRepackageSettings.txt";
+                }
+                List<string> settingsFileELements = File.ReadAllLines(settingsFile).ToList();
+
+                List<PropertyInfo> settingsProperties = new List<PropertyInfo>();
+                foreach (PropertyInfo property in SettingsAndData.Instance.GetType().GetProperties())
+                {
+                    settingsProperties.Add(property);
+                }
+
+                foreach (string element in settingsFileELements)
+                {
+                    int dividerPosition = element.IndexOf("|");
+                    string attribute = element.Substring(0, dividerPosition);
+                    string value = element.Substring(dividerPosition + 1, element.Length - dividerPosition - 1);
+
+                    foreach (PropertyInfo property in settingsProperties)
                     {
-                        property.SetValue(SettingsAndData.Instance, value);
-                        break;
+                        if (attribute == property.Name)
+                        {
+                            property.SetValue(SettingsAndData.Instance, value);
+                            break;
+                        }
                     }
                 }
+            } catch (Exception e)
+            {
+                log.write(e);
             }
 
 
@@ -109,71 +117,84 @@ namespace SonistoRepackage
 
         private void btnCreateInstallData_Click(object sender, RoutedEventArgs e)
         {
-            CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
-
-            //testArea
-            if (SettingsAndData.Instance.test)
+            try
             {
-                Testing tests = new Testing();
+                CleanUpInstalledElementList cleanTheList = new CleanUpInstalledElementList();
+
+                //testArea
+                if (SettingsAndData.Instance.test)
+                {
+                    Testing tests = new Testing();
 
 
-                //tests.testInstallationPackageDTO();
-                //tests.testRadioButtonPopUp();
+                    //tests.testInstallationPackageDTO();
+                    //tests.testRadioButtonPopUp();
 
-            }
-            //testArea ending
-            else
+                }
+                //testArea ending
+                else
+                {
+                    ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
+                    Detection fileDetector = new Detection();
+                    Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
+
+                    //Getting data from the installation proces
+                    //Start thread
+                    recorder.Start();
+                    executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
+                    fileDetector.stop();
+                    //End Thread
+                    recorder.Abort();
+                    //Getting data from the installation proces
+
+                    eventStringList = fileDetector.getEventList();
+                    cleanList = cleanTheList.doIt(eventStringList);
+
+                    //First User pass of data created by the install proces
+                    //Creating the total folder structure.
+
+                    placeHolderStructure.createPlaceHolderStructure(cleanList);
+                    placeHolderFoldersList = placeHolderStructure.getFolders();
+                    //FillListBox (the clean list, the actual folders)
+                    FillListBox();
+
+
+                    //Måske man kan bruge original eventlisten - cleanList til at forbedre på filtret.
+                    //Den resulterende liste skal renses.
+
+                    btnCreateInstallData.Background = (Brush)Application.Current.Resources["DoneColor"];
+                }
+            } catch (Exception ex)
             {
-                ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
-                Detection fileDetector = new Detection();
-                Thread recorder = new Thread(new ThreadStart(fileDetector.InstanceMethod));
-
-                //Getting data from the installation proces
-                //Start thread
-                recorder.Start();
-                executeInnoInstaller(this.txtBxPath.Text, this.txtBxInstaller.Text);
-                fileDetector.stop();
-                //End Thread
-                recorder.Abort();
-                //Getting data from the installation proces
-
-                eventStringList = fileDetector.getEventList();
-                cleanList = cleanTheList.doIt(eventStringList);
-
-                //First User pass of data created by the install proces
-                //Creating the total folder structure.
-
-                placeHolderStructure.createPlaceHolderStructure(cleanList);
-                placeHolderFoldersList = placeHolderStructure.getFolders();
-                //FillListBox (the clean list, the actual folders)
-                FillListBox();
-
-
-                //Måske man kan bruge original eventlisten - cleanList til at forbedre på filtret.
-                //Den resulterende liste skal renses.
-
-                btnCreateInstallData.Background = (Brush)Application.Current.Resources["DoneColor"];
+                log.write(ex);
             }
         }
 
         //Method to fill up the listbox
         private void FillListBox()
         {
-            listBoxItems = new List<ItemForListbox>();
-            //If the file in the cleanlist exists, then it is a file, if not it is a folder.
-            //If it is a folder, then the last part of the textfile is not to be considered a file, but a folder.
-            for (int idx = 0; idx < cleanList.Count; idx++)
+            try
             {
-                if (File.Exists(cleanList[idx]))
+                listBoxItems = new List<ItemForListbox>();
+                //If the file in the cleanlist exists, then it is a file, if not it is a folder.
+                //If it is a folder, then the last part of the textfile is not to be considered a file, but a folder.
+                for (int idx = 0; idx < cleanList.Count; idx++)
                 {
-                        listBoxItems.Add(new ItemForListbox() {choices=new InstallationPackageChoice(), keepKill = new KeepKill(), path=Path.GetDirectoryName(cleanList[idx]), file=Path.GetFileName(cleanList[idx])}); 
+                    if (File.Exists(cleanList[idx]))
+                    {
+                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(cleanList[idx]), file = Path.GetFileName(cleanList[idx]) });
+                    }
+                    else
+                    {
+                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = cleanList[idx] });
+                    }
                 }
-                else
-                {
-                    listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = cleanList[idx] });
-                }
+                this.lstBoxInfoWindow.ItemsSource = listBoxItems;
             }
-            this.lstBoxInfoWindow.ItemsSource = listBoxItems;
+            catch (Exception e)
+            {
+                log.write(e);
+            }
         }
 
         // Try to execute the installer with another user... Does not work properly
@@ -188,8 +209,8 @@ namespace SonistoRepackage
             installerProces.FileName = "\"" + path + fileName + "\"";
             installerProces.WorkingDirectory = path;
             installerProces.WindowStyle = ProcessWindowStyle.Normal;
-            installerProces.UserName = "test";
-            installerProces.PasswordInClearText = "test";
+            //installerProces.UserName = "test";
+            //installerProces.PasswordInClearText = "test";
 
             try
             {
@@ -203,7 +224,7 @@ namespace SonistoRepackage
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                log.write(e);
             }
         }
 
@@ -211,44 +232,56 @@ namespace SonistoRepackage
         {
             // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
             // Create OpenFileDialog
-            OpenFileDialog openFileDlg = new OpenFileDialog();
-            openFileDlg.DefaultExt = ".exe";
-            openFileDlg.Filter = "Inno executable (.exe)| *.exe";
-            openFileDlg.InitialDirectory = @"C:\Temp\";
-
-            // Launch OpenFileDialog by calling ShowDialog method
-            Nullable<bool> result = openFileDlg.ShowDialog();
-            // Get the selected file name and display in a TextBox.
-            // Load content of file in a TextBlock
-            if (result == true)
+            try
             {
-                string file = openFileDlg.FileName;
-                int to = file.Length - 1;
-                int lastOccurance = file.LastIndexOf(@"\");
-                string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
-                string path = file.Replace(filename, "");
-                this.txtBxPath.Text = path;
-                this.txtBxInstaller.Text = filename;
+                OpenFileDialog openFileDlg = new OpenFileDialog();
+                openFileDlg.DefaultExt = ".exe";
+                openFileDlg.Filter = "Inno executable (.exe)| *.exe";
+                openFileDlg.InitialDirectory = @"C:\Temp\";
+
+                // Launch OpenFileDialog by calling ShowDialog method
+                Nullable<bool> result = openFileDlg.ShowDialog();
+                // Get the selected file name and display in a TextBox.
+                // Load content of file in a TextBlock
+                if (result == true)
+                {
+                    string file = openFileDlg.FileName;
+                    int to = file.Length - 1;
+                    int lastOccurance = file.LastIndexOf(@"\");
+                    string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
+                    string path = file.Replace(filename, "");
+                    this.txtBxPath.Text = path;
+                    this.txtBxInstaller.Text = filename;
+                }
+                btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
+            }catch (Exception ex)
+            {
+                log.write(ex);
             }
-            btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
         }
 
         private void btnKillMarkedFiles_Click(object sender, RoutedEventArgs e)
         {
-            int numberOfElementsInListBox = listBoxItems.Count;
-            for (int idx = numberOfElementsInListBox - 1; idx > -1; idx--)
+            try
             {
-                if (listBoxItems[idx].keepKill.kill == true)
+                int numberOfElementsInListBox = listBoxItems.Count;
+                for (int idx = numberOfElementsInListBox - 1; idx > -1; idx--)
                 {
-                    listBoxItems.RemoveAt(idx);
-                    cleanList.RemoveAt(idx);
-                    placeHolderFoldersList.RemoveAt(idx);
-                    numberOfElementsInListBox -= 1;
+                    if (listBoxItems[idx].keepKill.kill == true)
+                    {
+                        listBoxItems.RemoveAt(idx);
+                        cleanList.RemoveAt(idx);
+                        placeHolderFoldersList.RemoveAt(idx);
+                        numberOfElementsInListBox -= 1;
+                    }
                 }
+                FillListBox();
+
+                btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            } catch (Exception ex)
+            {
+                log.write(ex);
             }
-            FillListBox();
-            
-            btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
         }
 
         private void btnCreatePackages_Click(object sender, RoutedEventArgs e)
@@ -263,96 +296,106 @@ namespace SonistoRepackage
             //if so add the element to the proper kombination list, with the belonging element from cleanlist
             //
 
-
-            Dictionary<string, List<PackageElement>> packageLists = new Dictionary<string, List<PackageElement>>();
-            List<string> differentCombinations = new List<string>();//a string build to show the package combination like "bit32vst2" or "all"
-
-            //Getting the different combinations strings that is existent in this install and 
-            //put them in a list to use later so that it is converted to an integer index.
-            for (int idx = 0; idx < listBoxItems.Count; idx++)
+            try
             {
-                string packageChoiceString = generatePackageChoiceString(listBoxItems[idx].choices);
-                if (!differentCombinations.Contains(packageChoiceString))
+                Dictionary<string, List<PackageElement>> packageLists = new Dictionary<string, List<PackageElement>>();
+                List<string> differentCombinations = new List<string>();//a string build to show the package combination like "bit32vst2" or "all"
+
+                //Getting the different combinations strings that is existent in this install and 
+                //put them in a list to use later so that it is converted to an integer index.
+                for (int idx = 0; idx < listBoxItems.Count; idx++)
                 {
-                    differentCombinations.Add(packageChoiceString);
-                }
-            }
-
-            if (differentCombinations.Count == 1)
-            {
-                MessageBox.Show("You need to choose an architecture and format for at least one of the files.", "No Arch/Form");
-                return;
-            }
-
-            //Initialize the packageLists on the basis of how many combination strings there has been discovered
-            //so the first packagelist will be recognized on the first combination string.
-            for (int idx = 0; idx < differentCombinations.Count; idx++)
-            {
-                packageLists.Add(differentCombinations[idx], new List<PackageElement>());
-            }
-
-
-            //disperse the original list into the proper packagelists on the basis of the index of the combinationlist
-            for (int idx = 0; idx < listBoxItems.Count; idx++)
-            {
-                PackageElement packageElement = new PackageElement();
-                packageElement.placeHolderPath = placeHolderFoldersList[idx];
-                packageElement.realPath = cleanList[idx];
-
-                List<PackageElement> list = null;
-                //converting the combinationstring into the proper int.
-                int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
-
-                //If the key in the packaglist contains the packagecombination string
-                if (packageLists.ContainsKey(differentCombinations[properPackageIndex]))
-                {
-                    //if all add it to all the lists.
-                    if(differentCombinations[properPackageIndex] == "all")
+                    string packageChoiceString = generatePackageChoiceString(listBoxItems[idx].choices);
+                    if (!differentCombinations.Contains(packageChoiceString))
                     {
-                        foreach(KeyValuePair<string, List<PackageElement>> x in packageLists)
+                        differentCombinations.Add(packageChoiceString);
+                    }
+                }
+
+                if (differentCombinations.Count == 1)
+                {
+                    MessageBox.Show("You need to choose an architecture and format for at least one of the files.", "No Arch/Form");
+                    return;
+                }
+
+                //Initialize the packageLists on the basis of how many combination strings there has been discovered
+                //so the first packagelist will be recognized on the first combination string.
+                for (int idx = 0; idx < differentCombinations.Count; idx++)
+                {
+                    packageLists.Add(differentCombinations[idx], new List<PackageElement>());
+                }
+
+
+                //disperse the original list into the proper packagelists on the basis of the index of the combinationlist
+                for (int idx = 0; idx < listBoxItems.Count; idx++)
+                {
+                    PackageElement packageElement = new PackageElement();
+                    packageElement.placeHolderPath = placeHolderFoldersList[idx];
+                    packageElement.realPath = cleanList[idx];
+
+                    List<PackageElement> list = null;
+                    //converting the combinationstring into the proper int.
+                    int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
+
+                    //If the key in the packaglist contains the packagecombination string
+                    if (packageLists.ContainsKey(differentCombinations[properPackageIndex]))
+                    {
+                        //if all add it to all the lists.
+                        if (differentCombinations[properPackageIndex] == "all")
                         {
-                            List<PackageElement> y = x.Value;
-                            y.Add(packageElement);
+                            foreach (KeyValuePair<string, List<PackageElement>> x in packageLists)
+                            {
+                                List<PackageElement> y = x.Value;
+                                y.Add(packageElement);
+                            }
+                        }
+                        else //add the element to the proper list
+                        {
+                            list = packageLists[differentCombinations[properPackageIndex]];
+                            list.Add(packageElement);
                         }
                     }
-                    else //add the element to the proper list
+                }
+
+                //clear the working folder
+                placeHolderStructure.prepareWorkingFolder();
+
+
+                //For each package list, create and copy the files and folders from their real position to their package positions.
+                //If there were no selections of packages, do the process again. There always needs to be one architecture and format selection.
+                foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists)
+                {
+                    string key = installPackage.Key;
+                    if (key != "all")
                     {
-                        list = packageLists[differentCombinations[properPackageIndex]];
-                        list.Add(packageElement);
+                        placeHolderStructure.CreateFolders(key, installPackage.Value);
+                        zipThePackageFolder(key);
                     }
                 }
-            }
 
-            //clear the working folder
-            placeHolderStructure.prepareWorkingFolder();
-
-
-            //For each package list, create and copy the files and folders from their real position to their package positions.
-            //If there were no selections of packages, do the process again. There always needs to be one architecture and format selection.
-            foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists)
+                MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
+                ResetApplication();
+            }catch (Exception ex)
             {
-                string key = installPackage.Key;
-                if (key != "all")
-                {
-                    placeHolderStructure.CreateFolders(key, installPackage.Value);
-                    zipThePackageFolder(key);
-                }
+                log.write(ex);
             }
-            
-            MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
-            ResetApplication();
         }
 
         private void zipThePackageFolder(string key)
         {
-            string startPath = SettingsAndData.Instance.workingFolder + "\\" + key;
-            string zipPath = SettingsAndData.Instance.workingFolder + "\\" + key + ".zip";
-            ZipFile.CreateFromDirectory(startPath, zipPath);
+            try
+            {
+                string startPath = SettingsAndData.Instance.workingFolder + "\\" + key;
+                string zipPath = SettingsAndData.Instance.workingFolder + "\\" + key + ".zip";
+                ZipFile.CreateFromDirectory(startPath, zipPath);
+            } catch (Exception ex)
+            {
+                log.write(ex);
+            }
         }
 
         private void ResetApplication()
         {
-
             listBoxItems.Clear(); 
             eventStringList.Clear();
             cleanList.Clear();
@@ -432,8 +475,14 @@ namespace SonistoRepackage
 
         private void btnFilterfile_Click(object sender, RoutedEventArgs e)
         {
-            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
-            WriteToFile(listBoxElement.file);
+            try
+            {
+                ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+                WriteToFile(listBoxElement.file);
+            }catch (Exception ex)
+            {
+                log.write(ex);
+            }
         }
 
         private void btnFilterpath_Click(object sender, RoutedEventArgs e)
@@ -486,143 +535,5 @@ namespace SonistoRepackage
             listBoxElement.keepKill.kill = true;
             btnKillMarkedFiles.Background = Brushes.Red;
         }
-
-        //Code concerning user handling of process SAVE UNTIL IDEA ABANDONED
-
-        /*private System.Security.SecureString getSecurePassword(string passwordText)
-        {
-            System.Security.SecureString encPassword = new System.Security.SecureString();
-
-            foreach (System.Char c in passwordText)
-            {
-                encPassword.AppendChar(c);
-            }
-
-            return encPassword;
-        }*/
-
-
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-        //Code to die-----------------------------------------------------------------------------------
-
-
-        /*  private void txtBxLogfile_GotFocus(object sender, RoutedEventArgs e)
-          {
-              // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
-              // Create OpenFileDialog
-              SaveFileDialog saveFileDlg = new SaveFileDialog();
-              saveFileDlg.DefaultExt = ".log";
-              saveFileDlg.Filter = "JsonInstall log (.log)| *.log";
-              saveFileDlg.Title = "Select folder and filename for Sonisto Json logfile";
-
-              // Launch OpenFileDialog by calling ShowDialog method
-              //Nullable<bool> result = saveFileDlg.ShowDialog();
-              saveFileDlg.ShowDialog();
-
-              if (saveFileDlg.FileName != "")
-              {
-                  this.txtBxLogfile.Text = saveFileDlg.FileName;
-              }
-          }*/
-
-        /* private void btnSelectJsonPath_Click(object sender, RoutedEventArgs e)
-         {
-             // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
-             // Create OpenFileDialog
-             SaveFileDialog saveFileDlg = new SaveFileDialog();
-             saveFileDlg.DefaultExt = ".json";
-             saveFileDlg.Filter = "Sonisto json (.json)| *.json";
-             saveFileDlg.Title = "Select folder and filename for Sonisto JSON";
-
-             // Launch OpenFileDialog by calling ShowDialog method
-             //Nullable<bool> result = saveFileDlg.ShowDialog();
-             saveFileDlg.ShowDialog();
-
-             if (saveFileDlg.FileName != "")
-             {
-                 string file = saveFileDlg.FileName;
-                 int to = file.Length - 1;
-                 int lastOccurance = file.LastIndexOf(@"\");
-                 string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
-                 string path = file.Replace(filename, "");
-                 this.txtBxJsonPath.Text = path;
-                 this.txtBxJsonFileName.Text = filename;
-             }
-         }*/
-
-        /* private void btnCreateFilter_Click(object sender, RoutedEventArgs e)
-         {
-             // run innounp.exe -v installerfile -> filter.txt
-             // Read filter.txt, and put the filenames into a Dictionary
-             //executeInnounp(this.txtBxPath.Text, this.txtBxInstaller.Text);
-         }*/
-
-        /*private void executeInnounp(string path, string filename)
-        {
-            // Use ProcessStartInfo class
-            ProcessStartInfo innounpProces = new ProcessStartInfo();
-            innounpProces.CreateNoWindow = false;
-            innounpProces.UseShellExecute = false;
-            innounpProces.FileName = "innounp.exe";
-            innounpProces.WorkingDirectory = path;
-            innounpProces.WindowStyle = ProcessWindowStyle.Normal;
-            innounpProces.RedirectStandardOutput = true;
-            innounpProces.Arguments = "-v \"" + filename + "\"";                 
-                
-            try
-            {
-                // Start the process with the info we specified.
-                // Call WaitForExit and then the using statement will close.
-                using (Process exeProcess = Process.Start(innounpProces))
-                {
-                    string line = "";
-                    string tmpLine;
-                    int counter = 0;
-                    while (!exeProcess.StandardOutput.EndOfStream)
-                    {
-                        tmpLine = exeProcess.StandardOutput.ReadLine();
-                        //skip the first 3 lines of the datastream
-                        if ( counter > 2)
-                        {
-                            if (tmpLine.Contains(":"))
-                            {
-                                filterElements.Add(counter, convertInnoList.convertElement(tmpLine));
-                                line = line + tmpLine + "\n";
-                            }
-                        }
-                        counter += 1;
-                    }
-                    exeProcess.WaitForExit();
-                    //Removing the last install_script.iss entry
-                    filterElements.Remove(counter - 2);
-                    //Getting the filename, path
-
-                    //Creating filename of filter file
-                    int idx = filename.IndexOf(".");
-                    string filterFileName = filename.Substring(0, idx) + "_filter.txt";
-                    string filterFile = path + filterFileName;
-
-                    //if file exists delete. Create filter file using data from line
-                    if (File.Exists(path + filterFileName))
-                    {
-                        File.Delete(path + filterFileName);
-                    }
-                    File.WriteAllText(path + filterFileName, line);
-                    //int exitCode = exeProcess.ExitCode;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            } 
-        }*/
     }
-
-
-
-
 }
