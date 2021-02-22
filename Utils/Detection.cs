@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SonistoRepackage.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Principal;
@@ -7,12 +8,10 @@ namespace SonistoRepackage.InstallDetection
 {
     public class Detection
     {
-
+        Log log = new Log();
         bool startRecord = false;
         List<String> eventList = new List<string>();
-
-
-        Dictionary<int, WatchedElement> watchedList = new Dictionary<int, WatchedElement>();
+        ///string groupOwner = 
 
         public Detection()
         {
@@ -73,7 +72,8 @@ namespace SonistoRepackage.InstallDetection
             try
             {
                 owner = File.GetAccessControl(e.FullPath).GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
-                if (owner.Contains("BUILTIN\\Administratorer"))
+                //log.write(owner, "XXXXXXXXXXXXOwnerXXXXXXXXXXXX");
+                if (owner.Contains("Admin"))
                 //if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
@@ -93,7 +93,8 @@ namespace SonistoRepackage.InstallDetection
             try
             {
                 owner = File.GetAccessControl(e.FullPath).GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
-                if (owner.Contains("BUILTIN\\Administratorer"))
+                log.write(owner, "XXXXXXXXXXXXOwnerXXXXXXXXXXXX");
+                //if (owner.Contains("Admin"))
                 //if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);
@@ -102,6 +103,7 @@ namespace SonistoRepackage.InstallDetection
             }
             catch (Exception ex)
             {
+
             }
         }
     }
