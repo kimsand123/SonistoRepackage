@@ -79,7 +79,7 @@
         <Label Content="6-" HorizontalAlignment="Left" Margin="621,115,0,0" VerticalAlignment="Top" Width="33" Height="37" FontSize="20" Grid.Row="0"/>
 
         <!-- LISTBOX -->
-        <ListBox Name="lstBoxInfoWindow" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" ScrollViewer.VerticalScrollBarVisibility="Visible" Margin="5,1.2,4.6,-0.4" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <ListBox Name="lstBoxInfoWindow" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" ScrollViewer.VerticalScrollBarVisibility="Visible" Margin="5,20,5,5" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Style.Triggers>
@@ -103,9 +103,17 @@
                         <Button Name="btnFilterfile" Content="Filter file" Click="btnFilterfile_Click" HorizontalAlignment="Right"/>
                         <TextBlock Name="txtBlkFile" Text="{Binding file, Mode=TwoWay}" FontSize="10" Width="150" Height="20" Margin="10,0,10,0"/>
 
-                        <CheckBox Name="chkBxKeep" Content="Keep" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.keep, Mode=TwoWay}" Margin="5,0,5,0" Checked="chkBxKeep_Checked"/>
                         <CheckBox Name="chkBxKill" Content="Kill" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.kill, Mode=TwoWay}" Margin="5,0,5,0" Checked="chkBxKill_Checked"/>
                     </StackPanel>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=chkBxKill, Path=IsChecked}">
+                            <Setter TargetName="btnFilterfile" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="btnFilterPath" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="btnPackageVersion" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="txtBlkPath" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="txtBlkFile" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ListBox>

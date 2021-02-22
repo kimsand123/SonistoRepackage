@@ -70,7 +70,7 @@ namespace SonistoRepackage
         private void initializeApplication()
         {
             try
-            {   
+            {
                 string settingsFile = "";
                 if (SettingsAndData.Instance.deployBuild)
                 {
@@ -131,7 +131,7 @@ namespace SonistoRepackage
                 }
                 //testArea ending
                 else
-               
+
                 {
                     ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
                     Detection fileDetector = new Detection();
@@ -256,7 +256,7 @@ namespace SonistoRepackage
                     this.txtBxInstaller.Text = filename;
                 }
                 btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 log.write(ex, "Exception");
             }
@@ -374,7 +374,7 @@ namespace SonistoRepackage
                 //Reset the application for another plugin
                 MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
                 ResetApplication();
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 log.write(ex, "Exception");
             }
@@ -395,7 +395,7 @@ namespace SonistoRepackage
 
         private void ResetApplication()
         {
-            listBoxItems.Clear(); 
+            listBoxItems.Clear();
             eventStringList.Clear();
             cleanList.Clear();
             placeHolderFoldersList.Clear();
@@ -410,11 +410,11 @@ namespace SonistoRepackage
 
 
             if (Directory.Exists(SettingsAndData.Instance.workingFolder))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo
-                    {
-                        Arguments = SettingsAndData.Instance.workingFolder,
-                        FileName = "explorer.exe"
+                    Arguments = SettingsAndData.Instance.workingFolder,
+                    FileName = "explorer.exe"
                 };
 
                 Process.Start(startInfo);
@@ -422,7 +422,7 @@ namespace SonistoRepackage
             else
             {
                 MessageBox.Show(string.Format("{0} Directory does not exist!", SettingsAndData.Instance.workingFolder));
-            }     
+            }
         }
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
@@ -503,7 +503,7 @@ namespace SonistoRepackage
                     WriteToFile(window.pathResult);
 
                 }
-            }catch (Exception ex)
+            } catch (Exception ex)
             {
                 log.write(ex, "Exception");
             }
@@ -511,18 +511,36 @@ namespace SonistoRepackage
 
         private void WriteToFile(string filterText)
         {
-            try { 
+            try {
                 string filterFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsAndData.Instance.filterFile);
                 using (StreamWriter sw = File.AppendText(filterFile))
                 {
                     sw.WriteLine(filterText);
                 }
-            }catch (Exception ex)
-                {
-                    log.write(ex, "Exception");
-                }
-}
+            } catch (Exception ex)
+            {
+                log.write(ex, "Exception");
+            }
+        }
+    
+        private void chkBxKill_Checked(object sender, RoutedEventArgs e)
+        {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            if (listBoxElement.keepKill.kill == false)
+            {
+                listBoxElement.keepKill.kill = true;
+            }
+            else
+            {
+                listBoxElement.keepKill.kill = false;
+            }
+            btnKillMarkedFiles.Background = Brushes.Red;
 
+            
+            
+            
+
+        }
         private object getListBoxElement(object sender)
         {
             int index = 0;
@@ -540,17 +558,6 @@ namespace SonistoRepackage
             return this.lstBoxInfoWindow.Items[index];
         }
 
-        private void chkBxKeep_Checked(object sender, RoutedEventArgs e)
-        {
-            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
-            listBoxElement.keepKill.keep = true;          
-        }
 
-        private void chkBxKill_Checked(object sender, RoutedEventArgs e)
-        {
-            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
-            listBoxElement.keepKill.kill = true;
-            btnKillMarkedFiles.Background = Brushes.Red;
-        }
     }
 }
