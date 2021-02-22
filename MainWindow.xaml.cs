@@ -32,17 +32,17 @@ namespace SonistoRepackage
     //pass them through filters. 
     //1. pass is if the element is created or renamed they pass through the filter
     //2. pass is if the file still exists, and was not a temporary file.
+    //3. pass is the filterFile. If any of the strings in this file exists in the element, remove it.
     //Show clean list of installed elements in listbox
     //kill user marked elements from lists
     //create the placeHolderStructure for the cleaned list
     //assign each element to an install package. Default is all
-    //Create package list for each install package
-    //create and copy the filestructure from their real placement to their package placement
+    //Create package list for each install package by copying the file from its installed position to is package position
+    //Reset
     //Job done.
 
     public partial class MainWindow : Window
     {
-
         List<ItemForListbox> listBoxItems = new List<ItemForListbox>();
         CreateFolderStructure placeHolderStructure = new CreateFolderStructure();
         List<string> eventStringList = null;
@@ -70,7 +70,7 @@ namespace SonistoRepackage
         private void initializeApplication()
         {
             try
-            {
+            {   
                 string settingsFile = "";
                 if (SettingsAndData.Instance.deployBuild)
                 {
@@ -92,6 +92,9 @@ namespace SonistoRepackage
                     settingsProperties.Add(property);
                 }
 
+
+                //Foreach element in settingsfile, compare the attribute with each propertyName in the SettingsAndData.Instance
+                //If they are equal, transfer the value and break.
                 foreach (string element in settingsFileELements)
                 {
                     int dividerPosition = element.IndexOf("|");
@@ -109,10 +112,8 @@ namespace SonistoRepackage
                 }
             } catch (Exception e)
             {
-                log.write(e);
+                //log.write(e, "Exception");
             }
-
-
         }
 
         private void btnCreateInstallData_Click(object sender, RoutedEventArgs e)
@@ -125,14 +126,12 @@ namespace SonistoRepackage
                 if (SettingsAndData.Instance.test)
                 {
                     Testing tests = new Testing();
-
-
                     //tests.testInstallationPackageDTO();
                     //tests.testRadioButtonPopUp();
-
                 }
                 //testArea ending
                 else
+               
                 {
                     ConvertStringToInstalledElement installedElementConverter = new ConvertStringToInstalledElement();
                     Detection fileDetector = new Detection();
@@ -150,6 +149,9 @@ namespace SonistoRepackage
                     eventStringList = fileDetector.getEventList();
                     cleanList = cleanTheList.doIt(eventStringList);
 
+                    log.write(eventStringList, "XXXXXXXXXXXXXXEventlistXXXXXXXXXXXX");
+                    log.write(cleanList, "XXXXXXXXXXXXXXCleanlistXXXXXXXXXXXX");
+
                     //First User pass of data created by the install proces
                     //Creating the total folder structure.
 
@@ -166,7 +168,7 @@ namespace SonistoRepackage
                 }
             } catch (Exception ex)
             {
-                log.write(ex);
+                log.write(ex, "Exception");
             }
         }
 
@@ -193,7 +195,7 @@ namespace SonistoRepackage
             }
             catch (Exception e)
             {
-                log.write(e);
+                log.write(e, "Exception");
             }
         }
 
@@ -202,7 +204,7 @@ namespace SonistoRepackage
         private void executeInnoInstaller(string path, string fileName)
         {
             // Use ProcessStartInfo class
-            //Remember to lower the security og UAC to lowest level on the computer
+            //Remember to lower the security and UAC to lowest level on the computer
             ProcessStartInfo installerProces = new ProcessStartInfo();
             installerProces.CreateNoWindow = true;
             installerProces.UseShellExecute = false;
@@ -214,7 +216,7 @@ namespace SonistoRepackage
 
             try
             {
-                // Start the process with the info we specified.
+                // Start the process with the info specified.
                 // Call WaitForExit and then the using statement will close.
                 using (Process exeProcess = Process.Start(installerProces))
                 {
@@ -224,7 +226,7 @@ namespace SonistoRepackage
             }
             catch (Exception e)
             {
-                log.write(e);
+                log.write(e, "Exception");
             }
         }
 
@@ -256,7 +258,7 @@ namespace SonistoRepackage
                 btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
             }catch (Exception ex)
             {
-                log.write(ex);
+                log.write(ex, "Exception");
             }
         }
 
@@ -280,7 +282,7 @@ namespace SonistoRepackage
                 btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
             } catch (Exception ex)
             {
-                log.write(ex);
+                log.write(ex, "Exception");
             }
         }
 
@@ -302,7 +304,7 @@ namespace SonistoRepackage
                 List<string> differentCombinations = new List<string>();//a string build to show the package combination like "bit32vst2" or "all"
 
                 //Getting the different combinations strings that is existent in this install and 
-                //put them in a list to use later so that it is converted to an integer index.
+                //put them in a list.
                 for (int idx = 0; idx < listBoxItems.Count; idx++)
                 {
                     string packageChoiceString = generatePackageChoiceString(listBoxItems[idx].choices);
@@ -311,7 +313,7 @@ namespace SonistoRepackage
                         differentCombinations.Add(packageChoiceString);
                     }
                 }
-
+                //If user hasnt made any architecture/format choice only ALL is present in the list
                 if (differentCombinations.Count == 1)
                 {
                     MessageBox.Show("You need to choose an architecture and format for at least one of the files.", "No Arch/Form");
@@ -319,12 +321,10 @@ namespace SonistoRepackage
                 }
 
                 //Initialize the packageLists on the basis of how many combination strings there has been discovered
-                //so the first packagelist will be recognized on the first combination string.
                 for (int idx = 0; idx < differentCombinations.Count; idx++)
                 {
                     packageLists.Add(differentCombinations[idx], new List<PackageElement>());
                 }
-
 
                 //disperse the original list into the proper packagelists on the basis of the index of the combinationlist
                 for (int idx = 0; idx < listBoxItems.Count; idx++)
@@ -360,9 +360,7 @@ namespace SonistoRepackage
                 //clear the working folder
                 placeHolderStructure.prepareWorkingFolder();
 
-
                 //For each package list, create and copy the files and folders from their real position to their package positions.
-                //If there were no selections of packages, do the process again. There always needs to be one architecture and format selection.
                 foreach (KeyValuePair<string, List<PackageElement>> installPackage in packageLists)
                 {
                     string key = installPackage.Key;
@@ -373,11 +371,12 @@ namespace SonistoRepackage
                     }
                 }
 
+                //Reset the application for another plugin
                 MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
                 ResetApplication();
             }catch (Exception ex)
             {
-                log.write(ex);
+                log.write(ex, "Exception");
             }
         }
 
@@ -390,7 +389,7 @@ namespace SonistoRepackage
                 ZipFile.CreateFromDirectory(startPath, zipPath);
             } catch (Exception ex)
             {
-                log.write(ex);
+                log.write(ex, "Exception");
             }
         }
 
@@ -428,6 +427,7 @@ namespace SonistoRepackage
 
         private string generatePackageChoiceString(InstallationPackageChoice element)
         {
+            //returns ex. "allbit32vst3"
             string result = "";
             if (element.all)
             {
@@ -443,10 +443,6 @@ namespace SonistoRepackage
                 {
                     result = String.Concat(result, "bit64");
                 }
-                if (element.vst2)
-                {
-                    result = String.Concat(result, "vst2");
-                }
                 if (element.vst3)
                 {
                     result = String.Concat(result, "vst3");
@@ -455,10 +451,13 @@ namespace SonistoRepackage
                 {
                     result = String.Concat(result, "aax");
                 }
+                if (element.vst2)
+                {
+                    result = String.Concat(result, "vst2");
+                }
             }
             return result;
         }
-
 
         //ListBox controls
         private void btnPackageVersion_Click(object sender, RoutedEventArgs e)
@@ -470,6 +469,8 @@ namespace SonistoRepackage
             if ((bool)popup.ShowDialog() && popup.DialogResult.Value == true)
             {
                 listBoxElement.choices = popup.getChoices();
+                Button button = sender as Button;
+                button.Background = (Brush)Application.Current.Resources["DoneColor"];
             }
         }
 
@@ -479,9 +480,12 @@ namespace SonistoRepackage
             {
                 ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
                 WriteToFile(listBoxElement.file);
-            }catch (Exception ex)
+                Button button = sender as Button;
+                button.Background = (Brush)Application.Current.Resources["DoneColor"];
+            }
+            catch (Exception ex)
             {
-                log.write(ex);
+                log.write(ex, "Exception");
             }
         }
 
@@ -490,21 +494,34 @@ namespace SonistoRepackage
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
             var window = new PathPopup();
             window.txtBxPathResult.Text = listBoxElement.path;
-
-            if (window.ShowDialog() == true)
+            Button button = sender as Button;
+            button.Background = (Brush)Application.Current.Resources["DoneColor"];
+            try
             {
-                WriteToFile(window.pathResult);
+                if (window.ShowDialog() == true)
+                {
+                    WriteToFile(window.pathResult);
+
+                }
+            }catch (Exception ex)
+            {
+                log.write(ex, "Exception");
             }
         }
 
         private void WriteToFile(string filterText)
         {
-            string filterFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsAndData.Instance.filterFile);
-            using (StreamWriter sw = File.AppendText(filterFile))
-            {
-                sw.WriteLine(filterText);
-            }
-        }
+            try { 
+                string filterFile = Path.Combine(Directory.GetCurrentDirectory(), SettingsAndData.Instance.filterFile);
+                using (StreamWriter sw = File.AppendText(filterFile))
+                {
+                    sw.WriteLine(filterText);
+                }
+            }catch (Exception ex)
+                {
+                    log.write(ex, "Exception");
+                }
+}
 
         private object getListBoxElement(object sender)
         {

@@ -72,8 +72,8 @@ namespace SonistoRepackage.InstallDetection
             try
             {
                 owner = File.GetAccessControl(e.FullPath).GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
-                log.write(owner);
-                if (owner.Contains("Administratorer")|| owner.Contains("Administrators"))
+                //log.write(owner, "XXXXXXXXXXXXOwnerXXXXXXXXXXXX");
+                if (owner.Contains("Admin"))
                 //if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.FullPath + "<" + e.ChangeType + ":" + owner);
@@ -93,8 +93,8 @@ namespace SonistoRepackage.InstallDetection
             try
             {
                 owner = File.GetAccessControl(e.FullPath).GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
-                log.write(owner);
-                if (owner.Contains("Administratorer") || owner.Contains("Administrators"))
+                log.write(owner, "XXXXXXXXXXXXOwnerXXXXXXXXXXXX");
+                //if (owner.Contains("Admin"))
                 //if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);

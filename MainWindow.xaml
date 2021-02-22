@@ -18,35 +18,6 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <!--<Style.Triggers>
-                <EventTrigger RoutedEvent="Click">
-                    <BeginStoryboard>
-                        <Storyboard BeginTime="00:00:00"
-                                    RepeatBehavior="Forever"
-                                    AutoReverse="True">
-                            <ColorAnimation  From="Background"
-                                             To="{StaticResource AttentionColor}" Duration="0:0:1"/>
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Style.Triggers>-->
-        </Style>
-
-        <Style x:Key="ProcesButtons" TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Button>
-                            <Border CornerRadius="10" BorderThickness="2" BorderBrush="Black" Background="{StaticResource ButtonDefaultColor}">
-                                <Border.Effect>
-                                    <DropShadowEffect BlurRadius="2" RenderingBias="Quality" ShadowDepth="3" Direction="175" Opacity="0.75" Color="#FFBFBFBF"/>
-                                </Border.Effect>
-                                <TextBlock Text="{TemplateBinding Content}" FontSize="10" TextWrapping="Wrap"  VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Black"/>
-                            </Border>
-                        </Button>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
     </Window.Resources>
 
@@ -78,8 +49,6 @@
             </Button.Resources>
         </Button>
 
-
-
         <Button Name="btnKillMarkedFiles"  HorizontalAlignment="Left" Margin="320,115,0,0" VerticalAlignment="Top" Width="82" Height="40" Click="btnKillMarkedFiles_Click" Background="{StaticResource ButtonDefaultColor}" Grid.Column="0" Grid.Row="0">
             <TextBlock TextWrapping="Wrap" Width="71" VerticalAlignment="Center" TextAlignment="Center"><Run Text="Kill the "/><LineBreak/><Run/><Run Text="marked files"/></TextBlock>
             <Button.Resources>
@@ -109,6 +78,7 @@
         <Label Content="5-" HorizontalAlignment="Left" Margin="429,115,0,0" VerticalAlignment="Top" Width="31" Height="37" FontSize="20" Grid.Row="0"/>
         <Label Content="6-" HorizontalAlignment="Left" Margin="621,115,0,0" VerticalAlignment="Top" Width="33" Height="37" FontSize="20" Grid.Row="0"/>
 
+        <!-- LISTBOX -->
         <ListBox Name="lstBoxInfoWindow" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="Black" ScrollViewer.VerticalScrollBarVisibility="Visible" Margin="5,1.2,4.6,-0.4" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <ListBox.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
@@ -124,23 +94,17 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Name="btnPackageVersion" Style="{StaticResource ListBoxButtonFormat}" Content ="Package version" Click="btnPackageVersion_Click" HorizontalAlignment="Right" Margin="10,0,10,0"/>
+                        <Button Name="btnPackageVersion" Content ="Package version" Click="btnPackageVersion_Click" HorizontalAlignment="Right" Margin="10,0,10,0">
 
-                        <Button Name="btnFilterPath" Style="{StaticResource ListBoxButtonFormat}" Content ="Filter path" Click="btnFilterpath_Click" HorizontalAlignment="Right"/>
+                        </Button>
+                        <Button Name="btnFilterPath" Content ="Filter path" Click="btnFilterpath_Click" HorizontalAlignment="Right"/>
                         <TextBlock Name="txtBlkPath" Text="{Binding path, Mode=TwoWay}" FontSize="10" Width="500" Height="20" Margin="10,0,10,0"/>
 
-                        <Button Name="btnFilterfile" Style="{StaticResource ListBoxButtonFormat}" Content="Filter file" Click="btnFilterfile_Click" HorizontalAlignment="Right"/>
+                        <Button Name="btnFilterfile" Content="Filter file" Click="btnFilterfile_Click" HorizontalAlignment="Right"/>
                         <TextBlock Name="txtBlkFile" Text="{Binding file, Mode=TwoWay}" FontSize="10" Width="150" Height="20" Margin="10,0,10,0"/>
 
                         <CheckBox Name="chkBxKeep" Content="Keep" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.keep, Mode=TwoWay}" Margin="5,0,5,0" Checked="chkBxKeep_Checked"/>
                         <CheckBox Name="chkBxKill" Content="Kill" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.kill, Mode=TwoWay}" Margin="5,0,5,0" Checked="chkBxKill_Checked"/>
-
-                        <Separator  Name="MySeparator" 
-                                        Height="3"
-                                        Width="Auto"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Bottom"                   
-                                        Background="Red" />
                     </StackPanel>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

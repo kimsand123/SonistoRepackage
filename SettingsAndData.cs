@@ -28,7 +28,8 @@ namespace SonistoRepackage
         }
         public  bool test = false;
         public bool deployBuild = false;
-        public string userDocFolder = Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents");
+        public string userDocFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            //Path.Combine(Environment.ExpandEnvironmentVariables("%userprofile%"), "Documents");
         public string homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
         public string filterFile {get;set;}
