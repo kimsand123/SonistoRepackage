@@ -7,5 +7,6 @@
         <SolidColorBrush x:Key="ButtonDefaultColor" Color="#FFDDDDDD"/>
         <SolidColorBrush x:Key="AttentionColor" Color="#FFFF9292"/>
         <SolidColorBrush x:Key="DoneColor" Color="LightGreen"/>
+        <SolidColorBrush x:Key="GreyedOut" Color="LightGray"/>
     </Application.Resources>
 </Application>
