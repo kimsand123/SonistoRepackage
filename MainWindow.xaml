@@ -103,13 +103,16 @@
                         <Button Name="btnFilterfile" Content="Filter file" Click="btnFilterfile_Click" HorizontalAlignment="Right"/>
                         <TextBlock Name="txtBlkFile" Text="{Binding file, Mode=TwoWay}" FontSize="10" Width="150" Height="20" Margin="10,0,10,0"/>
 
-                        <CheckBox Name="chkBxKill" Content="Kill" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.kill, Mode=TwoWay}" Margin="5,0,5,0" Checked="chkBxKill_Checked"/>
+                        <CheckBox Name="chkBxKill" Content="Kill" VerticalAlignment="Center" HorizontalAlignment="Right" IsChecked="{Binding keepKill.kill, Mode=TwoWay}" Margin="5,0,5,0" Unchecked="chkBxKill_Unchecked"  Checked="chkBxKill_Checked"/>
                     </StackPanel>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=chkBxKill, Path=IsChecked}">
+                        <DataTrigger Binding="{Binding ElementName=chkBxKill, Path=IsChecked}" Value="True">
                             <Setter TargetName="btnFilterfile" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="btnFilterfile" Property="IsEnabled" Value="False"/>
                             <Setter TargetName="btnFilterPath" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="btnFilterPath" Property="IsEnabled" Value="False"/>
                             <Setter TargetName="btnPackageVersion" Property="TextElement.FontWeight" Value="ExtraLight"/>
+                            <Setter TargetName="btnPackageVersion" Property="IsEnabled" Value="False"/>
                             <Setter TargetName="txtBlkPath" Property="TextElement.FontWeight" Value="ExtraLight"/>
                             <Setter TargetName="txtBlkFile" Property="TextElement.FontWeight" Value="ExtraLight"/>
                         </DataTrigger>

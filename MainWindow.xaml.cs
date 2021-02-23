@@ -326,33 +326,36 @@ namespace SonistoRepackage
                     packageLists.Add(differentCombinations[idx], new List<PackageElement>());
                 }
 
-                //disperse the original list into the proper packagelists on the basis of the index of the combinationlist
+                //disperse the CleanList list into the proper packagelists on the basis of the index of the combinationlist
                 for (int idx = 0; idx < listBoxItems.Count; idx++)
                 {
-                    PackageElement packageElement = new PackageElement();
-                    packageElement.placeHolderPath = placeHolderFoldersList[idx];
-                    packageElement.realPath = cleanList[idx];
-
-                    List<PackageElement> list = null;
-                    //converting the combinationstring into the proper int.
-                    int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
-
-                    //If the key in the packaglist contains the packagecombination string
-                    if (packageLists.ContainsKey(differentCombinations[properPackageIndex]))
+                    if (listBoxItems[idx].keepKill.kill != true)
                     {
-                        //if all add it to all the lists.
-                        if (differentCombinations[properPackageIndex] == "all")
+                        PackageElement packageElement = new PackageElement();
+                        packageElement.placeHolderPath = placeHolderFoldersList[idx];
+                        packageElement.realPath = cleanList[idx];
+
+                        List<PackageElement> list = null;
+                        //converting the combinationstring into the proper int.
+                        int properPackageIndex = differentCombinations.IndexOf(generatePackageChoiceString(listBoxItems[idx].choices));
+
+                        //If the key in the packaglist contains the packagecombination string
+                        if (packageLists.ContainsKey(differentCombinations[properPackageIndex]))
                         {
-                            foreach (KeyValuePair<string, List<PackageElement>> x in packageLists)
+                            //if all add it to all the lists.
+                            if (differentCombinations[properPackageIndex] == "all")
                             {
-                                List<PackageElement> y = x.Value;
-                                y.Add(packageElement);
+                                foreach (KeyValuePair<string, List<PackageElement>> x in packageLists)
+                                {
+                                    List<PackageElement> y = x.Value;
+                                    y.Add(packageElement);
+                                }
                             }
-                        }
-                        else //add the element to the proper list
-                        {
-                            list = packageLists[differentCombinations[properPackageIndex]];
-                            list.Add(packageElement);
+                            else //add the element to the proper list
+                            {
+                                list = packageLists[differentCombinations[properPackageIndex]];
+                                list.Add(packageElement);
+                            }
                         }
                     }
                 }
@@ -526,20 +529,21 @@ namespace SonistoRepackage
         private void chkBxKill_Checked(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
-            if (listBoxElement.keepKill.kill == false)
-            {
+           // if (listBoxElement.keepKill.kill == false)
+           // {
                 listBoxElement.keepKill.kill = true;
-            }
-            else
-            {
-                listBoxElement.keepKill.kill = false;
-            }
+            //}
+            //else
+            //{
+            //    listBoxElement.keepKill.kill = false;
+            //}
             btnKillMarkedFiles.Background = Brushes.Red;
+        }
 
-            
-            
-            
-
+        private void chkBxKill_Unchecked(object sender, RoutedEventArgs e)
+        {
+            ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
+            listBoxElement.keepKill.kill = false;
         }
         private object getListBoxElement(object sender)
         {
