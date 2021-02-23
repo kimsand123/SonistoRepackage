@@ -34,7 +34,7 @@ namespace SonistoRepackage
     //2. pass is if the file still exists, and was not a temporary file.
     //3. pass is the filterFile. If any of the strings in this file exists in the element, remove it.
     //Show clean list of installed elements in listbox
-    //kill user marked elements from lists
+    //mark files to exclude in the packaging
     //create the placeHolderStructure for the cleaned list
     //assign each element to an install package. Default is all
     //Create package list for each install package by copying the file from its installed position to is package position
@@ -66,7 +66,6 @@ namespace SonistoRepackage
                 }
             }
         }
-
         private void initializeApplication()
         {
             try
@@ -110,12 +109,53 @@ namespace SonistoRepackage
                         }
                     }
                 }
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 //log.write(e, "Exception");
             }
         }
 
+        private void btnFindInstaller_Click(object sender, RoutedEventArgs e)
+        {
+            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
+            // Create OpenFileDialog
+            if (listBoxItems.Count == 0)
+            {
+                try
+                {
+                    OpenFileDialog openFileDlg = new OpenFileDialog();
+                    openFileDlg.DefaultExt = ".exe";
+                    openFileDlg.Filter = "Inno executable (.exe)| *.exe";
+                    openFileDlg.InitialDirectory = @"C:\Temp\";
+
+                    // Launch OpenFileDialog by calling ShowDialog method
+                    Nullable<bool> result = openFileDlg.ShowDialog();
+                    // Get the selected file name and display in a TextBox.
+                    // Load content of file in a TextBlock
+                    if (result == true)
+                    {
+                        string file = openFileDlg.FileName;
+                        int to = file.Length - 1;
+                        int lastOccurance = file.LastIndexOf(@"\");
+                        string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
+                        string path = file.Replace(filename, "");
+                        this.txtBxPath.Text = path;
+                        this.txtBxInstaller.Text = filename;
+                    }
+                    btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
+                }
+                catch (Exception ex)
+                {
+                    log.write(ex, "Exception");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please reset the application before installing new plugin");
+            }
+        }
+       
         private void btnCreateInstallData_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -160,7 +200,6 @@ namespace SonistoRepackage
                     //FillListBox (the clean list, the actual folders)
                     FillListBox();
 
-
                     //Måske man kan bruge original eventlisten - cleanList til at forbedre på filtret.
                     //Den resulterende liste skal renses.
 
@@ -169,33 +208,6 @@ namespace SonistoRepackage
             } catch (Exception ex)
             {
                 log.write(ex, "Exception");
-            }
-        }
-
-        //Method to fill up the listbox
-        private void FillListBox()
-        {
-            try
-            {
-                listBoxItems = new List<ItemForListbox>();
-                //If the file in the cleanlist exists, then it is a file, if not it is a folder.
-                //If it is a folder, then the last part of the textfile is not to be considered a file, but a folder.
-                for (int idx = 0; idx < cleanList.Count; idx++)
-                {
-                    if (File.Exists(cleanList[idx]))
-                    {
-                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = Path.GetDirectoryName(cleanList[idx]), file = Path.GetFileName(cleanList[idx]) });
-                    }
-                    else
-                    {
-                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), keepKill = new KeepKill(), path = cleanList[idx] });
-                    }
-                }
-                this.lstBoxInfoWindow.ItemsSource = listBoxItems;
-            }
-            catch (Exception e)
-            {
-                log.write(e, "Exception");
             }
         }
 
@@ -229,60 +241,29 @@ namespace SonistoRepackage
                 log.write(e, "Exception");
             }
         }
-
-        private void btnFindInstaller_Click(object sender, RoutedEventArgs e)
-        {
-            // https://www.c-sharpcorner.com/UploadFile/mahesh/openfiledialog-in-wpf/
-            // Create OpenFileDialog
-            try
-            {
-                OpenFileDialog openFileDlg = new OpenFileDialog();
-                openFileDlg.DefaultExt = ".exe";
-                openFileDlg.Filter = "Inno executable (.exe)| *.exe";
-                openFileDlg.InitialDirectory = @"C:\Temp\";
-
-                // Launch OpenFileDialog by calling ShowDialog method
-                Nullable<bool> result = openFileDlg.ShowDialog();
-                // Get the selected file name and display in a TextBox.
-                // Load content of file in a TextBlock
-                if (result == true)
-                {
-                    string file = openFileDlg.FileName;
-                    int to = file.Length - 1;
-                    int lastOccurance = file.LastIndexOf(@"\");
-                    string filename = file.Substring(lastOccurance + 1, to - lastOccurance);
-                    string path = file.Replace(filename, "");
-                    this.txtBxPath.Text = path;
-                    this.txtBxInstaller.Text = filename;
-                }
-                btnFindInstaller.Background = (Brush)Application.Current.Resources["DoneColor"];
-            } catch (Exception ex)
-            {
-                log.write(ex, "Exception");
-            }
-        }
-
-        private void btnKillMarkedFiles_Click(object sender, RoutedEventArgs e)
+        private void FillListBox()
         {
             try
             {
-                int numberOfElementsInListBox = listBoxItems.Count;
-                for (int idx = numberOfElementsInListBox - 1; idx > -1; idx--)
+                listBoxItems = new List<ItemForListbox>();
+                //If the file in the cleanlist exists, then it is a file, if not it is a folder.
+                //If it is a folder, then the last part of the textfile is not to be considered a file, but a folder.
+                for (int idx = 0; idx < cleanList.Count; idx++)
                 {
-                    if (listBoxItems[idx].keepKill.kill == true)
+                    if (File.Exists(cleanList[idx]))
                     {
-                        listBoxItems.RemoveAt(idx);
-                        cleanList.RemoveAt(idx);
-                        placeHolderFoldersList.RemoveAt(idx);
-                        numberOfElementsInListBox -= 1;
+                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), exclude = false, path = Path.GetDirectoryName(cleanList[idx]), file = Path.GetFileName(cleanList[idx]) });
+                    }
+                    else
+                    {
+                        listBoxItems.Add(new ItemForListbox() { choices = new InstallationPackageChoice(), exclude = false, path = cleanList[idx] });
                     }
                 }
-                FillListBox();
-
-                btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
-            } catch (Exception ex)
+                this.lstBoxInfoWindow.ItemsSource = listBoxItems;
+            }
+            catch (Exception e)
             {
-                log.write(ex, "Exception");
+                log.write(e, "Exception");
             }
         }
 
@@ -329,7 +310,7 @@ namespace SonistoRepackage
                 //disperse the CleanList list into the proper packagelists on the basis of the index of the combinationlist
                 for (int idx = 0; idx < listBoxItems.Count; idx++)
                 {
-                    if (listBoxItems[idx].keepKill.kill != true)
+                    if (listBoxItems[idx].exclude != true)
                     {
                         PackageElement packageElement = new PackageElement();
                         packageElement.placeHolderPath = placeHolderFoldersList[idx];
@@ -373,61 +354,16 @@ namespace SonistoRepackage
                         zipThePackageFolder(key);
                     }
                 }
-
+                OpenPackageFolder();
                 //Reset the application for another plugin
-                MessageBox.Show("Packages created. Prepare for new Plugin", "Done");
-                ResetApplication();
+                MessageBox.Show("Packages created.", "Done");
             } catch (Exception ex)
             {
                 log.write(ex, "Exception");
             }
+
+
         }
-
-        private void zipThePackageFolder(string key)
-        {
-            try
-            {
-                string startPath = SettingsAndData.Instance.workingFolder + "\\" + key;
-                string zipPath = SettingsAndData.Instance.workingFolder + "\\" + key + ".zip";
-                ZipFile.CreateFromDirectory(startPath, zipPath);
-            } catch (Exception ex)
-            {
-                log.write(ex, "Exception");
-            }
-        }
-
-        private void ResetApplication()
-        {
-            listBoxItems.Clear();
-            eventStringList.Clear();
-            cleanList.Clear();
-            placeHolderFoldersList.Clear();
-            FillListBox();
-            this.txtBxInstaller.Text = "";
-            this.txtBxPath.Text = "";
-
-            btnFindInstaller.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
-            btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
-            btnCreateInstallData.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
-            btnCreatePackages.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
-
-
-            if (Directory.Exists(SettingsAndData.Instance.workingFolder))
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    Arguments = SettingsAndData.Instance.workingFolder,
-                    FileName = "explorer.exe"
-                };
-
-                Process.Start(startInfo);
-            }
-            else
-            {
-                MessageBox.Show(string.Format("{0} Directory does not exist!", SettingsAndData.Instance.workingFolder));
-            }
-        }
-
         private string generatePackageChoiceString(InstallationPackageChoice element)
         {
             //returns ex. "allbit32vst3"
@@ -462,7 +398,54 @@ namespace SonistoRepackage
             return result;
         }
 
-        //ListBox controls
+        private void zipThePackageFolder(string key)
+        {
+            try
+            {
+                string startPath = SettingsAndData.Instance.workingFolder + "\\" + key;
+                string zipPath = SettingsAndData.Instance.workingFolder + "\\" + key + ".zip";
+                ZipFile.CreateFromDirectory(startPath, zipPath);
+            } catch (Exception ex)
+            {
+                log.write(ex, "Exception");
+            }
+        }
+        private void OpenPackageFolder()
+        {
+            if (Directory.Exists(SettingsAndData.Instance.workingFolder))
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    Arguments = SettingsAndData.Instance.workingFolder,
+                    FileName = "explorer.exe"
+                };
+
+                Process.Start(startInfo);
+            }
+            else
+            {
+                MessageBox.Show(string.Format("{0} Directory does not exist!", SettingsAndData.Instance.workingFolder));
+            }
+        }
+
+        private void ResetApplication()
+        {
+            listBoxItems.Clear();
+            eventStringList.Clear();
+            cleanList.Clear();
+            placeHolderFoldersList.Clear();
+            FillListBox();
+            this.txtBxInstaller.Text = "";
+            this.txtBxPath.Text = "";
+
+            btnFindInstaller.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            //btnKillMarkedFiles.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            btnCreateInstallData.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+            btnCreatePackages.Background = (Brush)Application.Current.Resources["ButtonDefaultColor"];
+        }
+
+
+//*****************************ListBox controls*************************************************
         private void btnPackageVersion_Click(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
@@ -526,24 +509,16 @@ namespace SonistoRepackage
             }
         }
     
-        private void chkBxKill_Checked(object sender, RoutedEventArgs e)
+        private void chkBxExclude_Checked(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
-           // if (listBoxElement.keepKill.kill == false)
-           // {
-                listBoxElement.keepKill.kill = true;
-            //}
-            //else
-            //{
-            //    listBoxElement.keepKill.kill = false;
-            //}
-            btnKillMarkedFiles.Background = Brushes.Red;
+            listBoxElement.exclude = true;
         }
 
-        private void chkBxKill_Unchecked(object sender, RoutedEventArgs e)
+        private void chkBxExclude_Unchecked(object sender, RoutedEventArgs e)
         {
             ItemForListbox listBoxElement = (ItemForListbox)getListBoxElement(sender);
-            listBoxElement.keepKill.kill = false;
+            listBoxElement.exclude = false;
         }
         private object getListBoxElement(object sender)
         {
@@ -562,6 +537,9 @@ namespace SonistoRepackage
             return this.lstBoxInfoWindow.Items[index];
         }
 
-
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ResetApplication();
+        }
     }
 }
