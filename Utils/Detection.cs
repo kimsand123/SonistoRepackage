@@ -94,7 +94,7 @@ namespace SonistoRepackage.InstallDetection
             {
                 owner = File.GetAccessControl(e.FullPath).GetOwner(typeof(SecurityIdentifier)).Translate(typeof(NTAccount)).ToString();
                 log.write(owner, "XXXXXXXXXXXXOwnerXXXXXXXXXXXX");
-                //if (owner.Contains("Admin"))
+                if (owner.Contains("Admin"))
                 //if (owner.Contains("test"))
                 {
                     eventList.Add(">" + e.OldFullPath + "<" + e.ChangeType + ":" + owner);

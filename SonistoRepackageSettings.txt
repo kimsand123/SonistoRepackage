@@ -1,7 +1,4 @@
 ﻿filterFile|RepackageFilter.txt
-workingFolder|C:\Sonisto\PackageFolders\
-userDocFolder|C:\Users\test\Documents
-homeFolder|C:\Users\test
 pluginVst3_32Folder|C:\Program Files (x86)\Common Files\VST3
 pluginVst3_64Folder|C:\Program Files\Common Files\VST3
 pluginAaxFolder|\Library\Music\AAX
